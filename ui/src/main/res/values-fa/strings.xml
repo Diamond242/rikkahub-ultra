@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="sketch_dialog_undo">واگرد</string>
+  <string name="sketch_dialog_redo">ازنو</string>
+  <string name="sketch_dialog_clear">پاک کردن</string>
+  <string name="sketch_dialog_eraser">پاک‌کن</string>
+  <string name="sketch_dialog_discard_title">طرح کنار گذاشته شود؟</string>
+  <string name="sketch_dialog_discard_message">طراحی شما از بین می‌رود.</string>
+  <string name="sketch_dialog_custom_color">رنگ سفارشی</string>
+  <string name="sketch_dialog_paper">بوم</string>
+  <string name="sketch_dialog_paper_auto">متناسب با صفحه</string>
+  <string name="sketch_dialog_choose_image">انتخاب تصویر</string>
+  <string name="sketch_dialog_remove_image">حذف تصویر</string>
+  <string name="sketch_dialog_image_load_failed">بارگذاری تصویر ممکن نشد</string>
+  <string name="sketch_dialog_brush_pen">قلم</string>
+  <string name="sketch_dialog_brush_marker">ماژیک</string>
+  <string name="sketch_dialog_brush_highlighter">هایلایتر</string>
+  <string name="sketch_dialog_brush_dashed">خط‌چین</string>
+  <string name="sketch_dialog_brush_calligraphy">قلم خوشنویسی</string>
+  <string name="sketch_dialog_brush_flat">قلم تخت</string>
+  <string name="sketch_dialog_text">متن</string>
+  <string name="sketch_dialog_select">انتخاب</string>
+  <string name="chart_mode_chart">نمودار</string>
+  <string name="chart_mode_table">جدول</string>
+  <string name="chart_series">سری</string>
+  <string name="chart_series_name">سری %1$d</string>
+  <string name="image_crop_rotate">چرخش</string>
+  <string name="image_crop_reset">بازنشانی</string>
+  <string name="image_crop_free">آزاد</string>
+  <string name="image_crop_original">اصلی</string>
+  <string name="image_crop_load_failed">بارگذاری تصویر ممکن نشد</string>
+  <string name="image_crop_failed">برش تصویر ممکن نشد</string>
+</resources>
