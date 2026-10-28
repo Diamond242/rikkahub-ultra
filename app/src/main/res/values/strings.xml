@@ -1848,4 +1848,7 @@
     <string name="provider_marucode_signup_bonus">New users get $2 on sign-up</string>
     <string name="provider_marucode_image_studio">Image studio 🖼️</string>
     <string name="provider_naapi_desc">NaAPI (naapi.cc) is an OpenAI-compatible LLM gateway offering 300+ models from OpenAI, Anthropic, Google and others at discounted prices</string>
+  <string name="setting_language_title">Language</string>
+  <string name="setting_language_follow_system">Follow system</string>
+  <string name="setting_language_desc">Choose the app language. By default it follows the system language</string>
 </resources>

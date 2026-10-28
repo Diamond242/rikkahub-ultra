@@ -1850,4 +1850,7 @@ mDNS 地址：使用 .local 主机名，同一网络中的其他设备可通过�
     <string name="provider_marucode_signup_bonus">新用户注册送 2 刀</string>
     <string name="provider_marucode_image_studio">生图工作台🖼️</string>
     <string name="provider_naapi_desc">钠API（naapi.cc）是 OpenAI 兼容的 LLM 网关，以优惠价格提供 OpenAI、Anthropic、Google 等 300+ 模型访问</string>
+  <string name="setting_language_title">&#x8bed;&#x8a00;</string>
+  <string name="setting_language_follow_system">&#x8ddf;&#x968f;&#x7cfb;&#x7edf;</string>
+  <string name="setting_language_desc">&#x9009;&#x62e9;&#x5e94;&#x7528;&#x8bed;&#x8a00;&#xff0c;&#x9ed8;&#x8ba4;&#x8ddf;&#x968f;&#x7cfb;&#x7edf;&#x8bed;&#x8a00;</string>
 </resources>

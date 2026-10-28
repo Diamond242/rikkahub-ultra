@@ -158,6 +158,10 @@ fun conversationIntent(context: Context, conversationId: String): Intent =
     }
 
 class RouteActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(me.rerere.rikkahub.utils.AppLocale.wrap(newBase))
+    }
+
     private val okHttpClient by inject<OkHttpClient>()
     private val settingsStore by inject<SettingsStore>()
     private val mediaCreationRepository by inject<MediaCreationRepository>()

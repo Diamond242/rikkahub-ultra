@@ -1845,4 +1845,7 @@
     <string name="provider_marucode_signup_bonus">新使用者註冊送 2 刀</string>
     <string name="provider_marucode_image_studio">生圖工作臺🖼️</string>
     <string name="provider_naapi_desc">鈉API（naapi.cc）是 OpenAI 相容的 LLM 閘道器，以優惠價格提供 OpenAI、Anthropic、Google 等 300+ 模型訪問</string>
+  <string name="setting_language_title">&#x8a9e;&#x8a00;</string>
+  <string name="setting_language_follow_system">&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;</string>
+  <string name="setting_language_desc">&#x9078;&#x64c7;&#x61c9;&#x7528;&#x7a0b;&#x5f0f;&#x8a9e;&#x8a00;&#xff0c;&#x9810;&#x8a2d;&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;&#x8a9e;&#x8a00;</string>
 </resources>

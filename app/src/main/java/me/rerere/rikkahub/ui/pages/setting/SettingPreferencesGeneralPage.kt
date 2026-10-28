@@ -73,6 +73,43 @@ fun SettingPreferencesGeneralPage(vm: SettingVM = koinViewModel()) {
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {
+                val context = androidx.compose.ui.platform.LocalContext.current
+                val activity = context as? android.app.Activity
+                var currentLang by remember { mutableStateOf(me.rerere.rikkahub.utils.AppLocale.match(me.rerere.rikkahub.utils.AppLocale.current(context))) }
+                var expanded by remember { mutableStateOf(false) }
+                val systemLabel = stringResource(R.string.setting_language_follow_system)
+                val options = listOf("" to systemLabel) + me.rerere.rikkahub.utils.AppLocale.supported
+                val currentLabel = options.firstOrNull { it.first == currentLang }?.second ?: systemLabel
+                CardGroup {
+                    item(
+                        onClick = { expanded = true },
+                        headlineContent = { Text(stringResource(R.string.setting_language_title)) },
+                        supportingContent = { Text(stringResource(R.string.setting_language_desc)) },
+                        trailingContent = {
+                            androidx.compose.foundation.layout.Box {
+                                CardGroupValue(currentLabel)
+                                androidx.compose.material3.DropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false },
+                                ) {
+                                    options.forEach { (tag, label) ->
+                                        androidx.compose.material3.DropdownMenuItem(
+                                            text = { Text(label) },
+                                            onClick = {
+                                                expanded = false
+                                                currentLang = tag
+                                                activity?.let { me.rerere.rikkahub.utils.AppLocale.set(it, tag) }
+                                            },
+                                        )
+                                    }
+                                }
+                            }
+                        },
+                    )
+                }
+            }
+
+            item {
                 var createNewConversationOnStart by rememberSharedPreferenceBoolean(
                     "create_new_conversation_on_start",
                     true

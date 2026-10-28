@@ -1848,4 +1848,7 @@
     <string name="provider_marucode_signup_bonus">کاربران جدید هنگام ثبت‌نام ۲ دلار هدیه می‌گیرند</string>
     <string name="provider_marucode_image_studio">استودیوی تصویر 🖼️</string>
     <string name="provider_naapi_desc">NaAPI (naapi.cc) یک درگاه LLM سازگار با OpenAI است که بیش از ۳۰۰ مدل از OpenAI، Anthropic، Google و دیگران را با قیمت مناسب ارائه می‌دهد</string>
+  <string name="setting_language_title">&#x632;&#x628;&#x627;&#x646;</string>
+  <string name="setting_language_follow_system">&#x67e;&#x6cc;&#x631;&#x648;&#x6cc; &#x627;&#x632; &#x633;&#x6cc;&#x633;&#x62a;&#x645;</string>
+  <string name="setting_language_desc">&#x632;&#x628;&#x627;&#x646; &#x628;&#x631;&#x646;&#x627;&#x645;&#x647; &#x631;&#x627; &#x627;&#x646;&#x62a;&#x62e;&#x627;&#x628; &#x6a9;&#x646;&#x6cc;&#x62f;&#x61b; &#x628;&#x647;&#x200c;&#x637;&#x648;&#x631; &#x67e;&#x6cc;&#x634;&#x200c;&#x641;&#x631;&#x636; &#x627;&#x632; &#x632;&#x628;&#x627;&#x646; &#x633;&#x6cc;&#x633;&#x62a;&#x645; &#x67e;&#x6cc;&#x631;&#x648;&#x6cc; &#x645;&#x6cc;&#x200c;&#x6a9;&#x646;&#x62f;</string>
 </resources>
