@@ -688,8 +688,19 @@
   scrollbar-color: var(--border) transparent;
 }
 
-/* Persian (fa-IR): prefer locally installed Persian fonts; no network font loading. */
-:root:lang(fa) body {
+/* Persian (fa-IR): bundled Vazirmatn (OFL-1.1, see public/fonts/OFL.txt), served locally.
+   unicode-range limits it to Arabic-script glyphs, so Latin text keeps the default font stack. */
+@font-face {
+  font-family: "Vazirmatn";
+  src: url("/fonts/Vazirmatn-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+:root:lang(fa) body,
+:root[dir="rtl"] body {
   font-family:
-    "Vazirmatn", "Vazir", "Sahel", "Tahoma", "Segoe UI", "Noto Sans Arabic", var(--font-sans), sans-serif;
+    "Vazirmatn", var(--font-sans), "Tahoma", "Noto Sans Arabic", sans-serif;
 }
