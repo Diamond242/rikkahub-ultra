@@ -687,3 +687,9 @@
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
+
+/* Persian (fa-IR): prefer locally installed Persian fonts; no network font loading. */
+:root:lang(fa) body {
+  font-family:
+    "Vazirmatn", "Vazir", "Sahel", "Tahoma", "Segoe UI", "Noto Sans Arabic", var(--font-sans), sans-serif;
+}
