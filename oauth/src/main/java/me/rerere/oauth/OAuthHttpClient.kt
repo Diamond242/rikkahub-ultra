@@ -163,7 +163,7 @@ class OAuthHttpClient(
 
     fun buildAuthorizationUrl(request: AuthorizationRequest): String {
         val base = request.authorizationEndpoint.toHttpUrlOrNull()
-            ?: error("非法的授权端点: ${request.authorizationEndpoint}")
+            ?: error("Invalid authorization endpoint: ${request.authorizationEndpoint}")
         return base.newBuilder()
             .addQueryParameter("response_type", "code")
             .addQueryParameter("client_id", request.clientId)

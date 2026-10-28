@@ -488,7 +488,7 @@ private fun QQGroupBottomSheet(onDismiss: () -> Unit) {
                     onClick = {
                         if (group.number != null) {
                             context.writeClipboardText(group.number)
-                            Toast.makeText(context, "群号已复制", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, context.getString(R.string.setting_qq_group_number_copied), Toast.LENGTH_SHORT).show()
                         } else {
                             context.joinQQGroup(group.key)
                         }

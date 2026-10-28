@@ -250,7 +250,7 @@ class WorkspaceRepository(
             WorkspaceStorageArea.LINUX -> {
                 val size = backend.fileSize(area, path)
                 require(size <= MAX_PREVIEW_BYTES) {
-                    "文件过大, 无法预览 ($size bytes)"
+                    "File is too large to preview ($size bytes)"
                 }
                 ByteArrayOutputStream().use { out ->
                     backend.exportFile(area, path, out)

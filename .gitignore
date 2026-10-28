@@ -13,3 +13,6 @@ local.properties
 .kotlin
 # CodeGraph index
 .codegraph/
+
+# local project report (not committed)
+docs/PROJECT_REPORT.md
