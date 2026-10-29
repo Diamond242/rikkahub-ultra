@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.assistant
 
+import me.rerere.rikkahub.ui.context.LocalToaster
 import me.rerere.hugeicons.HugeIcons
 import me.rerere.hugeicons.stroke.Copy01
 import me.rerere.hugeicons.stroke.Add01
@@ -493,6 +494,9 @@ private fun AssistantItem(
                 }
             }
 
+            val toaster = LocalToaster.current
+            val cannotDeleteMsg = stringResource(R.string.assistant_default_cannot_delete)
+            val isBuiltIn = assistant.id in DEFAULT_ASSISTANTS_IDS
             ItemActionMenu(
                 actions = listOf(
                     ItemAction(
@@ -504,8 +508,10 @@ private fun AssistantItem(
                         text = stringResource(R.string.assistant_page_delete),
                         icon = HugeIcons.Delete01,
                         destructive = true,
-                        enabled = assistant.id !in DEFAULT_ASSISTANTS_IDS,
-                        onClick = onDelete,
+                        // built-in assistants are protected: explain instead of a silently disabled item
+                        onClick = if (isBuiltIn) {
+                            { toaster.show(message = cannotDeleteMsg) }
+                        } else onDelete,
                     ),
                 )
             )
