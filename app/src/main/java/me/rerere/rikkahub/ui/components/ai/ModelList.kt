@@ -392,7 +392,14 @@ private fun ColumnScope.ModelList(
     }
 
     var searchKeywords by remember { mutableStateOf("") }
-    var sortByQuality by rememberSaveable { mutableStateOf(false) }
+    // sort mode persisted in shared prefs: "default" | "quality" | "manual"
+    var sortModePref by rememberSharedPreferenceString("model_list_sort_mode", "default")
+    val sortMode = sortModePref.orEmpty().ifBlank { "default" }
+    val sortByQuality = sortMode == "quality"
+    val sortManual = sortMode == "manual"
+    var sortMenuExpanded by remember { mutableStateOf(false) }
+    var manualOrderPref by rememberSharedPreferenceString("model_list_manual_order", "")
+    var draggingManualOrder by remember { mutableStateOf<List<String>?>(null) }
     val appContext = LocalContext.current
     val qualityRanking = remember { ModelQualityRanking.load(appContext) }
 
@@ -491,6 +498,22 @@ private fun ColumnScope.ModelList(
         0
     }
 
+    // manual mode: flat list ordered by user-defined order; unknown models appended in default order
+    val manualFullIds = remember(providers, modelType, manualOrderPref, draggingManualOrder) {
+        val all = providers.flatMap { pr -> pr.models.fastFilter { it.type == modelType }.map { it.id.toString() } }
+        val saved = draggingManualOrder ?: manualOrderPref.orEmpty().split(",").filter { it.isNotBlank() }
+        val allSet = all.toSet()
+        val savedKept = saved.filter { it in allSet }
+        savedKept + all.filter { it !in savedKept.toSet() }
+    }
+    val manualModels = remember(providers, modelType, searchKeywords, manualFullIds, sortManual) {
+        if (!sortManual) return@remember emptyList()
+        val byId = providers.flatMap { pr ->
+            pr.models.fastFilter { it.type == modelType && it.displayName.contains(searchKeywords, true) }.map { pr to it }
+        }.associateBy { it.second.id.toString() }
+        manualFullIds.mapNotNull { byId[it] }
+    }
+
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemIndex = selectedModelPosition
     )
@@ -502,6 +525,36 @@ private fun ColumnScope.ModelList(
         if (fromPos >= 0 && toPos >= 0) {
             ids.add(toPos, ids.removeAt(fromPos))
             draggingFavoriteOrder = ids
+        }
+        val fk = from.key as? String
+        val tk = to.key as? String
+        if (fk != null && tk != null && fk.startsWith("manual:") && tk.startsWith("manual:")) {
+            val mids = manualFullIds.toMutableList()
+            val f = mids.indexOf(fk.removePrefix("manual:"))
+            val t = mids.indexOf(tk.removePrefix("manual:"))
+            if (f >= 0 && t >= 0) {
+                mids.add(t, mids.removeAt(f))
+                draggingManualOrder = mids
+            }
+        }
+    }
+    val favoriteTail: @Composable (Model) -> Unit = { model ->
+        val favorite = settings.value.favoriteModels.contains(model.id)
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    settingsStore.update { st ->
+                        if (favorite) st.copy(favoriteModels = st.favoriteModels.filter { it != model.id })
+                        else st.copy(favoriteModels = st.favoriteModels + model.id)
+                    }
+                }
+            }
+        ) {
+            if (favorite) {
+                Icon(HeartIcon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+            } else {
+                Icon(imageVector = HugeIcons.Favourite, contentDescription = null, modifier = Modifier.size(20.dp))
+            }
         }
     }
     val haptic = LocalHapticFeedback.current
@@ -550,15 +603,35 @@ private fun ColumnScope.ModelList(
                 Icon(HugeIcons.Search01, null)
             },
             trailingIcon = {
-                IconToggleButton(
-                    checked = sortByQuality,
-                    onCheckedChange = { sortByQuality = it },
-                ) {
-                    Icon(
-                        imageVector = HugeIcons.Sorting01,
-                        contentDescription = stringResource(R.string.model_list_sort_by_quality),
-                        tint = if (sortByQuality) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                androidx.compose.foundation.layout.Box {
+                    IconButton(onClick = { sortMenuExpanded = true }) {
+                        Icon(
+                            imageVector = HugeIcons.Sorting01,
+                            contentDescription = stringResource(R.string.model_list_sort),
+                            tint = if (sortMode != "default") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    androidx.compose.material3.DropdownMenu(
+                        expanded = sortMenuExpanded,
+                        onDismissRequest = { sortMenuExpanded = false },
+                    ) {
+                        listOf(
+                            "default" to R.string.model_list_sort_default,
+                            "quality" to R.string.model_list_sort_by_quality,
+                            "manual" to R.string.model_list_sort_manual,
+                        ).forEach { (mode, label) ->
+                            androidx.compose.material3.DropdownMenuItem(
+                                text = { Text(stringResource(label)) },
+                                onClick = {
+                                    sortModePref = mode
+                                    sortMenuExpanded = false
+                                },
+                                leadingIcon = {
+                                    androidx.compose.material3.RadioButton(selected = sortMode == mode, onClick = null)
+                                },
+                            )
+                        }
+                    }
                 }
             },
             maxLines = 1,
@@ -686,7 +759,56 @@ private fun ColumnScope.ModelList(
                     subtitle = provider.name + (score?.let {
                         " · " + stringResource(R.string.model_list_quality_score, it.toInt().toString())
                     } ?: ""),
+                    tail = { favoriteTail(model) },
                 )
+            }
+        } else if (sortManual) {
+            item(key = "manual:header") {
+                Text(
+                    text = stringResource(R.string.model_list_sort_manual_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+            items(
+                items = manualModels,
+                key = { "manual:" + it.second.id.toString() }
+            ) { (provider, model) ->
+                ReorderableItem(
+                    state = reorderableState,
+                    key = "manual:" + model.id.toString()
+                ) { isDragging ->
+                    ModelItem(
+                        model = model,
+                        onSelect = onSelect,
+                        modifier = Modifier
+                            .scale(if (isDragging) 0.95f else 1f)
+                            .animateItem(),
+                        providerSetting = provider,
+                        select = currentModel == model.id,
+                        onDismiss = { onDismiss() },
+                        subtitle = provider.name,
+                        tail = { favoriteTail(model) },
+                        dragHandle = {
+                            Icon(
+                                imageVector = HugeIcons.DragDropHorizontal,
+                                contentDescription = null,
+                                modifier = Modifier.longPressDraggableHandle(
+                                    onDragStarted = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                        val order = draggingManualOrder ?: return@longPressDraggableHandle
+                                        manualOrderPref = order.joinToString(",")
+                                        draggingManualOrder = null
+                                    }
+                                )
+                            )
+                        }
+                    )
+                }
             }
         } else providers.fastForEach { providerSetting ->
             val collapsed = isCollapsed(providerSetting)
@@ -801,7 +923,7 @@ private fun ColumnScope.ModelList(
                 }
             }
     }
-    if (providers.isNotEmpty() && !sortByQuality) {
+    if (providers.isNotEmpty() && sortMode == "default") {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth(),

@@ -1867,6 +1867,10 @@
   <string name="setting_provider_page_retry">Retry</string>
   <string name="setting_provider_page_add_all_free">Add all free (%1$d)</string>
   <string name="model_list_sort_by_quality">Sort by quality</string>
+  <string name="model_list_sort">Sort</string>
+  <string name="model_list_sort_default">Default order</string>
+  <string name="model_list_sort_manual">Manual order</string>
+  <string name="model_list_sort_manual_hint">Long-press the handle and drag to reorder</string>
   <string name="model_list_quality_score">score %1$s</string>
   <string name="model_list_quality_source">%1$s, %2$s</string>
 </resources>
