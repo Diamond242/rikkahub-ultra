@@ -1896,4 +1896,24 @@
     <string name="model_filter_tools">ابزار</string>
     <string name="setting_page_search_hint">جست‌وجو در تنظیمات</string>
     <string name="setting_page_search_empty">تنظیمی پیدا نشد</string>
+    <string name="key_guide_button">کلید را از کجا بگیرم؟</string>
+    <string name="key_guide_title">راهنمای دریافت کلید %1$s</string>
+    <string name="key_guide_open_site">باز کردن وب‌سایت</string>
+    <string name="key_guide_none">هنوز راهنمایی برای این ارائه‌دهنده موجود نیست. بخش API Key وب‌سایت ارائه‌دهنده را بررسی کنید.</string>
+    <string name="key_guide_groq">۱. وارد console.groq.com شوید و با حساب گوگل یا ایمیل ثبت‌نام کنید.\n۲. به بخش «API Keys» بروید و «Create API Key» را بزنید.\n۳. یک نام وارد کنید، کلید (با gsk_ شروع می‌شود) را کپی کرده و این‌جا بچسبانید.\nپلن رایگان با محدودیت تعداد درخواست؛ از ایران نیاز به VPN دارد.</string>
+    <string name="key_guide_nvidia">۱. وارد build.nvidia.com شوید و حساب NVIDIA بسازید.\n۲. از Settings ← API Keys گزینهٔ «Generate API Key» را بزنید.\n۳. کلید (با nvapi- شروع می‌شود) را کپی کرده و این‌جا بچسبانید.\nاعتبار رایگان؛ از ایران نیاز به VPN دارد.</string>
+    <string name="key_guide_mistral">۱. وارد console.mistral.ai شوید و ثبت‌نام کنید.\n۲. پلن رایگان «Experiment» را انتخاب کنید (تأیید شمارهٔ تلفن لازم است).\n۳. از بخش API Keys گزینهٔ «Create new key» را بزنید، کلید را کپی و این‌جا بچسبانید.\nاز ایران نیاز به VPN دارد.</string>
+    <string name="key_guide_cohere">۱. وارد dashboard.cohere.com شوید و ثبت‌نام کنید.\n۲. به بخش API Keys بروید؛ یک کلید آزمایشی (Trial) به‌صورت خودکار ساخته شده است.\n۳. کلید Trial را کپی کرده و این‌جا بچسبانید.\nاز ایران نیاز به VPN دارد.</string>
+    <string name="key_guide_zai">۱. وارد z.ai شوید و ثبت‌نام کنید.\n۲. به بخش API Keys بروید و کلید جدید بسازید.\n۳. کلید را کپی کرده و این‌جا بچسبانید. مدل‌های GLM Flash رایگان هستند.</string>
+    <string name="key_guide_siliconflow">۱. وارد cloud.siliconflow.com شوید و ثبت‌نام کنید.\n۲. از Account ← API Keys یک کلید بسازید.\n۳. کلید را کپی کرده و این‌جا بچسبانید. مدل‌های دارای برچسب «Free» رایگان هستند.</string>
+    <string name="key_guide_llm7">۱. وارد dash.llm7.io شوید.\n۲. یک توکن بسازید.\n۳. توکن را کپی کرده و این‌جا بچسبانید.</string>
+    <string name="key_guide_pollinations">۱. وارد enter.pollinations.ai شوید و با حساب GitHub وارد شوید.\n۲. یک کلید بسازید.\n۳. کلید را کپی کرده و این‌جا بچسبانید.</string>
+    <string name="key_guide_gemini">۱. با حساب گوگل وارد aistudio.google.com/apikey شوید.\n۲. «Create API key» را بزنید و یک پروژه انتخاب یا ایجاد کنید.\n۳. کلید (با AIza شروع می‌شود) را کپی کرده و این‌جا بچسبانید.\nسهمیهٔ رایگان مناسب؛ از ایران نیاز به VPN دارد.</string>
+    <string name="key_guide_openrouter">۱. وارد openrouter.ai شوید و ثبت‌نام کنید.\n۲. از Settings ← Keys گزینهٔ «Create Key» را بزنید.\n۳. کلید (با sk-or- شروع می‌شود) را کپی کرده و این‌جا بچسبانید.\nمدل‌هایی که به «:free» ختم می‌شوند رایگان هستند.</string>
+    <string name="key_guide_cerebras">۱. وارد cloud.cerebras.ai شوید و ثبت‌نام کنید.\n۲. به بخش API Keys بروید و کلید بسازید.\n۳. کلید را کپی کرده و این‌جا بچسبانید.</string>
+    <string name="key_guide_sambanova">۱. وارد cloud.sambanova.ai شوید و ثبت‌نام کنید.\n۲. به بخش APIs بروید و کلید بسازید.\n۳. کلید را کپی کرده و این‌جا بچسبانید.</string>
+    <string name="key_guide_avalai">۱. وارد chat.avalai.ir شوید و با شمارهٔ موبایل ثبت‌نام کنید.\n۲. کیف پول خود را شارژ کنید (پرداخت ریالی).\n۳. از پلتفرم ← API Keys کلید بسازید و این‌جا بچسبانید.\nدر ایران بدون VPN کار می‌کند.</string>
+    <string name="key_guide_gapgpt">۱. وارد gapgpt.app شوید و ثبت‌نام کنید.\n۲. حساب خود را شارژ کنید (پرداخت ریالی).\n۳. از پلتفرم ← Tokens یک توکن بسازید و این‌جا بچسبانید.\nدر ایران بدون VPN کار می‌کند.</string>
+    <string name="key_guide_metisai">۱. وارد console.metisai.ir شوید و ثبت‌نام کنید.\n۲. حساب خود را شارژ کنید (پرداخت ریالی).\n۳. از بخش API Keys کلید بسازید و این‌جا بچسبانید.\nدر ایران بدون VPN کار می‌کند.</string>
+    <string name="key_guide_ollama">۱. Ollama را از ollama.com/download روی رایانه‌ای در همان شبکه نصب کنید.\n۲. آن را با OLLAMA_HOST=0.0.0.0 اجرا کرده و یک مدل دریافت کنید (ollama pull llama3.2).\n۳. نشانی پایه را این‌جا http://&lt;IP-رایانه&gt;:11434/v1 قرار دهید. کلید لازم نیست.</string>
 </resources>

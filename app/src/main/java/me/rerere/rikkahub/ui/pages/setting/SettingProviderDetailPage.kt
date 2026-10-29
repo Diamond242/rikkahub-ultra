@@ -369,6 +369,7 @@ private fun SettingProviderConfigPage(
                     ProviderConnectionTester(
                         internalProvider = internalProvider,
                     )
+                    me.rerere.rikkahub.ui.pages.setting.components.KeyGuideButton(internalProvider)
 
                     if (!internalProvider.builtIn) {
                         IconButton(
