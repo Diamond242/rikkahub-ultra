@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.clickable
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -146,6 +147,53 @@ fun SettingPage(vm: SettingVM = koinViewModel()) {
             contentPadding = innerPadding + PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            item("settingsSearch") {
+                var query by androidx.compose.runtime.saveable.rememberSaveable { androidx.compose.runtime.mutableStateOf("") }
+                val entries = listOf(
+                    Triple(R.string.setting_page_preferences, R.string.setting_page_preferences_desc, Screen.SettingPreferences),
+                    Triple(R.string.setting_page_assistant, R.string.setting_page_assistant_desc, Screen.Assistant),
+                    Triple(R.string.setting_page_extensions, R.string.setting_page_extensions_desc, Screen.Extensions),
+                    Triple(R.string.setting_page_default_model, R.string.setting_page_default_model_desc, Screen.SettingModels),
+                    Triple(R.string.setting_page_providers, R.string.setting_page_providers_desc, Screen.SettingProvider),
+                    Triple(R.string.setting_page_search_service, R.string.setting_page_search_service_desc, Screen.SettingSearch),
+                    Triple(R.string.setting_page_tts_service, R.string.setting_page_tts_service_desc, Screen.SettingSpeech),
+                    Triple(R.string.setting_page_media, R.string.setting_page_media_desc, Screen.SettingMedia),
+                    Triple(R.string.setting_page_mcp, R.string.setting_page_mcp_desc, Screen.SettingMcp),
+                    Triple(R.string.setting_page_web_server, R.string.setting_page_web_server_desc, Screen.SettingWeb),
+                    Triple(R.string.setting_page_data_backup, R.string.setting_page_data_backup_desc, Screen.Backup),
+                    Triple(R.string.setting_page_chat_storage, R.string.setting_page_chat_storage, Screen.SettingFiles),
+                    Triple(R.string.setting_page_about, R.string.setting_page_about, Screen.SettingAbout),
+                ).map { (t, d, s) -> Triple(stringResource(t), stringResource(d), s) }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    androidx.compose.material3.OutlinedTextField(
+                        value = query,
+                        onValueChange = { query = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        placeholder = { Text(stringResource(R.string.setting_page_search_hint)) },
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(50),
+                    )
+                    if (query.isNotBlank()) {
+                        val q = query.trim()
+                        val hits = entries.filter { it.first.contains(q, true) || it.second.contains(q, true) }
+                        if (hits.isEmpty()) {
+                            Text(
+                                stringResource(R.string.setting_page_search_empty),
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                        hits.forEach { (title, desc, screen) ->
+                            ListItem(
+                                headlineContent = { Text(title) },
+                                supportingContent = { Text(desc, maxLines = 1) },
+                                modifier = Modifier.clickable { navController.navigate(screen) },
+                            )
+                        }
+                    }
+                }
+            }
+
             if (settings.isNotConfigured()) {
                 item {
                     ProviderConfigWarningCard(

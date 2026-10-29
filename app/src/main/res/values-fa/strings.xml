@@ -1894,4 +1894,6 @@
     <string name="model_filter_vision">تصویر</string>
     <string name="model_filter_reasoning">استدلال</string>
     <string name="model_filter_tools">ابزار</string>
+    <string name="setting_page_search_hint">جست‌وجو در تنظیمات</string>
+    <string name="setting_page_search_empty">تنظیمی پیدا نشد</string>
 </resources>

@@ -1895,4 +1895,6 @@
     <string name="model_filter_vision">Vision</string>
     <string name="model_filter_reasoning">Reasoning</string>
     <string name="model_filter_tools">Tools</string>
+    <string name="setting_page_search_hint">Search settings</string>
+    <string name="setting_page_search_empty">No matching settings</string>
 </resources>
