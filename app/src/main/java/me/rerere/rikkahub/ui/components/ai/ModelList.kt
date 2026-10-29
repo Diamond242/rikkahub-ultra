@@ -900,7 +900,7 @@ private fun ColumnScope.ModelList(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Icon(
-                        imageVector = if (collapsed) HugeIcons.ArrowRight01 else HugeIcons.ArrowDown01,
+                        imageVector = if (collapsed) me.rerere.rikkahub.ui.components.ui.endArrowIcon() else HugeIcons.ArrowDown01,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.primary,
@@ -1091,7 +1091,7 @@ private fun ModelItem(
                 ) {
                     Text(
                         text = model.displayName,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleSmall.copy(textDirection = androidx.compose.ui.text.style.TextDirection.Content),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -1178,7 +1178,7 @@ fun ModelModalityTag(model: Model) {
             )
         }
         Icon(
-            imageVector = HugeIcons.ArrowRight01,
+            imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
             contentDescription = null,
             modifier = Modifier.size(LocalTextStyle.current.lineHeight.toDp())
         )

@@ -359,7 +359,7 @@ fun SettingPreferencesNetworkPage(vm: SettingVM = koinViewModel()) {
                             )
                         },
                         trailingContent = {
-                            Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                            Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                         },
                     )
                     item(

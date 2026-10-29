@@ -629,7 +629,7 @@ private fun TopBar(
                     )
                     if (chatModel != null && provider != null) {
                         Text(
-                            text = "${assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) }} / ${chatModel.displayName} (${provider.name})",
+                            text = "${assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) }} / \u2068${chatModel.displayName}\u2069 (\u2068${provider.name}\u2069)",
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                             color = LocalContentColor.current.copy(0.65f),

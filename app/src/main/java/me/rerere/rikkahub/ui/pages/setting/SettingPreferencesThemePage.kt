@@ -70,7 +70,7 @@ fun SettingPreferencesThemePage(vm: SettingVM = koinViewModel()) {
                         onClick = { navController.navigate(Screen.SettingTheme) },
                         headlineContent = { Text(stringResource(R.string.setting_page_theme_setting)) },
                         supportingContent = { Text(stringResource(R.string.setting_page_theme_setting_desc)) },
-                        trailingContent = { Icon(HugeIcons.ArrowRight01, contentDescription = null) },
+                        trailingContent = { Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null) },
                     )
                     switchItem(
                         checked = amoledDarkMode,

@@ -134,7 +134,7 @@ fun SettingPreferencesNotificationPage(vm: SettingVM = koinViewModel()) {
                                 )
                             },
                             trailingContent = {
-                                Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                                Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                             },
                         )
                     }
@@ -180,7 +180,7 @@ fun SettingPreferencesNotificationPage(vm: SettingVM = koinViewModel()) {
                             headlineContent = { Text(stringResource(R.string.setting_page_preferences_notification_overlay_permission)) },
                             supportingContent = { Text(stringResource(R.string.setting_page_preferences_notification_overlay_permission_desc)) },
                             trailingContent = {
-                                Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                                Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                             },
                         )
                     }

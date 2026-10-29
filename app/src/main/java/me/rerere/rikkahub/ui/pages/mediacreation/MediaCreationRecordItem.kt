@@ -715,13 +715,13 @@ private fun VersionSwitcher(
         modifier = Modifier.heightIn(min = 48.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Arrow(HugeIcons.ArrowLeft01, stringResource(R.string.media_creation_page_previous_version), offset = -1)
+        Arrow(me.rerere.rikkahub.ui.components.ui.startArrowIcon(), stringResource(R.string.media_creation_page_previous_version), offset = -1)
         Text(
             text = "${node.versionIndex + 1}/${node.versionCount}",
             style = MaterialTheme.typography.bodySmall,
             color = color,
         )
-        Arrow(HugeIcons.ArrowRight01, stringResource(R.string.media_creation_page_next_version), offset = 1)
+        Arrow(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), stringResource(R.string.media_creation_page_next_version), offset = 1)
     }
 }
 

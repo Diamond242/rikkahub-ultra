@@ -430,7 +430,7 @@ private fun ProviderConfigureAccount(
                 supportingContent = (status as? AccountLoginStatus.Failed)?.let { failed ->
                     { Text(failed.message, color = MaterialTheme.colorScheme.error) }
                 },
-                trailingContent = { Icon(HugeIcons.ArrowRight01, contentDescription = null) },
+                trailingContent = { Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null) },
                 headlineContent = { Text(stringResource(R.string.setting_provider_page_sign_in_with, serviceName)) },
             )
         }

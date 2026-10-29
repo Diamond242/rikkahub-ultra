@@ -157,7 +157,7 @@ object MaterialMarkdownDefaults {
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
-                    imageVector = HugeIcons.ArrowRight01,
+                    imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                     contentDescription = null,
                     modifier = Modifier.size(18.dp).rotate(rotation),
                 )

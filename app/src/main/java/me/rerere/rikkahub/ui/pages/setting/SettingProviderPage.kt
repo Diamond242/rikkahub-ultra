@@ -641,7 +641,7 @@ private fun AddButton(onAdd: (ProviderSetting) -> Unit) {
                                     style = MaterialTheme.typography.titleMediumEmphasized,
                                     modifier = Modifier.weight(1f),
                                 )
-                                Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                                Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                             }
                         }
                     }
