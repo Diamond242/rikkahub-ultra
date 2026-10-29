@@ -225,3 +225,28 @@
 | WebDAV / S3 | ساخت bucket یا حساب (مثلاً Cloudflare R2، InfiniCloud)، کلیدها | کنسول R2، فرم پشتیبان، نتیجهٔ تست |
 | وب‌سرور | فعال‌سازی، پورت، رمز، باز کردن از کامپیوتر | تنظیمات، صفحهٔ وب در مرورگر |
 | پروکسی | وارد کردن آدرس HTTP یا SOCKS | فرم پروکسی |
+
+## ارائه‌دهنده‌های رایگان و ایرانی (فاز ۱ — commit `cfcf2810`)
+
+همه به‌صورت پیش‌فرض **غیرفعال** هستند و شناسهٔ ثابت (uuid5) دارند. برچسب‌ها و فیلتر «همه / رایگان / بدون فیلترشکن» در صفحهٔ تنظیمات › ارائه‌دهنده‌ها نمایش داده می‌شود. متادیتا در `app/.../data/datastore/ProviderMeta.kt` است.
+
+| نام | نوع | Base URL | سطح | بدون کلید | بدون فیلترشکن در ایران |
+|---|---|---|---|---|---|
+| Groq | OpenAI | `https://api.groq.com/openai/v1` | رایگان | — | — |
+| NVIDIA NIM | OpenAI | `https://integrate.api.nvidia.com/v1` | رایگان | — | — |
+| Mistral | OpenAI | `https://api.mistral.ai/v1` | رایگان | — | — |
+| Cohere | OpenAI | `https://api.cohere.ai/compatibility/v1` | رایگان | — | — |
+| Z.ai | OpenAI | `https://api.z.ai/api/paas/v4` | رایگان | — | — |
+| SiliconFlow (Global) | OpenAI | `https://api.siliconflow.com/v1` | رایگان | — | — |
+| LLM7 | OpenAI | `https://api.llm7.io/v1` | رایگان (توکن رایگان لازم) | — | — |
+| Pollinations | OpenAI | `https://gen.pollinations.ai/v1` | رایگان (کلید لازم) | — | — |
+| Cerebras | OpenAI | `https://api.cerebras.ai/v1` | اعتبار آزمایشی | — | — |
+| SambaNova | OpenAI | `https://api.sambanova.ai/v1` | اعتبار آزمایشی | — | — |
+| Anthropic | Claude | `https://api.anthropic.com/v1` | پولی | — | — |
+| Ollama (محلی) | OpenAI | `http://localhost:11434/v1` | رایگان | ✅ | ✅ |
+| AvalAI | OpenAI | `https://api.avalai.ir/v1` | پولی | — | ✅ |
+| GapGPT | OpenAI | `https://api.gapgpt.app/v1` | پولی | — | ✅ |
+| Metis | OpenAI | `https://api.metisai.ir/openai/v1` | پولی | — | ✅ |
+
+برچسب‌گذاری موارد موجود: Gemini، OpenRouter، SiliconFlow (cn)، Zhipu = رایگان؛ OpenAI، DeepSeek، xAI = پولی.
+حذف‌شده: GitHub Models (از ۳۰ ژوئیهٔ ۲۰۲۶ بازنشسته شد)؛ OpenRouter از قبل موجود بود.
