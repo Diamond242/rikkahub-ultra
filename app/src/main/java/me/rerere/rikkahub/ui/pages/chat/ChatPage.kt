@@ -109,6 +109,23 @@ fun ChatPage(id: Uuid, text: String?, files: List<Uri>, nodeId: Uuid? = null) {
     val assistant by vm.assistant.collectAsStateWithLifecycle()
     val errors by vm.errors.collectAsStateWithLifecycle()
 
+    // First-run onboarding (shown once, skippable)
+    val onboardingContext = LocalContext.current
+    var showOnboarding by remember { mutableStateOf(!isOnboardingDone(onboardingContext)) }
+    if (showOnboarding) {
+        OnboardingDialog(
+            providers = setting.providers,
+            onFinish = { updated, firstModel ->
+                showOnboarding = false
+                scope.launch {
+                    vm.updateSettings { s -> s.copy(providers = s.providers.map { if (it.id == updated.id) updated else it }) }.join()
+                    firstModel?.let { vm.setChatModel(it) }
+                }
+            },
+            onDismiss = { showOnboarding = false },
+        )
+    }
+
     // 新会话发出第一条消息前，跟随抽屉当前选中的文件夹（#2133）
     val drawerVm: ChatDrawerVM = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
     val selectedFolderId by drawerVm.selectedFolderId.collectAsStateWithLifecycle()

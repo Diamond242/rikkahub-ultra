@@ -1873,4 +1873,21 @@
   <string name="model_list_sort_manual_hint">Long-press the handle and drag to reorder</string>
   <string name="model_list_quality_score">score %1$s</string>
   <string name="model_list_quality_source">%1$s, %2$s</string>
+    <!-- Onboarding / key test / friendly errors (fa-translation fork) -->
+    <string name="onboarding_title">Get started</string>
+    <string name="onboarding_intro">Pick a provider, get an API key from its site, paste it here and test it. Providers that work in Iran without VPN are listed first.</string>
+    <string name="onboarding_get_key">Get an API key</string>
+    <string name="onboarding_paste_key">Paste your API key</string>
+    <string name="onboarding_finish">Finish and start chatting</string>
+    <string name="onboarding_skip">Skip</string>
+    <string name="key_test_button">Test key</string>
+    <string name="key_test_running">Testing…</string>
+    <string name="key_test_success">Key works. %1$d models available.</string>
+    <string name="key_test_failed">Key test failed:</string>
+    <string name="friendly_error_invalid_key">The API key is invalid or expired, or access is blocked for your region (401/403).</string>
+    <string name="friendly_error_quota">Quota or rate limit reached (429). Wait a bit or use another provider.</string>
+    <string name="friendly_error_quota_hint">Tip: switch to another free provider or model from the model picker.</string>
+    <string name="friendly_error_network">Network problem: the server could not be reached. Check your internet connection or VPN.</string>
+    <string name="friendly_error_model_not_found">This model was not found at the provider (404). Pick another model or refresh the model list.</string>
+    <string name="friendly_error_go_provider_settings">Go to provider settings</string>
 </resources>

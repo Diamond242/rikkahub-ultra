@@ -1873,4 +1873,20 @@
   <string name="model_list_sort_manual_hint">دستگیره را نگه دارید و بکشید تا ترتیب را عوض کنید</string>
   <string name="model_list_quality_score">امتیاز %1$s</string>
   <string name="model_list_quality_source">%1$s، %2$s</string>
+    <string name="onboarding_title">شروع به کار</string>
+    <string name="onboarding_intro">یک سرویس‌دهنده انتخاب کنید، از سایت آن کلید API بگیرید، اینجا وارد کنید و آزمایشش کنید. سرویس‌دهنده‌هایی که در ایران بدون VPN کار می‌کنند در ابتدای فهرست آمده‌اند.</string>
+    <string name="onboarding_get_key">دریافت کلید API</string>
+    <string name="onboarding_paste_key">کلید API را وارد کنید</string>
+    <string name="onboarding_finish">پایان و شروع گفتگو</string>
+    <string name="onboarding_skip">رد شدن</string>
+    <string name="key_test_button">آزمایش کلید</string>
+    <string name="key_test_running">در حال آزمایش…</string>
+    <string name="key_test_success">کلید معتبر است. %1$d مدل در دسترس است.</string>
+    <string name="key_test_failed">آزمایش کلید ناموفق بود:</string>
+    <string name="friendly_error_invalid_key">کلید API نامعتبر یا منقضی شده است، یا دسترسی از منطقهٔ شما مسدود است (401/403).</string>
+    <string name="friendly_error_quota">سهمیه یا محدودیت تعداد درخواست به پایان رسیده است (429). کمی صبر کنید یا از سرویس‌دهندهٔ دیگری استفاده کنید.</string>
+    <string name="friendly_error_quota_hint">پیشنهاد: از انتخابگر مدل، به سرویس‌دهنده یا مدل رایگان دیگری بروید.</string>
+    <string name="friendly_error_network">مشکل شبکه: اتصال به سرور برقرار نشد. اینترنت یا VPN خود را بررسی کنید.</string>
+    <string name="friendly_error_model_not_found">این مدل نزد سرویس‌دهنده پیدا نشد (404). مدل دیگری انتخاب کنید یا فهرست مدل‌ها را به‌روز کنید.</string>
+    <string name="friendly_error_go_provider_settings">رفتن به تنظیمات سرویس‌دهنده</string>
 </resources>
