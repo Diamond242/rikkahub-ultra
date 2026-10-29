@@ -1853,4 +1853,13 @@ mDNS 地址：使用 .local 主机名，同一网络中的其他设备可通过�
   <string name="setting_language_title">&#x8bed;&#x8a00;</string>
   <string name="setting_language_follow_system">&#x8ddf;&#x968f;&#x7cfb;&#x7edf;</string>
   <string name="setting_language_desc">&#x9009;&#x62e9;&#x5e94;&#x7528;&#x8bed;&#x8a00;&#xff0c;&#x9ed8;&#x8ba4;&#x8ddf;&#x968f;&#x7cfb;&#x7edf;&#x8bed;&#x8a00;</string>
+  <string name="provider_tier_free">免费</string>
+  <string name="provider_tier_trial">免费试用</string>
+  <string name="provider_tier_paid">付费</string>
+  <string name="provider_badge_no_key">无需密钥</string>
+  <string name="provider_badge_no_vpn">伊朗无需VPN可用</string>
+  <string name="provider_filter_all">全部</string>
+  <string name="provider_filter_free">免费</string>
+  <string name="provider_filter_no_vpn">无需VPN</string>
+  <string name="provider_get_api_key">获取 API 密钥：</string>
 </resources>

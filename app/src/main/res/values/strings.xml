@@ -1851,4 +1851,13 @@
   <string name="setting_language_title">Language</string>
   <string name="setting_language_follow_system">Follow system</string>
   <string name="setting_language_desc">Choose the app language. By default it follows the system language</string>
+  <string name="provider_tier_free">Free</string>
+  <string name="provider_tier_trial">Free trial</string>
+  <string name="provider_tier_paid">Paid</string>
+  <string name="provider_badge_no_key">No key needed</string>
+  <string name="provider_badge_no_vpn">Works in Iran without VPN</string>
+  <string name="provider_filter_all">All</string>
+  <string name="provider_filter_free">Free</string>
+  <string name="provider_filter_no_vpn">No VPN</string>
+  <string name="provider_get_api_key">Get an API key:</string>
 </resources>

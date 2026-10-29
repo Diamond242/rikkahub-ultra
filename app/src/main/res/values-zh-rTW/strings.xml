@@ -1848,4 +1848,13 @@
   <string name="setting_language_title">&#x8a9e;&#x8a00;</string>
   <string name="setting_language_follow_system">&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;</string>
   <string name="setting_language_desc">&#x9078;&#x64c7;&#x61c9;&#x7528;&#x7a0b;&#x5f0f;&#x8a9e;&#x8a00;&#xff0c;&#x9810;&#x8a2d;&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;&#x8a9e;&#x8a00;</string>
+  <string name="provider_tier_free">免費</string>
+  <string name="provider_tier_trial">免費試用</string>
+  <string name="provider_tier_paid">付費</string>
+  <string name="provider_badge_no_key">無需金鑰</string>
+  <string name="provider_badge_no_vpn">伊朗無需VPN可用</string>
+  <string name="provider_filter_all">全部</string>
+  <string name="provider_filter_free">免費</string>
+  <string name="provider_filter_no_vpn">無需VPN</string>
+  <string name="provider_get_api_key">取得 API 金鑰：</string>
 </resources>
