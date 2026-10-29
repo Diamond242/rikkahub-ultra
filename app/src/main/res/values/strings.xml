@@ -63,7 +63,7 @@
   <string name="assistant_page_default_assistant">Default Assistant</string>
   <string name="assistant_page_delete">Delete</string>
   <string name="assistant_page_delete_body">Delete Body</string>
-  <string name="assistant_page_delete_dialog_text">Are you sure you want to delete this assistant? This action cannot be undone.</string>
+  <string name="assistant_page_delete_dialog_text">Delete this assistant? Its chats and memories will also be deleted. This cannot be undone.</string>
   <string name="assistant_page_delete_header">Delete Header</string>
   <string name="assistant_page_enter_image_url">Enter Image URL</string>
   <string name="assistant_page_global_memory">Global Memory</string>
@@ -1917,4 +1917,12 @@
     <string name="key_guide_gapgpt">1. Open gapgpt.app and sign up.\n2. Top up your account (Rial payment).\n3. Go to Platform → Tokens, create a token and paste it here.\nWorks in Iran without VPN.</string>
     <string name="key_guide_metisai">1. Open console.metisai.ir and sign up.\n2. Top up your account (Rial payment).\n3. Go to API Keys, create a key and paste it here.\nWorks in Iran without VPN.</string>
     <string name="key_guide_ollama">1. Install Ollama from ollama.com/download on a computer on the same network.\n2. Run it with OLLAMA_HOST=0.0.0.0 and pull a model (ollama pull llama3.2).\n3. Set the Base URL here to http://&lt;computer-IP&gt;:11434/v1. No key needed.</string>
+  <string name="chat_page_scroll_to_previous">Previous message</string>
+  <string name="provider_tier_free_quota">Free quota</string>
+  <string name="provider_quota_avalai">Free signup credit: up to 200,000 Toman (full amount after phone verification)</string>
+  <string name="provider_quota_gapgpt">Starts with free credit (amount not officially published)</string>
+  <string name="provider_quota_metis">$0.5 gift credit after signup</string>
+  <string name="provider_quota_anthropic">About $5 one-time trial credit after phone verification (not guaranteed)</string>
+  <string name="provider_quota_openai">Paid. Free daily tokens only with data sharing on a funded account</string>
+  <string name="assistant_default_cannot_delete">Built-in assistants can\'t be deleted. Clone it if you want your own copy.</string>
 </resources>

@@ -63,7 +63,7 @@
   <string name="assistant_page_default_assistant">دستیار پیش‌فرض</string>
   <string name="assistant_page_delete">حذف</string>
   <string name="assistant_page_delete_body">حذف بدنه</string>
-  <string name="assistant_page_delete_dialog_text">آیا از حذف این دستیار مطمئن هستید؟ این کار قابل بازگشت نیست.</string>
+  <string name="assistant_page_delete_dialog_text">این دستیار حذف شود؟ گفتگوها و حافظه‌های آن هم حذف می‌شوند. این کار قابل بازگشت نیست.</string>
   <string name="assistant_page_delete_header">حذف هدر</string>
   <string name="assistant_page_enter_image_url">نشانی تصویر را وارد کنید</string>
   <string name="assistant_page_global_memory">حافظهٔ سراسری</string>
@@ -1916,4 +1916,12 @@
     <string name="key_guide_gapgpt">۱. وارد gapgpt.app شوید و ثبت‌نام کنید.\n۲. حساب خود را شارژ کنید (پرداخت ریالی).\n۳. از پلتفرم ← Tokens یک توکن بسازید و این‌جا بچسبانید.\nدر ایران بدون VPN کار می‌کند.</string>
     <string name="key_guide_metisai">۱. وارد console.metisai.ir شوید و ثبت‌نام کنید.\n۲. حساب خود را شارژ کنید (پرداخت ریالی).\n۳. از بخش API Keys کلید بسازید و این‌جا بچسبانید.\nدر ایران بدون VPN کار می‌کند.</string>
     <string name="key_guide_ollama">۱. Ollama را از ollama.com/download روی رایانه‌ای در همان شبکه نصب کنید.\n۲. آن را با OLLAMA_HOST=0.0.0.0 اجرا کرده و یک مدل دریافت کنید (ollama pull llama3.2).\n۳. نشانی پایه را این‌جا http://&lt;IP-رایانه&gt;:11434/v1 قرار دهید. کلید لازم نیست.</string>
+  <string name="chat_page_scroll_to_previous">پیام قبلی</string>
+  <string name="provider_tier_free_quota">سهمیهٔ رایگان</string>
+  <string name="provider_quota_avalai">اعتبار هدیهٔ ثبت‌نام: تا ۲۰۰ هزار تومان (مبلغ کامل پس از تأیید شمارهٔ موبایل)</string>
+  <string name="provider_quota_gapgpt">شروع با اعتبار رایگان (مقدار دقیق رسماً اعلام نشده)</string>
+  <string name="provider_quota_metis">۰٫۵ دلار اعتبار هدیه پس از ثبت‌نام</string>
+  <string name="provider_quota_anthropic">حدود ۵ دلار اعتبار آزمایشی یک‌باره پس از تأیید شماره (تضمینی نیست)</string>
+  <string name="provider_quota_openai">پولی. توکن رایگان روزانه فقط با فعال‌کردن اشتراک داده روی حساب شارژشده</string>
+  <string name="assistant_default_cannot_delete">دستیارهای پیش‌فرض قابل حذف نیستند. برای نسخهٔ شخصی، از آن کپی بگیرید.</string>
 </resources>

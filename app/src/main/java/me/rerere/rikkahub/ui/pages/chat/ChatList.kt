@@ -315,12 +315,11 @@ private fun ChatListNormal(
 
         // 判断最近是否滚动
         LaunchedEffect(state.isScrollInProgress) {
+            // Stay visible while the user is scrolling, hide ~2.5s after scrolling stops (no flicker mid-fling)
             if (state.isScrollInProgress) {
                 isRecentScroll = true
-                delay(1500)
-                isRecentScroll = false
             } else {
-                delay(1500)
+                delay(2500)
                 isRecentScroll = false
             }
         }
@@ -539,8 +538,10 @@ private fun ChatListNormal(
 
             // 消息快速跳转
             MessageJumper(
-                show = isRecentScroll && !state.isScrollInProgress && settings.displaySetting.showMessageJumper && !captureProgress,
+                show = isRecentScroll && settings.displaySetting.showMessageJumper && !captureProgress &&
+                    (state.canScrollBackward || state.canScrollForward),
                 onLeft = settings.displaySetting.messageJumperOnLeft,
+                bottomOffset = if (conversation.chatSuggestions.isNotEmpty()) 56.dp else 0.dp,
                 scope = scope,
                 state = state
             )
@@ -778,99 +779,56 @@ private fun ChatSuggestionsRow(
 private fun BoxScope.MessageJumper(
     show: Boolean,
     onLeft: Boolean,
+    bottomOffset: Dp,
     scope: CoroutineScope,
     state: LazyListState
 ) {
+    // Fixed bottom corner just above the input bar (the parent Box is already padded by the bar height),
+    // only a fade animation so nothing slides or jumps around while the list scrolls.
     AnimatedVisibility(
         visible = show,
-        modifier = Modifier.align(if (onLeft) Alignment.CenterStart else Alignment.CenterEnd),
-        enter = slideInHorizontally(
-            initialOffsetX = { if (onLeft) -it * 2 else it * 2 },
-        ),
-        exit = slideOutHorizontally(
-            targetOffsetX = { if (onLeft) -it * 2 else it * 2 },
-        )
+        modifier = Modifier
+            .align(if (onLeft) Alignment.BottomStart else Alignment.BottomEnd)
+            .padding(bottom = bottomOffset),
+        enter = fadeIn(),
+        exit = fadeOut(),
     ) {
         Column(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Surface(
                 onClick = {
                     scope.launch {
-                        state.scrollToItem(0)
+                        state.animateScrollToItem((state.firstVisibleItemIndex - 1).fastCoerceAtLeast(0))
                     }
                 },
                 shape = CircleShape,
                 tonalElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    4.dp
-                ).copy(alpha = 0.65f)
-            ) {
-                Icon(
-                    imageVector = HugeIcons.ArrowUpDouble,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-            }
-            Surface(
-                onClick = {
-                    scope.launch {
-                        state.animateScrollToItem(
-                            (state.firstVisibleItemIndex - 1).fastCoerceAtLeast(
-                                0
-                            )
-                        )
-                    }
-                },
-                shape = CircleShape,
-                tonalElevation = 4.dp,
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    4.dp
-                ).copy(alpha = 0.65f)
+                shadowElevation = 2.dp,
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).copy(alpha = 0.9f)
             ) {
                 Icon(
                     imageVector = HugeIcons.ArrowUp01,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(4.dp)
+                    contentDescription = stringResource(R.string.chat_page_scroll_to_previous),
+                    modifier = Modifier.padding(8.dp)
                 )
             }
             Surface(
                 onClick = {
                     scope.launch {
-                        state.animateScrollToItem(state.firstVisibleItemIndex + 1)
+                        state.scrollToItem((state.layoutInfo.totalItemsCount - 1).fastCoerceAtLeast(0))
                     }
                 },
                 shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    4.dp
-                ).copy(alpha = 0.65f)
-            ) {
-                Icon(
-                    imageVector = HugeIcons.ArrowDown01,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .padding(4.dp)
-                )
-            }
-            Surface(
-                onClick = {
-                    scope.launch {
-                        state.scrollToItem(state.layoutInfo.totalItemsCount - 1)
-                    }
-                },
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                    4.dp
-                ).copy(alpha = 0.65f),
+                tonalElevation = 4.dp,
+                shadowElevation = 2.dp,
+                color = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).copy(alpha = 0.9f),
             ) {
                 Icon(
                     imageVector = HugeIcons.ArrowDownDouble,
                     contentDescription = stringResource(R.string.chat_page_scroll_to_bottom),
-                    modifier = Modifier
-                        .padding(4.dp)
+                    modifier = Modifier.padding(8.dp)
                 )
             }
         }

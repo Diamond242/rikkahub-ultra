@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.chat
 
+import me.rerere.hugeicons.stroke.Settings01
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -398,33 +399,6 @@ fun ChatDrawerContent(
                     },
                 )
 
-                Box {
-                    DrawerAction(
-                        icon = {
-                            Icon(HugeIcons.Sparkles, "Menu")
-                        },
-                        label = {
-                            Text(stringResource(R.string.menu))
-                        },
-                        onClick = {
-                            showMenuPopup = true
-                        },
-                    )
-                    DropdownMenu(
-                        expanded = showMenuPopup,
-                        onDismissRequest = { showMenuPopup = false }
-                    ) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.chat_page_menu_image_generation)) },
-                            leadingIcon = { Icon(HugeIcons.Image02, null) },
-                            onClick = {
-                                showMenuPopup = false
-                                navController.navigate(Screen.ImageGen)
-                            }
-                        )
-                    }
-                }
-
                 DrawerAction(
                     icon = {
                         Icon(HugeIcons.InLove, stringResource(R.string.favorite_page_title))
@@ -453,7 +427,7 @@ fun ChatDrawerContent(
 
                 DrawerAction(
                     icon = {
-                        Icon(HugeIcons.Settings03, null)
+                        Icon(HugeIcons.Settings01, stringResource(R.string.settings))
                     },
                     label = { Text(stringResource(R.string.settings)) },
                     onClick = {
@@ -761,6 +735,13 @@ private fun DrawerActions(navController: Navigator) {
             icon = HugeIcons.LanguageCircle,
             text = stringResource(R.string.chat_page_menu_ai_translator),
             onClick = { navController.navigate(Screen.Translator) },
+        )
+
+        // Settings: clearly labelled gear entry so it is easy to find
+        DrawerEntry(
+            icon = HugeIcons.Settings01,
+            text = stringResource(R.string.settings),
+            onClick = { navController.navigate(Screen.Setting) },
         )
     }
 }

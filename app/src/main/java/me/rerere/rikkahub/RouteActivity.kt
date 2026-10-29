@@ -435,7 +435,8 @@ class RouteActivity : ComponentActivity() {
                             }
 
                             entry<Screen.ImageGen> {
-                                ImageGenPage()
+                                // Deprecated image-generation page: redirect to media creation
+                                MediaCreationSessionsPage()
                             }
 
                             entry<Screen.MediaCreationSessions> {
