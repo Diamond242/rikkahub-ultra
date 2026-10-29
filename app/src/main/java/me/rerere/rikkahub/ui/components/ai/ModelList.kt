@@ -1,5 +1,9 @@
 package me.rerere.rikkahub.ui.components.ai
 
+import me.rerere.hugeicons.stroke.Sorting01
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -388,6 +392,9 @@ private fun ColumnScope.ModelList(
     }
 
     var searchKeywords by remember { mutableStateOf("") }
+    var sortByQuality by rememberSaveable { mutableStateOf(false) }
+    val appContext = LocalContext.current
+    val qualityRanking = remember { ModelQualityRanking.load(appContext) }
 
     // 折叠的供应商（持久化），搜索时全部展开
     var collapsedProvidersPref by rememberSharedPreferenceString("model_list_collapsed_providers", "")
@@ -421,6 +428,21 @@ private fun ColumnScope.ModelList(
         providers.associate { provider ->
             provider.id to if (isCollapsed(provider)) emptyList() else searchFilteredModelsByProvider[provider.id].orEmpty()
         }
+    }
+
+    // sort-by-quality mode: flat list, same model from different providers grouped, unknown scores last
+    val qualityModels = remember(providers, modelType, searchKeywords, sortByQuality, qualityRanking) {
+        if (!sortByQuality) return@remember emptyList()
+        providers.flatMap { provider ->
+            provider.models
+                .fastFilter { it.type == modelType && it.displayName.contains(searchKeywords, true) }
+                .map { Triple(provider, it, qualityRanking.score(it.modelId)) }
+        }.sortedWith(
+            compareBy<Triple<ProviderSetting, Model, Double?>> { if (it.third == null) 1 else 0 }
+                .thenByDescending { it.third ?: 0.0 }
+                .thenBy { qualityRanking.canonicalId(it.second.modelId) }
+                .thenBy { it.first.name }
+        )
     }
 
     // 计算当前选中模型的位置
@@ -527,6 +549,18 @@ private fun ColumnScope.ModelList(
             leadingIcon = {
                 Icon(HugeIcons.Search01, null)
             },
+            trailingIcon = {
+                IconToggleButton(
+                    checked = sortByQuality,
+                    onCheckedChange = { sortByQuality = it },
+                ) {
+                    Icon(
+                        imageVector = HugeIcons.Sorting01,
+                        contentDescription = stringResource(R.string.model_list_sort_by_quality),
+                        tint = if (sortByQuality) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            },
             maxLines = 1,
         )
     }
@@ -626,7 +660,35 @@ private fun ColumnScope.ModelList(
             }
         }
 
-        providers.fastForEach { providerSetting ->
+        if (sortByQuality) {
+            item(key = "quality:header") {
+                Text(
+                    text = stringResource(R.string.model_list_sort_by_quality) +
+                        if (qualityRanking.source.isNotBlank()) " · " + stringResource(
+                            R.string.model_list_quality_source, qualityRanking.source, qualityRanking.date
+                        ) else "",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+            items(
+                items = qualityModels,
+                key = { "quality:" + it.second.id.toString() }
+            ) { (provider, model, score) ->
+                ModelItem(
+                    model = model,
+                    onSelect = onSelect,
+                    modifier = Modifier.animateItem(),
+                    providerSetting = provider,
+                    select = currentModel == model.id,
+                    onDismiss = { onDismiss() },
+                    subtitle = provider.name + (score?.let {
+                        " · " + stringResource(R.string.model_list_quality_score, it.toInt().toString())
+                    } ?: ""),
+                )
+            }
+        } else providers.fastForEach { providerSetting ->
             val collapsed = isCollapsed(providerSetting)
             stickyHeader(key = "header:${providerSetting.id}") {
                 Row(
@@ -739,7 +801,7 @@ private fun ColumnScope.ModelList(
                 }
             }
     }
-    if (providers.isNotEmpty()) {
+    if (providers.isNotEmpty() && !sortByQuality) {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -775,7 +837,8 @@ private fun ModelItem(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     tail: @Composable RowScope.() -> Unit = {},
-    dragHandle: @Composable (RowScope.() -> Unit)? = null
+    dragHandle: @Composable (RowScope.() -> Unit)? = null,
+    subtitle: String? = null,
 ) {
     val navController = LocalNavController.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -834,6 +897,16 @@ private fun ModelItem(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
 
                     FlowRow(
                         modifier = Modifier
