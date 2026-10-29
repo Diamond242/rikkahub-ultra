@@ -1889,4 +1889,9 @@
     <string name="friendly_error_network">مشکل شبکه: اتصال به سرور برقرار نشد. اینترنت یا VPN خود را بررسی کنید.</string>
     <string name="friendly_error_model_not_found">این مدل نزد سرویس‌دهنده پیدا نشد (404). مدل دیگری انتخاب کنید یا فهرست مدل‌ها را به‌روز کنید.</string>
     <string name="friendly_error_go_provider_settings">رفتن به تنظیمات سرویس‌دهنده</string>
+    <string name="model_list_recent">اخیر</string>
+    <string name="model_filter_free">رایگان</string>
+    <string name="model_filter_vision">تصویر</string>
+    <string name="model_filter_reasoning">استدلال</string>
+    <string name="model_filter_tools">ابزار</string>
 </resources>

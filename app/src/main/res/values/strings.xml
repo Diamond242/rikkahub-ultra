@@ -1890,4 +1890,9 @@
     <string name="friendly_error_network">Network problem: the server could not be reached. Check your internet connection or VPN.</string>
     <string name="friendly_error_model_not_found">This model was not found at the provider (404). Pick another model or refresh the model list.</string>
     <string name="friendly_error_go_provider_settings">Go to provider settings</string>
+    <string name="model_list_recent">Recent</string>
+    <string name="model_filter_free">Free</string>
+    <string name="model_filter_vision">Vision</string>
+    <string name="model_filter_reasoning">Reasoning</string>
+    <string name="model_filter_tools">Tools</string>
 </resources>
