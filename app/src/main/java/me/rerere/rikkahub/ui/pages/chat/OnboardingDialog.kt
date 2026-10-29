@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.chat
 
+import me.rerere.rikkahub.data.datastore.labelRes
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -111,7 +112,8 @@ fun OnboardingDialog(
                             val m = p.meta!!
                             Text(
                                 buildList {
-                                    add(context.getString(if (m.tier == ProviderTier.FREE) R.string.provider_tier_free else if (m.tier == ProviderTier.TRIAL) R.string.provider_tier_trial else R.string.provider_tier_paid))
+                                    add(context.getString(m.tier.labelRes))
+                                    m.quotaNote?.let { add(context.getString(it)) }
                                     if (m.worksInIranWithoutVpn) add(context.getString(R.string.provider_filter_no_vpn))
                                 }.joinToString(" · "),
                                 style = MaterialTheme.typography.labelSmall,

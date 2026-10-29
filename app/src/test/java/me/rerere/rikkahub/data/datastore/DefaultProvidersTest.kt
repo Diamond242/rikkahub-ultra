@@ -64,7 +64,11 @@ class DefaultProvidersTest {
         val groq = DEFAULT_PROVIDERS.single { it.name == "Groq" }
         val ollama = DEFAULT_PROVIDERS.single { it.name == "Ollama" }
         assertTrue(metis.matches(ProviderFilter.NO_VPN))
-        assertFalse(metis.matches(ProviderFilter.FREE))
+        // Metis is paid but gives a free signup quota, so it shows up under the Free filter
+        assertEquals(ProviderTier.FREE_QUOTA, metis.meta!!.tier)
+        assertTrue(metis.matches(ProviderFilter.FREE))
+        val paid = DEFAULT_PROVIDERS.first { it.meta?.tier == ProviderTier.PAID }
+        assertFalse(paid.matches(ProviderFilter.FREE))
         assertTrue(groq.matches(ProviderFilter.FREE))
         assertFalse(groq.matches(ProviderFilter.NO_VPN))
         assertTrue(groq.matches(ProviderFilter.ALL))

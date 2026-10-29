@@ -723,6 +723,7 @@ private fun ProviderItem(
                         when (meta.tier) {
                             ProviderTier.FREE -> Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free)) }
                             ProviderTier.TRIAL -> Tag(type = TagType.WARNING) { Text(stringResource(R.string.provider_tier_trial)) }
+                            ProviderTier.FREE_QUOTA -> Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free_quota)) }
                             ProviderTier.PAID -> Tag(type = TagType.DEFAULT) { Text(stringResource(R.string.provider_tier_paid)) }
                         }
                         if (meta.noKeyRequired) {

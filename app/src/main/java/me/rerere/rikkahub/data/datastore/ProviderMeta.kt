@@ -16,7 +16,22 @@ import kotlin.uuid.Uuid
 
 /** Pricing tier of a provider's API access. */
 @Serializable
-enum class ProviderTier { FREE, TRIAL, PAID }
+enum class ProviderTier { FREE, TRIAL, FREE_QUOTA, PAID }
+
+/** True when the provider can be used without paying (free tier, trial credit or free quota). */
+val ProviderTier?.isFreeUsable: Boolean get() = this != null && this != ProviderTier.PAID
+
+/** Short label resource for the tier badge. */
+val ProviderTier.labelRes: Int
+    get() = when (this) {
+        ProviderTier.FREE -> R.string.provider_tier_free
+        ProviderTier.TRIAL -> R.string.provider_tier_trial
+        ProviderTier.FREE_QUOTA -> R.string.provider_tier_free_quota
+        ProviderTier.PAID -> R.string.provider_tier_paid
+    }
+
+/** OpenRouter-style free model variants (model id ending in ":free"). */
+val me.rerere.ai.provider.Model.isFreeVariant: Boolean get() = modelId.endsWith(":free")
 
 /**
  * Static metadata for built-in providers (pricing tier, key requirement, reachability from Iran).
@@ -28,6 +43,8 @@ data class ProviderMeta(
     val noKeyRequired: Boolean = false,
     val worksInIranWithoutVpn: Boolean = false,
     val signupUrl: String? = null,
+    /** Optional short note (string resource) describing the free quota / conditions. */
+    val quotaNote: Int? = null,
 )
 
 val PROVIDER_META: Map<Uuid, ProviderMeta> = mapOf(
@@ -41,16 +58,16 @@ val PROVIDER_META: Map<Uuid, ProviderMeta> = mapOf(
     Uuid.parse("4efb9dd2-f0f0-5b71-bc12-ef3273de4e30") to ProviderMeta(ProviderTier.FREE, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://enter.pollinations.ai"),
     Uuid.parse("531dac70-e404-5164-be97-8e44c19c92ae") to ProviderMeta(ProviderTier.TRIAL, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://cloud.cerebras.ai"),
     Uuid.parse("f134f417-7c91-5091-8879-4131dfa50e2d") to ProviderMeta(ProviderTier.TRIAL, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://cloud.sambanova.ai/apis"),
-    Uuid.parse("e7152bdc-7cca-5acf-ab4a-82ff25541f56") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://console.anthropic.com/settings/keys"),
+    Uuid.parse("e7152bdc-7cca-5acf-ab4a-82ff25541f56") to ProviderMeta(ProviderTier.TRIAL, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://console.anthropic.com/settings/keys", quotaNote = R.string.provider_quota_anthropic),
     Uuid.parse("6b381ff2-51c6-5339-bde5-40f564be2d28") to ProviderMeta(ProviderTier.FREE, noKeyRequired = true, worksInIranWithoutVpn = true, signupUrl = "https://ollama.com/download"),
-    Uuid.parse("104dcd8a-983c-5d56-9e14-3a238290c2c9") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://chat.avalai.ir/platform/api-keys"),
-    Uuid.parse("4473f8e9-12b2-5ebe-9c94-e4f46d039c3b") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://gapgpt.app/platform/tokens"),
-    Uuid.parse("f6c07569-4d0a-5e64-a8a5-dafc60771279") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://console.metisai.ir/api-keys"),
+    Uuid.parse("104dcd8a-983c-5d56-9e14-3a238290c2c9") to ProviderMeta(ProviderTier.FREE_QUOTA, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://chat.avalai.ir/platform/api-keys", quotaNote = R.string.provider_quota_avalai),
+    Uuid.parse("4473f8e9-12b2-5ebe-9c94-e4f46d039c3b") to ProviderMeta(ProviderTier.FREE_QUOTA, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://gapgpt.app/platform/tokens", quotaNote = R.string.provider_quota_gapgpt),
+    Uuid.parse("f6c07569-4d0a-5e64-a8a5-dafc60771279") to ProviderMeta(ProviderTier.FREE_QUOTA, noKeyRequired = false, worksInIranWithoutVpn = true, signupUrl = "https://console.metisai.ir/api-keys", quotaNote = R.string.provider_quota_metis),
     Uuid.parse("6ab18148-c138-4394-a46f-1cd8c8ceaa6d") to ProviderMeta(ProviderTier.FREE, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://aistudio.google.com/apikey"),
     Uuid.parse("d5734028-d39b-4d41-9841-fd648d65440e") to ProviderMeta(ProviderTier.FREE, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://openrouter.ai/settings/keys"),
     Uuid.parse("56a94d29-c88b-41c5-8e09-38a7612d6cf8") to ProviderMeta(ProviderTier.FREE, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://cloud.siliconflow.cn/account/ak"),
     Uuid.parse("3bc40dc1-b11a-46fa-863b-6306971223be") to ProviderMeta(ProviderTier.FREE, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://open.bigmodel.cn/usercenter/apikeys"),
-    Uuid.parse("1eeea727-9ee5-4cae-93e6-6fb01a4d051e") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://platform.openai.com/api-keys"),
+    Uuid.parse("1eeea727-9ee5-4cae-93e6-6fb01a4d051e") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://platform.openai.com/api-keys", quotaNote = R.string.provider_quota_openai),
     Uuid.parse("f099ad5b-ef03-446d-8e78-7e36787f780b") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://platform.deepseek.com/api_keys"),
     Uuid.parse("ff3cde7e-0f65-43d7-8fb2-6475c99f5990") to ProviderMeta(ProviderTier.PAID, noKeyRequired = false, worksInIranWithoutVpn = false, signupUrl = "https://console.x.ai"),
 )
@@ -61,13 +78,21 @@ enum class ProviderFilter { ALL, FREE, NO_VPN }
 
 fun ProviderSetting.matches(filter: ProviderFilter): Boolean = when (filter) {
     ProviderFilter.ALL -> true
-    ProviderFilter.FREE -> meta?.tier.let { it == ProviderTier.FREE || it == ProviderTier.TRIAL }
+    ProviderFilter.FREE -> meta?.tier.isFreeUsable
     ProviderFilter.NO_VPN -> meta?.worksInIranWithoutVpn == true
 }
 
 @Composable
 fun ProviderSignupDescription(id: String) {
-    val url = PROVIDER_META[Uuid.parse(id)]?.signupUrl ?: return
+    val meta = PROVIDER_META[Uuid.parse(id)] ?: return
+    meta.quotaNote?.let { note ->
+        Text(
+            text = "\uD83C\uDF81 " + stringResource(note),
+            color = MaterialTheme.colorScheme.primary,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+    val url = meta.signupUrl ?: return
     Text(
         text = buildAnnotatedString {
             append(stringResource(R.string.provider_get_api_key))

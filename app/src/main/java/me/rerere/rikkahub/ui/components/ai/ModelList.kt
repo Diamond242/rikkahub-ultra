@@ -1,5 +1,8 @@
 package me.rerere.rikkahub.ui.components.ai
 
+import me.rerere.rikkahub.data.datastore.isFreeUsable
+import me.rerere.rikkahub.data.datastore.labelRes
+import me.rerere.rikkahub.data.datastore.isFreeVariant
 import me.rerere.hugeicons.stroke.Sorting01
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalContext
@@ -399,7 +402,7 @@ private fun ColumnScope.ModelList(
     val chipFilters = remember(chipFilterPref) { chipFilterPref.orEmpty().split(",").filter { it.isNotBlank() }.toSet() }
     fun chipOk(p: ProviderSetting, m: Model): Boolean = chipFilters.all { f ->
         when (f) {
-            "free" -> p.meta?.tier.let { it == me.rerere.rikkahub.data.datastore.ProviderTier.FREE || it == me.rerere.rikkahub.data.datastore.ProviderTier.TRIAL }
+            "free" -> m.isFreeVariant || p.meta?.tier.isFreeUsable
             "novpn" -> p.meta?.worksInIranWithoutVpn == true
             "vision" -> Modality.IMAGE in m.inputModalities
             "reasoning" -> ModelAbility.REASONING in m.abilities
@@ -1118,17 +1121,11 @@ private fun ModelItem(
 
                         ModelAbilityTag(model = model)
 
-                        providerSetting.meta?.let { meta ->
+                        if (model.isFreeVariant) {
+                            Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free)) }
+                        } else providerSetting.meta?.let { meta ->
                             Tag(type = if (meta.tier == me.rerere.rikkahub.data.datastore.ProviderTier.PAID) TagType.WARNING else TagType.SUCCESS) {
-                                Text(
-                                    stringResource(
-                                        when (meta.tier) {
-                                            me.rerere.rikkahub.data.datastore.ProviderTier.FREE -> R.string.provider_tier_free
-                                            me.rerere.rikkahub.data.datastore.ProviderTier.TRIAL -> R.string.provider_tier_trial
-                                            me.rerere.rikkahub.data.datastore.ProviderTier.PAID -> R.string.provider_tier_paid
-                                        }
-                                    )
-                                )
+                                Text(stringResource(meta.tier.labelRes))
                             }
                         }
                         if (model.contextLength in 1 until 1_000_000) {
