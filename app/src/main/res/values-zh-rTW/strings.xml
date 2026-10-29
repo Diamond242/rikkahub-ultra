@@ -1857,4 +1857,13 @@
   <string name="provider_filter_free">免費</string>
   <string name="provider_filter_no_vpn">無需VPN</string>
   <string name="provider_get_api_key">取得 API 金鑰：</string>
+  <string name="setting_provider_page_fetch_models">獲取模型</string>
+  <string name="setting_provider_page_fetch_models_loading">正在獲取模型列表…</string>
+  <string name="setting_provider_page_fetch_models_error">獲取模型失敗：%1$s</string>
+  <string name="setting_provider_page_fetch_models_empty">供應商未返回任何模型，請檢查 API Key 和 Base URL 後重試。</string>
+  <string name="setting_provider_page_retry">重試</string>
+  <string name="setting_provider_page_add_all_free">新增全部免費模型 (%1$d)</string>
+  <string name="model_list_sort_by_quality">依品質排序</string>
+  <string name="model_list_quality_score">評分 %1$s</string>
+  <string name="model_list_quality_source">%1$s，%2$s</string>
 </resources>

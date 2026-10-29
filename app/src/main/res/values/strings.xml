@@ -1860,4 +1860,13 @@
   <string name="provider_filter_free">Free</string>
   <string name="provider_filter_no_vpn">No VPN</string>
   <string name="provider_get_api_key">Get an API key:</string>
+  <string name="setting_provider_page_fetch_models">Fetch models</string>
+  <string name="setting_provider_page_fetch_models_loading">Fetching model list…</string>
+  <string name="setting_provider_page_fetch_models_error">Failed to fetch models: %1$s</string>
+  <string name="setting_provider_page_fetch_models_empty">The provider returned no models. Check the API key and base URL, then retry.</string>
+  <string name="setting_provider_page_retry">Retry</string>
+  <string name="setting_provider_page_add_all_free">Add all free (%1$d)</string>
+  <string name="model_list_sort_by_quality">Sort by quality</string>
+  <string name="model_list_quality_score">score %1$s</string>
+  <string name="model_list_quality_source">%1$s, %2$s</string>
 </resources>

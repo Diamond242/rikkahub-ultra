@@ -1860,4 +1860,13 @@
   <string name="provider_filter_free">رایگان</string>
   <string name="provider_filter_no_vpn">بدون فیلترشکن</string>
   <string name="provider_get_api_key">دریافت کلید API:</string>
+  <string name="setting_provider_page_fetch_models">دریافت مدل‌ها</string>
+  <string name="setting_provider_page_fetch_models_loading">در حال دریافت فهرست مدل‌ها…</string>
+  <string name="setting_provider_page_fetch_models_error">دریافت مدل‌ها ناموفق بود: %1$s</string>
+  <string name="setting_provider_page_fetch_models_empty">پرووایدر هیچ مدلی برنگرداند. کلید API و آدرس پایه را بررسی کنید و دوباره تلاش کنید.</string>
+  <string name="setting_provider_page_retry">تلاش دوباره</string>
+  <string name="setting_provider_page_add_all_free">افزودن همهٔ رایگان‌ها (%1$d)</string>
+  <string name="model_list_sort_by_quality">مرتب‌سازی بر اساس کیفیت</string>
+  <string name="model_list_quality_score">امتیاز %1$s</string>
+  <string name="model_list_quality_source">%1$s، %2$s</string>
 </resources>
