@@ -1925,4 +1925,10 @@
   <string name="provider_quota_anthropic">About $5 one-time trial credit after phone verification (not guaranteed)</string>
   <string name="provider_quota_openai">Paid. Free daily tokens only with data sharing on a funded account</string>
   <string name="assistant_default_cannot_delete">Built-in assistants can\'t be deleted. Clone it if you want your own copy.</string>
+  <string name="assistant_builtin_simple_name">Simple assistant</string>
+  <string name="assistant_builtin_smart_name">Smart assistant</string>
+  <string name="assistant_builtin_info_title">About this assistant</string>
+  <string name="assistant_builtin_info_ok">Got it</string>
+  <string name="assistant_builtin_simple_info">Talks to the model directly, with no extra instructions. The model answers exactly as it was built to.\n\nGood for testing a model or when you want to write your own instructions.</string>
+  <string name="assistant_builtin_smart_info">Before each chat it quietly tells the model:\n• today\'s date, your language and time zone\n• your device and Android version\n• your nickname\n\nIt also asks the model to reply in your language and to format answers neatly (Markdown, and LaTeX for math).\n\nDifference from the simple assistant: the simple one sends none of this, so the model doesn\'t know the date or your language. Recommended for everyday use.</string>
 </resources>

@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.service
 
+import me.rerere.rikkahub.data.datastore.displayName
 import android.app.Application
 import android.util.Log
 import androidx.annotation.StringRes
@@ -616,7 +617,7 @@ class ChatService(
 
             val turn = requestFactory.createContext(settings, conversation)
             senderName = if (turn.assistant.useAssistantAvatar) {
-                turn.assistant.name.ifEmpty { context.getString(R.string.assistant_page_default_assistant) }
+                turn.assistant.displayName(context)
             } else {
                 turn.model.displayName
             }

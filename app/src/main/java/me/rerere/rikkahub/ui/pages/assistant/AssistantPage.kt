@@ -1,6 +1,8 @@
 package me.rerere.rikkahub.ui.pages.assistant
 
+import me.rerere.rikkahub.data.datastore.displayName
 import me.rerere.rikkahub.ui.context.LocalToaster
+import me.rerere.rikkahub.ui.components.ai.AssistantInfoButton
 import me.rerere.hugeicons.HugeIcons
 import me.rerere.hugeicons.stroke.Copy01
 import me.rerere.hugeicons.stroke.Add01
@@ -439,7 +441,7 @@ private fun AssistantItem(
             verticalAlignment = Alignment.CenterVertically
         ) {
             UIAvatar(
-                name = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) },
+                name = assistant.displayName(),
                 value = assistant.avatar,
                 modifier = Modifier
                     .size(48.dp)
@@ -452,7 +454,7 @@ private fun AssistantItem(
             ) {
 
                 Text(
-                    text = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) },
+                    text = assistant.displayName(),
                     style = MaterialTheme.typography.titleMediumEmphasized,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -493,6 +495,8 @@ private fun AssistantItem(
                     }
                 }
             }
+
+            AssistantInfoButton(assistant = assistant)
 
             val toaster = LocalToaster.current
             val cannotDeleteMsg = stringResource(R.string.assistant_default_cannot_delete)

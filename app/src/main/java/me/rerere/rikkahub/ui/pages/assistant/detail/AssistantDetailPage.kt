@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.assistant.detail
 
+import me.rerere.rikkahub.data.datastore.displayName
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.mutableStateOf
@@ -87,7 +88,7 @@ fun AssistantDetailPage(id: String) {
     val listState = rememberLazyListState()
     // 头部滚出屏幕后，名字改在顶栏里显示
     val showTitle by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
-    val name = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) }
+    val name = assistant.displayName()
     val assistantVM: AssistantVM = koinViewModel()
     var showDeleteDialog by remember { mutableStateOf(false) }
 

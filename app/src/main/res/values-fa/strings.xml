@@ -1924,4 +1924,10 @@
   <string name="provider_quota_anthropic">حدود ۵ دلار اعتبار آزمایشی یک‌باره پس از تأیید شماره (تضمینی نیست)</string>
   <string name="provider_quota_openai">پولی. توکن رایگان روزانه فقط با فعال‌کردن اشتراک داده روی حساب شارژشده</string>
   <string name="assistant_default_cannot_delete">دستیارهای پیش‌فرض قابل حذف نیستند. برای نسخهٔ شخصی، از آن کپی بگیرید.</string>
+  <string name="assistant_builtin_simple_name">دستیار ساده</string>
+  <string name="assistant_builtin_smart_name">دستیار هوشمند</string>
+  <string name="assistant_builtin_info_title">دربارهٔ این دستیار</string>
+  <string name="assistant_builtin_info_ok">متوجه شدم</string>
+  <string name="assistant_builtin_simple_info">مستقیم با مدل حرف می‌زند و هیچ دستور اضافه‌ای به آن نمی‌دهد. مدل همان‌طور که ساخته شده جواب می‌دهد.\n\nبرای امتحان کردن یک مدل یا وقتی می‌خواهید دستورهای خودتان را بنویسید مناسب است.</string>
+  <string name="assistant_builtin_smart_info">پیش از هر گفتگو، بی‌صدا این‌ها را به مدل می‌گوید:\n• تاریخ امروز، زبان و منطقهٔ زمانی شما\n• مدل گوشی و نسخهٔ اندروید\n• نام مستعار شما\n\nهمچنین از مدل می‌خواهد به زبان خودتان جواب بدهد و پاسخ‌ها را مرتب قالب‌بندی کند (Markdown، و LaTeX برای فرمول‌ها).\n\nفرقش با دستیار ساده: دستیار ساده هیچ‌کدام از این‌ها را نمی‌فرستد، پس مدل تاریخ یا زبان شما را نمی‌داند. برای استفادهٔ روزمره پیشنهاد می‌شود.</string>
 </resources>

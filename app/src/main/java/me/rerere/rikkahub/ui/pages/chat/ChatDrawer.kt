@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.chat
 
+import me.rerere.rikkahub.data.datastore.displayName
 import me.rerere.hugeicons.stroke.Settings01
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.clickable
@@ -1060,7 +1061,7 @@ private fun AssistantItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) },
+                    text = assistant.displayName(),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
