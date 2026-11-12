@@ -51,6 +51,7 @@ import me.rerere.rikkahub.BuildConfig
 import me.rerere.rikkahub.R
 import me.rerere.rikkahub.Screen
 import me.rerere.rikkahub.ui.components.nav.BackButton
+import me.rerere.rikkahub.ui.components.ui.BrandTitle
 import me.rerere.rikkahub.ui.components.ui.CardGroup
 import me.rerere.rikkahub.ui.components.ui.CardGroupIcon
 import me.rerere.rikkahub.ui.components.ui.drawAppLogo
@@ -165,12 +166,7 @@ fun SettingAboutPage() {
                                 .drawAppLogo(logoLayers)
                         )
 
-                        Text(
-                            text = "RikkaHub",
-                            style = MaterialTheme.typography.headlineLargeEmphasized.copy(
-                                fontWeight = FontWeight.Black,
-                            ),
-                        )
+                        BrandTitle()
                     }
                 }
 

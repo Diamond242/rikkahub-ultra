@@ -7,7 +7,7 @@
   <string name="about_page_version">نسخه</string>
   <string name="about_page_website">وب‌سایت</string>
   <string name="add">افزودن</string>
-  <string name="app_name">RikkaHub</string>
+  <string name="app_name">RikkaHub Ultra</string>
   <string name="asr_button_content_description">تشخیص گفتار</string>
   <string name="asr_button_stop">توقف</string>
   <string name="assistant_detail_basic_desc">تنظیم نام، آواتار، مدل و پارامترها</string>
@@ -875,7 +875,7 @@
   <string name="setting_page_search_title">سرویس جست‌وجو</string>
   <string name="setting_page_share">اشتراک‌گذاری</string>
   <string name="setting_page_share_desc">این برنامه را با دوستانتان به اشتراک بگذارید</string>
-  <string name="setting_page_share_text">RikkaHub - دستیار هوش مصنوعی متن‌باز برای اندروید\n\nوب‌سایت: https://rikka-ai.com/</string>
+  <string name="setting_page_share_text">RikkaHub Ultra - دستیار هوش مصنوعی متن‌باز برای اندروید\n\nگیت‌هاب: https://github.com/Diamond242/rikkahub-ultra\nوب‌سایت: https://vahid.top/</string>
   <string name="setting_page_sponsor_alert_confirm">حمایت مالی</string>
   <string name="setting_page_sponsor_alert_desc">شما بیش از ۱۰۰ بار برنامه را اجرا کرده‌اید! اگر از آن لذت می‌برید، لطفاً از توسعه‌دهنده حمایت کنید.</string>
   <string name="setting_page_sponsor_alert_dismiss">الان نه</string>

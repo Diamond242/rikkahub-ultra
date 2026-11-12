@@ -1230,12 +1230,14 @@ export const ConversationSidebar = React.memo(
             </DropdownMenu>
 
             <a
-              href="https://rikka-ai.com"
+              href="https://github.com/Diamond242/rikkahub-ultra"
               target="_blank"
               rel="noopener noreferrer"
+              dir="ltr"
               className="ms-auto text-xs font-normal text-foreground/80 hover:text-foreground transition-colors"
             >
               RikkaHub
+              <sub className="ms-0.5 text-[0.65em] font-bold text-green-600 dark:text-green-400">Ultra</sub>
             </a>
           </div>
         </SidebarFooter>

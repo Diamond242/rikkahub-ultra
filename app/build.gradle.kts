@@ -23,7 +23,9 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.rerere.rikkahub"
+        // rikkahub-ultra fork: own application id so it installs next to upstream RikkaHub.
+        // Kotlin namespace / source packages stay me.rerere.rikkahub to keep merges with upstream simple.
+        applicationId = "top.vahid.rikkahubultra"
         minSdk = 26
         targetSdk = 37
         versionCode = 194
@@ -88,8 +90,8 @@ android {
             buildConfigField("String", "VERSION_CODE", "\"${android.defaultConfig.versionCode}\"")
         }
     }
-    // 按分发渠道区分：github 是 GitHub Release / 每日构建的 APK，play 是上架 Google Play 的 AAB
-    // 两个渠道共用同一个 applicationId，Play 版不能自更新，相关入口通过 BuildConfig.IS_PLAY_STORE 关闭
+    // Distribution flavors: "github" is the APK published on GitHub Releases / daily builds, "play" is the Google Play AAB.
+    // Both share the same applicationId; the Play build cannot self-update, so those entry points are disabled via BuildConfig.IS_PLAY_STORE.
     flavorDimensions += "distribution"
     productFlavors {
         create("github") {
