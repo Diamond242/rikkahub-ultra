@@ -29,7 +29,8 @@ android {
         minSdk = 26
         targetSdk = 37
         versionCode = 194
-        versionName = "3.1.1"
+        // <upstream version>-ultra.<fork release>; GitHub release tags must be v<versionName> for the update checker
+        versionName = "3.1.1-ultra.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -147,6 +148,35 @@ android {
 // 两个渠道的启动路径一样，profile 合并到 src/main 共用，不按变体各存一份
 baselineProfile {
     mergeIntoMain = true
+}
+
+// rikkahub-ultra: bundle the root CHANGELOG.md (release notes shown in About) and sponsors.json
+// (offline fallback of the sponsor list) as app assets, so the repository copy is the single source.
+abstract class CopyUltraAssetsTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val sourceFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val out = outputDir.get().asFile
+        out.deleteRecursively()
+        out.mkdirs()
+        sourceFiles.files.filter { it.exists() }.forEach { it.copyTo(File(out, it.name), overwrite = true) }
+    }
+}
+
+val copyUltraAssets = tasks.register<CopyUltraAssetsTask>("copyUltraAssets") {
+    sourceFiles.from(rootProject.file("CHANGELOG.md"), rootProject.file("sponsors.json"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(copyUltraAssets, CopyUltraAssetsTask::outputDir)
+    }
 }
 
 // baselineprofile 插件按 release 复制出 nonMinifiedRelease 时只关掉 isMinifyEnabled，关不掉 optimization，

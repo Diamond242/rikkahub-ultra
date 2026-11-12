@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.rerere.common.http.await
@@ -21,9 +22,12 @@ import me.rerere.rikkahub.BuildConfig
 import me.rerere.rikkahub.R
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.util.Locale
 
-private const val API_URL = "https://updates.rikka-ai.com/"
-
+/**
+ * Checks the latest GitHub release of the rikkahub-ultra repository
+ * (see [AppLinks.LATEST_RELEASE_API]) instead of upstream's update server.
+ */
 class UpdateChecker(
     private val client: OkHttpClient,
     appScope: AppScope,
@@ -43,18 +47,20 @@ class UpdateChecker(
                 data = try {
                     val response = client.newCall(
                         Request.Builder()
-                            .url(API_URL)
+                            .url(AppLinks.LATEST_RELEASE_API)
                             .get()
+                            .addHeader("Accept", "application/vnd.github+json")
                             .addHeader(
                                 "User-Agent",
-                                "RikkaHub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}"
+                                "RikkaHub-Ultra ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}"
                             )
                             .build()
                     ).await()
-                    if (response.isSuccessful) {
-                        json.decodeFromString<UpdateInfo>(response.body.string())
-                    } else {
-                        throw Exception("Failed to fetch update info")
+                    when {
+                        response.isSuccessful -> json.decodeFromString<GithubRelease>(response.body.string()).toUpdateInfo()
+                        // No release published yet: treat as "up to date" instead of showing an error card.
+                        response.code == 404 -> UpdateInfo.upToDate()
+                        else -> throw Exception("HTTP ${response.code}")
                     }
                 } catch (e: Exception) {
                     throw Exception("Failed to fetch update info", e)
@@ -68,25 +74,18 @@ class UpdateChecker(
     fun downloadUpdate(context: Context, download: UpdateDownload) {
         runCatching {
             val request = DownloadManager.Request(download.url.toUri()).apply {
-                // 设置下载时通知栏的标题和描述
                 setTitle(download.name)
                 setDescription(context.getString(R.string.update_downloading_package))
-                // 下载完成后通知栏可见
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                // 允许在移动网络和WiFi下下载
                 setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                // 设置文件保存路径
                 setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, download.name)
-                // 允许下载的文件类型
                 setMimeType("application/vnd.android.package-archive")
             }
-            // 获取系统的DownloadManager
             val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
-            // 你可以保存返回的downloadId到本地，以便后续查询下载进度或状态
         }.onFailure {
-            Toast.makeText(context, "Failed to update", Toast.LENGTH_SHORT).show()
-            context.openUrl(download.url) // 跳转到下载页面
+            Toast.makeText(context, context.getString(R.string.update_card_download_failed), Toast.LENGTH_SHORT).show()
+            context.openUrl(download.url)
         }
     }
 }
@@ -103,9 +102,53 @@ data class UpdateInfo(
     val version: String,
     val publishedAt: String,
     val changelog: String,
-    val downloads: List<UpdateDownload>
+    val downloads: List<UpdateDownload>,
+    val pageUrl: String = AppLinks.RELEASES,
+) {
+    companion object {
+        fun upToDate() = UpdateInfo(
+            version = BuildConfig.VERSION_NAME,
+            publishedAt = "",
+            changelog = "",
+            downloads = emptyList(),
+        )
+    }
+}
+
+@Serializable
+internal data class GithubRelease(
+    @SerialName("tag_name") val tagName: String,
+    val name: String? = null,
+    val body: String? = null,
+    @SerialName("published_at") val publishedAt: String? = null,
+    @SerialName("html_url") val htmlUrl: String? = null,
+    val assets: List<GithubAsset> = emptyList(),
 )
 
+@Serializable
+internal data class GithubAsset(
+    val name: String,
+    @SerialName("browser_download_url") val downloadUrl: String,
+    val size: Long = 0,
+)
+
+internal fun GithubRelease.toUpdateInfo(): UpdateInfo = UpdateInfo(
+    version = tagName.trim().removePrefix("v").removePrefix("V"),
+    publishedAt = publishedAt.orEmpty(),
+    changelog = body.orEmpty(),
+    // APKs only; arm64-v8a first because almost every modern phone uses it
+    downloads = assets
+        .filter { it.name.endsWith(".apk", ignoreCase = true) }
+        .sortedWith(compareByDescending<GithubAsset> { it.name.contains("arm64", true) }.thenBy { it.name })
+        .map { UpdateDownload(name = it.name, url = it.downloadUrl, size = formatBytes(it.size)) },
+    pageUrl = htmlUrl ?: AppLinks.RELEASES,
+)
+
+private fun formatBytes(bytes: Long): String = when {
+    bytes <= 0 -> ""
+    bytes >= 1024 * 1024 -> String.format(Locale.US, "%.1f MB", bytes / 1024.0 / 1024.0)
+    else -> String.format(Locale.US, "%.0f KB", bytes / 1024.0)
+}
 /**
  * 版本号值类，封装版本号字符串并提供比较功能
  *
