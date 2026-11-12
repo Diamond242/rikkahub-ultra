@@ -633,7 +633,6 @@
   <string name="regenerate">إعادة التوليد</string>
   <string name="regenerate_confirm_message">هل أنت متأكد من إعادة توليد هذه الرسالة؟ سيتم حذف جميع الرسائل أسفل هذه الرسالة.</string>
   <string name="render_with_webview">العرض باستخدام WebView</string>
-  <string name="rikkahub_provider_description">خدمة ذكاء اصطناعي رسمية مجانية، تستخدم أموال رعاية المستخدمين لتوفير بعض النماذج المجانية للمستخدمين الجدد كخيار احتياطي، دون الحاجة إلى مفتاح API. لديها حدود صارمة على معدل الطلبات، وإذا كنت قد اشتريت مزوّدك الخاص، فيرجى استخدام مزوّدك الخاص قدر الإمكان.</string>
   <string name="safe_mode_assistants">المساعدون</string>
   <string name="safe_mode_copy">نسخ</string>
   <string name="safe_mode_crash_report">تقرير التعطل</string>

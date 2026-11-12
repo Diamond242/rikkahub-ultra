@@ -83,7 +83,6 @@
 | Firecrawl | API key | `api.firecrawl.dev/v2/search`، `/scrape` | apiKey | جستجو و scrape | https://firecrawl.dev |
 | Jina | API key | `s.jina.ai`، `r.jina.ai` | apiKey، searchUrl، scrapeUrl | جستجو و خواندن صفحه | https://jina.ai/ |
 | Bocha (博查) | API key | `api.bochaai.com/v1/web-search` | apiKey | جستجو | https://open.bochaai.com/ |
-| RikkaHub Search | API key | `api.rikka-ai.com/v1/search` | apiKey، depth | جستجو | https://rikka-ai.com |
 | Grok Search | API key | `api.x.ai/v1/responses` (قابل تغییر) | apiKey، model، customUrl، systemPrompt | جستجوی مبتنی بر LLM | https://console.x.ai/ |
 | Tinyfish | API key | `api.search.tinyfish.ai`، `api.fetch.tinyfish.ai` | apiKey | جستجو و fetch | https://agent.tinyfish.ai/api-keys |
 | Serper (Google) | API key | `google.serper.dev/search` | apiKey | جستجو | https://serper.dev/api-keys |
@@ -152,7 +151,7 @@
 | پروکسی HTTP | اختیاری | proxyUrl، proxyUsername، proxyPassword | `data/remote/ProxyConfig.kt` |
 | models.dev (فهرست مدل‌ها و توانایی‌ها) | ندارد | — | `data/remote/ModelsDevUpdater.kt` |
 | ترجمه و OCR | از یک مدل چت انتخابی استفاده می‌کند (API جداگانه ندارد) | translateModeId، prompt، targetLanguage؛ ocrModelId | `Settings.kt`، `OcrTransformer.kt` |
-| Sponsors API | ندارد | — | `sponsors.rikka-ai.com` |
+| Sponsors API | ندارد | — | `sponsors.json` (Diamond242/rikkahub-ultra) |
 
 ---
 

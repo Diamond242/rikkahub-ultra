@@ -648,7 +648,6 @@
   <string name="regenerate">Neu generieren</string>
   <string name="regenerate_confirm_message">Bist du sicher, dass du diese Nachricht neu generieren möchtest? Alle Nachrichten unterhalb dieser Nachricht werden gelöscht.</string>
   <string name="render_with_webview">Mit WebView rendern</string>
-  <string name="rikkahub_provider_description">Offizieller kostenloser KI-Dienst, der mit Sponsorengeldern der Nutzer einige kostenlose Modelle als Fallback für neue Nutzer bereitstellt. Kein API-Schlüssel erforderlich. Es gelten strenge Ratenlimits; wenn du einen eigenen Anbieter erworben hast, nutze bitte möglichst deinen eigenen Anbieter.</string>
   <string name="safe_mode_assistants">Assistenten</string>
   <string name="menu_page_night_greeting">Es ist spät, pass auf dich auf\uD83D\uDC4B</string>
   <string name="mermaid_export">Export</string>

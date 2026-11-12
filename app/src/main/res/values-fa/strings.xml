@@ -538,7 +538,6 @@
   <string name="regenerate">تولید دوباره</string>
   <string name="regenerate_confirm_message">آیا از تولید دوبارهٔ این پیام مطمئن هستید؟ همهٔ پیام‌های بعد از آن حذف خواهند شد.</string>
   <string name="render_with_webview">نمایش با WebView</string>
-  <string name="rikkahub_provider_description">سرویس رایگان رسمی هوش مصنوعی که با کمک‌های مالی کاربران، چند مدل رایگان را به‌عنوان گزینهٔ پشتیبان برای کاربران جدید فراهم می‌کند و به کلید API نیاز ندارد. محدودیت نرخ درخواست سخت‌گیرانه‌ای دارد؛ اگر ارائه‌دهندهٔ خودتان را تهیه کرده‌اید، تا حد امکان از همان استفاده کنید.</string>
   <string name="safe_mode_assistants">دستیارها</string>
   <string name="safe_mode_copy">کپی</string>
   <string name="safe_mode_crash_report">گزارش خرابی</string>

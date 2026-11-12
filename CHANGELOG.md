@@ -17,6 +17,7 @@ First release of the fork, based on RikkaHub 3.1.1.
 - New About page: developer, our GitHub, documentation, license, release notes and a link to the original RikkaHub.
 - In-app updates now come from the GitHub releases of this repository, with localized release notes.
 - New donate page (crypto with QR codes and network guides) and our own sponsor list.
+- Removed upstream's free RikkaHub AI service and RikkaHub search (api.rikka-ai.com); old settings and backups drop them automatically.
 
 **Persian & languages**
 - Complete Persian translation of the app and the web UI, full right-to-left layout and the Vazirmatn font.
@@ -46,6 +47,7 @@ First release of the fork, based on RikkaHub 3.1.1.
 - صفحهٔ «درباره» تازه: توسعه‌دهنده، گیت‌هاب پروژه، مستندات، مجوز، یادداشت‌های انتشار و لینک RikkaHub اصلی.
 - به‌روزرسانی داخل برنامه از انتشارهای گیت‌هاب همین مخزن، با یادداشت‌های انتشار فارسی.
 - صفحهٔ تازهٔ حمایت مالی (ارز دیجیتال با کد QR و راهنمای شبکه، و کارت بانکی) و فهرست حامیان مخصوص این پروژه.
+- ????? ?????? ??? ?????? ? ???????? RikkaHub ???? (api.rikka-ai.com) ??? ??? ??????? ? ??????????? ????? ?????? ?? ????? ??? ???????.
 
 **فارسی و زبان‌ها**
 - ترجمهٔ کامل فارسی برنامه و رابط وب، چیدمان کامل راست‌به‌چپ و فونت وزیرمتن.
