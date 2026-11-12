@@ -1,14 +1,14 @@
 name: Daily Build
 
 on:
-  # 每天 UTC 09:00、18:00 触发（北京时间 17:00、次日 02:00）
+  # Runs every day at 09:00 and 18:00 UTC
   schedule:
     - cron: '0 9,18 * * *'
-  # 也支持手动触发
+  # Can also be started manually
   workflow_dispatch:
 
 jobs:
-  # 检查过去 24 小时内是否有新提交，没有则跳过构建，避免重复打包
+  # Skip the build when there was no commit in the last 24 hours, to avoid duplicate packages
   check:
     runs-on: ubuntu-latest
     outputs:
@@ -18,17 +18,17 @@ jobs:
       - name: Check for recent commits
         id: check
         run: |
-          # 手动触发时无条件构建
+          # Manual runs always build
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "should_build=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          # 定时触发：仅当过去 24 小时内有新提交才构建
+          # Scheduled runs build only when there are commits from the last 24 hours
           if [ -n "$(git log --since='24 hours ago' --oneline)" ]; then
             echo "should_build=true" >> "$GITHUB_OUTPUT"
           else
             echo "should_build=false" >> "$GITHUB_OUTPUT"
-            echo "过去 24 小时无新提交，跳过构建"
+            echo "No commits in the last 24 hours, skipping the build"
           fi
 
   build:
@@ -36,25 +36,25 @@ jobs:
     if: needs.check.outputs.should_build == 'true'
     runs-on: ubuntu-latest
     permissions:
-      contents: write   # 发布 Release 需要写权限
+      contents: write   # needed to publish the release
 
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: recursive # 拉取子模块
+          submodules: recursive # fetch submodules
 
-      # 与 Android Studio 自带的 JetBrains Runtime 21 保持一致
+      # Same JetBrains Runtime 21 that ships with Android Studio
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'jetbrains'
           java-version: '21'
         env:
-          # jetbrains 安装器通过 GitHub API 查询版本，带上 token 避免被限流
+          # the JetBrains installer queries the GitHub API; the token avoids rate limits
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # web 模块的 preBuild 会执行 `pnpm run build` 构建前端，必须准备好 Node + pnpm
+      # preBuild of the web module runs `pnpm run build` for the web UI, so Node and pnpm are required
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -67,7 +67,7 @@ jobs:
           cache: pnpm
           cache-dependency-path: web-ui/pnpm-lock.yaml
 
-      # gradle 的 buildWebUi 任务只跑 build 不跑 install，需在此提前安装依赖
+      # the Gradle buildWebUi task only builds, so install the web UI dependencies here
       - name: Install web-ui dependencies
         working-directory: web-ui
         run: pnpm install --frozen-lockfile
@@ -82,13 +82,13 @@ jobs:
 
       - name: Prepare build files
         run: |
-          # 解码base64编码的keystore文件
+          # decode the base64 encoded keystore
           echo "${{ secrets.KEY_BASE64 }}" | base64 -d > app/app.key
 
-          # 写入签名配置到local.properties
+          # write the signing config to local.properties
           echo "${{ secrets.SIGNING_CONFIG }}" > local.properties
 
-          # 写入Google Services配置
+          # write the Google Services config
           echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
 
       - name: Gradle Build
@@ -96,19 +96,20 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleGithubRelease
 
-      # 把 APK 直接发布为 Prerelease，用户点链接即可下载单个 apk，无需登录、无需解压
+      # Publish the APKs as a prerelease so users can download a single APK without signing in or unzipping.
+      # Prereleases are ignored by the in-app update checker (it reads /releases/latest).
       - name: Publish nightly prerelease
         uses: softprops/action-gh-release@v2
         if: success()
         with:
-          tag_name: nightly            # 固定 tag，每晚覆盖同一个「最新每日构建」
+          tag_name: nightly            # fixed tag: every run replaces the same "latest nightly build"
           name: Nightly Build
           prerelease: true
           body: |
-            自动每日构建（commit `${{ github.sha }}`）
+            Automatic nightly build (commit `${{ github.sha }}`)
 
-            > ⚠️ 开发版本，可能不稳定，仅供测试。
-          # mapping.txt 用于还原混淆后的崩溃堆栈，所有 ABI 的 APK 共用这一份
+            > ⚠️ Development build: it may be unstable and is meant for testing only.
+          # mapping.txt de-obfuscates crash stack traces; one file is shared by the APKs of every ABI
           files: |
             app/build/outputs/apk/github/release/*.apk
             app/build/outputs/mapping/githubRelease/mapping.txt

@@ -1,51 +1,51 @@
 name: Bug Report
-description: 报告APP Bug或者崩溃
+description: Report a bug or crash in the app · گزارش باگ یا کرش برنامه
 title: "bug: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        感谢你花时间提交 Bug 报告！请尽量填写完整信息以便我们复现和修复问题。
-        Thanks for taking the time to report a bug! Please fill in as much detail as possible.
+        Thanks for taking the time to report a bug! Please fill in as much detail as possible so we can reproduce and fix it.
+        ممنون که باگ را گزارش می‌کنید! لطفاً تا جای ممکن جزئیات را کامل بنویسید تا بتوانیم مشکل را بازسازی و رفع کنیم.
 
-        > **注意 | Note**
-        > 请勿提交由 AI 生成的 Issue，此类 Issue 将被直接关闭。
+        > **Note · توجه**
         > Do not submit AI-generated issues — they will be closed without review.
+        > لطفاً Issue تولیدشده با هوش مصنوعی ثبت نکنید؛ این Issueها بدون بررسی بسته می‌شوند.
 
   - type: textarea
     id: description
     attributes:
-      label: 问题描述 | Problem Description
-      description: 请详细描述你遇到的问题，包括复现步骤。 / Describe the issue in detail, including steps to reproduce.
+      label: Problem Description | شرح مشکل
+      description: Describe the issue in detail, including steps to reproduce. / مشکل را با جزئیات و مراحل بازسازی آن توضیح دهید.
       placeholder: |
-        1. 进入 ...
-        2. 点击 ...
-        3. 出现了 ...
+        1. Open ...
+        2. Tap ...
+        3. ... happens
     validations:
       required: true
 
   - type: textarea
     id: expected
     attributes:
-      label: 期望行为 | Expected Behavior
-      description: 你期望应该发生什么？ / What did you expect to happen?
+      label: Expected Behavior | رفتار مورد انتظار
+      description: What did you expect to happen? / انتظار داشتید چه اتفاقی بیفتد؟
     validations:
       required: false
 
   - type: textarea
     id: screenshots
     attributes:
-      label: 截图 | Screenshots
-      description: 如有相关截图或录屏，请粘贴到此处。 / Attach relevant screenshots or screen recordings here.
+      label: Screenshots | تصاویر
+      description: Attach relevant screenshots or screen recordings here. / تصویر یا ویدیوی مرتبط را اینجا قرار دهید.
     validations:
       required: false
 
   - type: input
     id: provider
     attributes:
-      label: 使用的提供商 | Provider
-      description: 例如 OpenAI、Anthropic、Google、本地部署等 / e.g. OpenAI, Anthropic, Google, local deployment
+      label: Provider | ارائه‌دهنده
+      description: e.g. OpenAI, Anthropic, Google, AvalAI, local deployment
       placeholder: OpenAI
     validations:
       required: false
@@ -53,8 +53,8 @@ body:
   - type: input
     id: model
     attributes:
-      label: 使用的模型 | Model
-      description: 例如 gpt-4o、claude-3-5-sonnet 等 / e.g. gpt-4o, claude-3-5-sonnet
+      label: Model | مدل
+      description: e.g. gpt-4o, claude-3-5-sonnet
       placeholder: gpt-4o
     validations:
       required: false
@@ -62,8 +62,8 @@ body:
   - type: dropdown
     id: api-type
     attributes:
-      label: 接口类型 | API Type
-      description: 使用的接口协议类型 / The API protocol type being used
+      label: API Type | نوع API
+      description: The API protocol type being used / نوع پروتکل API
       options:
         - OpenAI ChatCompletion
         - Response API
@@ -75,17 +75,17 @@ body:
   - type: input
     id: app-version
     attributes:
-      label: APP 版本 | App Version
-      description: 例如 v1.2.3 / e.g. v1.2.3
-      placeholder: v1.2.3
+      label: App Version | نسخهٔ برنامه
+      description: Settings › About › Version, e.g. 3.1.1-ultra.1
+      placeholder: 3.1.1-ultra.1
     validations:
       required: true
 
   - type: input
     id: android-version
     attributes:
-      label: 安卓版本 | Android Version
-      description: 例如 Android 14 / e.g. Android 14
+      label: Android Version | نسخهٔ اندروید
+      description: e.g. Android 14
       placeholder: Android 14
     validations:
       required: true
@@ -93,8 +93,8 @@ body:
   - type: input
     id: device-model
     attributes:
-      label: 手机型号 | Device Model
-      description: 例如 小米 14 / e.g. Xiaomi 14
+      label: Device Model | مدل گوشی
+      description: e.g. Samsung Galaxy A54, Xiaomi 14
       placeholder: Xiaomi 14
     validations:
       required: true
