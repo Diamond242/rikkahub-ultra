@@ -16,3 +16,7 @@ local.properties
 
 # local project report (not committed)
 docs/PROJECT_REPORT.md
+
+# release signing keystore (never commit)
+keystore/
+*.jks
