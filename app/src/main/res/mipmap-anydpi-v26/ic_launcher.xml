@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- rikkahub-ultra: vector adaptive icon (source: docs/brand/icongen.js). PNG mipmaps are legacy fallbacks. -->
 <adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
-  <background android:drawable="@mipmap/ic_launcher_background"/>
-  <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
-  <monochrome android:drawable="@mipmap/ic_launcher_monochrome"/>
+  <background android:drawable="@drawable/ic_launcher_background_vector"/>
+  <foreground android:drawable="@drawable/ic_launcher_foreground_vector"/>
+  <monochrome android:drawable="@drawable/ic_launcher_monochrome_vector"/>
 </adaptive-icon>
