@@ -242,7 +242,7 @@ val dataSourceModule = module {
     }
 
     single {
-        SponsorAPI.create(get())
+        SponsorAPI(context = get(), client = get())
     }
 
     single {

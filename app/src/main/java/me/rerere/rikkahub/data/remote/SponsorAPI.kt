@@ -1,25 +1,35 @@
 package me.rerere.rikkahub.data.remote
 
+import android.content.Context
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import me.rerere.common.http.await
 import me.rerere.rikkahub.data.model.Sponsor
-import me.rerere.rikkahub.utils.JsonInstant
-import okhttp3.MediaType.Companion.toMediaType
+import me.rerere.rikkahub.utils.AppLinks
 import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.http.GET
+import okhttp3.Request
 
-interface SponsorAPI {
-    @GET("/sponsors")
-    suspend fun getSponsors(): List<Sponsor>
+/**
+ * Sponsors of rikkahub-ultra only. The list lives in `sponsors.json` of our GitHub repository
+ * ([AppLinks.SPONSORS_JSON]); the copy bundled at build time is used when the network fails.
+ * Upstream RikkaHub sponsors are intentionally not shown.
+ */
+class SponsorAPI(
+    private val context: Context,
+    private val client: OkHttpClient,
+) {
+    private val json = Json { ignoreUnknownKeys = true }
 
-    companion object {
-        fun create(httpClient: OkHttpClient): SponsorAPI {
-            return Retrofit.Builder()
-                .client(httpClient)
-                .baseUrl("https://sponsors.rikka-ai.com")
-                .addConverterFactory(JsonInstant.asConverterFactory("application/json".toMediaType()))
-                .build()
-                .create(SponsorAPI::class.java)
-        }
+    suspend fun getSponsors(): List<Sponsor> = withContext(Dispatchers.IO) {
+        runCatching {
+            val response = client.newCall(Request.Builder().url(AppLinks.SPONSORS_JSON).get().build()).await()
+            if (!response.isSuccessful) error("HTTP ${response.code}")
+            json.decodeFromString<List<Sponsor>>(response.body.string())
+        }.getOrElse { bundled() }
     }
+
+    private fun bundled(): List<Sponsor> = runCatching {
+        context.assets.open("sponsors.json").bufferedReader().use { json.decodeFromString<List<Sponsor>>(it.readText()) }
+    }.getOrDefault(emptyList())
 }
