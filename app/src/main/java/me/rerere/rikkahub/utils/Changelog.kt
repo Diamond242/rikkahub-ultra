@@ -25,12 +25,21 @@ object Changelog {
         return result
     }
 
+    private val htmlDiv = Regex("""</?div\b[^>]*>""", RegexOption.IGNORE_CASE)
+
+    /** Drop GitHub-only wrappers such as <div dir="rtl"> so the in-app dialog stays readable. */
+    fun stripGithubMarkup(text: String): String = htmlDiv.replace(text, "").trim()
+
     fun localize(text: String, language: String): String {
         val sections = sections(text)
-        if (sections.isEmpty()) return text.trim()
-        return sections[language.lowercase().substringBefore('-')]
-            ?: sections["en"]
-            ?: sections.values.first()
+        val raw = if (sections.isEmpty()) {
+            text.trim()
+        } else {
+            sections[language.lowercase().substringBefore('-')]
+                ?: sections["en"]
+                ?: sections.values.first()
+        }
+        return stripGithubMarkup(raw)
     }
 
     fun loadBundled(context: Context): String? = runCatching {

@@ -33,6 +33,21 @@ class ChangelogTest {
     }
 
     @Test
+    fun stripsGithubDivWrappers() {
+        val wrapped = """
+            <!-- lang:fa -->
+            <div dir="rtl">
+
+            ## ۱.۰
+            - سلام
+
+            </div>
+            <!-- /lang -->
+        """.trimIndent()
+        assertEquals("## ۱.۰\n- سلام", Changelog.localize(wrapped, "fa"))
+    }
+
+    @Test
     fun githubReleaseMapping() {
         val info = GithubRelease(
             tagName = "v3.1.1-ultra.2",
