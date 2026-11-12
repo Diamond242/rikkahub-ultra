@@ -104,7 +104,7 @@ fun WebViewPage(url: String, contentId: String) {
                         onClick = { state.goForward() },
                         enabled = state.canGoForward
                     ) {
-                        Icon(HugeIcons.ArrowRight01, contentDescription = "Forward")
+                        Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = "Forward")
                     }
 
                     val urlHandler = LocalUriHandler.current

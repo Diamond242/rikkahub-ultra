@@ -17,7 +17,8 @@ jobs:
             const isOwner = author === context.repo.owner;
 
             const body = context.payload.issue.body;
-            const templateMarkers = ['问题描述', '功能描述'];
+            // Section labels of our issue templates (bug report, feature request, sponsor listing)
+            const templateMarkers = ['Problem Description', 'Feature Description', 'Sponsor Name'];
             const usedTemplate = body && templateMarkers.some(marker => body.includes(marker));
 
             if (!isOwner && !usedTemplate) {
@@ -27,11 +28,11 @@ jobs:
                 repo: context.repo.repo,
                 issue_number: context.payload.issue.number,
                 body: [
-                  '感谢你的反馈！此 Issue 未使用官方模板，已自动关闭。',
-                  '请点击下方链接重新提交，并选择对应的模板填写完整信息：',
+                  'ممنون از بازخورد شما! این Issue با قالب رسمی ثبت نشده بود و به‌طور خودکار بسته شد.',
+                  'لطفاً با یکی از قالب‌های زیر دوباره ثبت کنید:',
                   '',
-                  `- 🐛 [Bug 报告](${repoUrl}/issues/new?template=bug-report.yml)`,
-                  `- ✨ [功能请求](${repoUrl}/issues/new?template=feature-request.yml)`,
+                  `- 🐛 [گزارش باگ](${repoUrl}/issues/new?template=bug-report.yml)`,
+                  `- ✨ [درخواست قابلیت](${repoUrl}/issues/new?template=feature-request.yml)`,
                   '',
                   '---',
                   '',
@@ -40,6 +41,7 @@ jobs:
                   '',
                   `- 🐛 [Bug Report](${repoUrl}/issues/new?template=bug-report.yml)`,
                   `- ✨ [Feature Request](${repoUrl}/issues/new?template=feature-request.yml)`,
+                  `- 💚 [Sponsor Listing](${repoUrl}/issues/new?template=sponsor-listing.yml)`,
                 ].join('\n'),
               });
               await github.rest.issues.update({

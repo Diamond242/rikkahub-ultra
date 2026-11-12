@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.assistant.detail
 
+import me.rerere.rikkahub.data.datastore.displayName
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -139,7 +140,7 @@ internal fun AssistantBasicContent(
         ) {
             UIAvatar(
                 value = assistant.avatar,
-                name = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) },
+                name = assistant.displayName(),
                 onUpdate = { avatar ->
                     onUpdate(
                         assistant.copy(

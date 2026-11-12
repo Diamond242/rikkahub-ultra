@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<resources>
+  <string name="oauth_notification_channel_name">مجوزدهی OAuth</string>
+  <string name="oauth_notification_title">مجوزدهی OAuth در حال انجام است</string>
+  <string name="oauth_notification_text">در انتظار پاسخ مجوز از مرورگر…</string>
+  <string name="oauth_callback_success_title">مجوزدهی کامل شد</string>
+  <string name="oauth_callback_success_message">حساب با موفقیت متصل شد.</string>
+  <string name="oauth_callback_success_hint">می‌توانید این زبانه را ببندید و به RikkaHub برگردید.</string>
+  <string name="oauth_callback_error_title">مجوزدهی ناموفق بود</string>
+  <string name="oauth_callback_error_message">ارائه‌دهندهٔ مجوز این درخواست را تأیید نکرد.</string>
+  <string name="oauth_callback_error_hint">این زبانه را ببندید و دوباره از RikkaHub تلاش کنید.</string>
+  <string name="oauth_callback_invalid_title">پاسخ مجوز نامعتبر است</string>
+  <string name="oauth_callback_invalid_message">پاسخ مجوز اطلاعات ناقص دارد یا منقضی شده است.</string>
+  <string name="oauth_callback_invalid_hint">به RikkaHub برگردید و مجوزدهی را دوباره شروع کنید.</string>
+  <string name="oauth_callback_handled_title">مجوز قبلاً پردازش شده است</string>
+  <string name="oauth_callback_handled_message">این پاسخ مجوز قبلاً پردازش شده است.</string>
+  <string name="oauth_callback_handled_hint">می‌توانید با خیال راحت این زبانه را ببندید و به RikkaHub برگردید.</string>
+</resources>

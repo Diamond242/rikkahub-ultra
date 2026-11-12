@@ -119,5 +119,10 @@
     "unlock": "解锁",
     "unlocking": "正在解锁...",
     "unlock_failed": "Web API 解锁失败。"
+  },
+  "fallback": {
+    "default_assistant": "默认助手",
+    "unnamed_model": "未命名模型",
+    "load_conversations_failed": "加载会话失败"
   }
 }

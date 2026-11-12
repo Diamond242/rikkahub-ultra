@@ -309,8 +309,8 @@ private fun AssistantPromptContent(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                     val rawMessages = listOf(
-                        UIMessage.user("你好啊"),
-                        UIMessage.assistant("你好，有什么我可以帮你的吗？"),
+                        UIMessage.user(stringResource(R.string.assistant_prompt_preview_user_sample)),
+                        UIMessage.assistant(stringResource(R.string.assistant_prompt_preview_assistant_sample)),
                     )
                     val preview by produceState<UiState<List<UIMessage>>>(
                         UiState.Success(rawMessages),

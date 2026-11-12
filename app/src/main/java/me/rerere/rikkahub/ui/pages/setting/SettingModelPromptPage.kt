@@ -186,7 +186,7 @@ private fun CardGroupScope.promptItem(
     },
     trailingContent = {
         Icon(
-            HugeIcons.ArrowRight01,
+            me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
             contentDescription = null,
             modifier = Modifier.size(16.dp),
         )

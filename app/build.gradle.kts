@@ -23,11 +23,14 @@ android {
     }
 
     defaultConfig {
-        applicationId = "me.rerere.rikkahub"
+        // rikkahub-ultra fork: own application id so it installs next to upstream RikkaHub.
+        // Kotlin namespace / source packages stay me.rerere.rikkahub to keep merges with upstream simple.
+        applicationId = "top.vahid.rikkahubultra"
         minSdk = 26
         targetSdk = 37
-        versionCode = 194
-        versionName = "3.1.1"
+        versionCode = 195
+        // <upstream version>-ultra.<fork release>; GitHub release tags must be v<versionName> for the update checker
+        versionName = "3.1.1-ultra.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -88,8 +91,8 @@ android {
             buildConfigField("String", "VERSION_CODE", "\"${android.defaultConfig.versionCode}\"")
         }
     }
-    // 按分发渠道区分：github 是 GitHub Release / 每日构建的 APK，play 是上架 Google Play 的 AAB
-    // 两个渠道共用同一个 applicationId，Play 版不能自更新，相关入口通过 BuildConfig.IS_PLAY_STORE 关闭
+    // Distribution flavors: "github" is the APK published on GitHub Releases / daily builds, "play" is the Google Play AAB.
+    // Both share the same applicationId; the Play build cannot self-update, so those entry points are disabled via BuildConfig.IS_PLAY_STORE.
     flavorDimensions += "distribution"
     productFlavors {
         create("github") {
@@ -116,7 +119,7 @@ android {
     androidResources {
         generateLocaleConfig = true
         // 只保留 app 自己翻译过的语言，依赖库（AndroidX、GMS 等）带的其他语言资源不打包
-        localeFilters += listOf("en", "ar", "de", "ja", "ko", "ko-rKR", "ru", "zh", "zh-rTW")
+        localeFilters += listOf("en", "ar", "fa", "de", "ja", "ko", "ko-rKR", "ru", "zh", "zh-rTW")
     }
     packaging {
         jniLibs {
@@ -145,6 +148,35 @@ android {
 // 两个渠道的启动路径一样，profile 合并到 src/main 共用，不按变体各存一份
 baselineProfile {
     mergeIntoMain = true
+}
+
+// rikkahub-ultra: bundle the root CHANGELOG.md (release notes shown in About) and sponsors.json
+// (offline fallback of the sponsor list) as app assets, so the repository copy is the single source.
+abstract class CopyUltraAssetsTask : DefaultTask() {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NAME_ONLY)
+    abstract val sourceFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val out = outputDir.get().asFile
+        out.deleteRecursively()
+        out.mkdirs()
+        sourceFiles.files.filter { it.exists() }.forEach { it.copyTo(File(out, it.name), overwrite = true) }
+    }
+}
+
+val copyUltraAssets = tasks.register<CopyUltraAssetsTask>("copyUltraAssets") {
+    sourceFiles.from(rootProject.file("CHANGELOG.md"), rootProject.file("sponsors.json"))
+}
+
+androidComponents {
+    onVariants { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(copyUltraAssets, CopyUltraAssetsTask::outputDir)
+    }
 }
 
 // baselineprofile 插件按 release 复制出 nonMinifiedRelease 时只关掉 isMinifyEnabled，关不掉 optimization，

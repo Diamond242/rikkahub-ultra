@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.share.handler
 
+import me.rerere.rikkahub.data.datastore.displayName
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -98,9 +99,7 @@ fun ShareHandlerPage(text: String, image: String?) {
                     ListItem(
                         headlineContent = {
                             Text(
-                                text = assistant.name.ifEmpty {
-                                    stringResource(R.string.assistant_page_default_assistant)
-                                },
+                                text = assistant.displayName(),
                                 maxLines = 1
                             )
                         },

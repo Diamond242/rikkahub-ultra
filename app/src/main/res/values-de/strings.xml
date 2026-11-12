@@ -17,7 +17,7 @@
   <string name="about_page_version">Version</string>
   <string name="about_page_website">Website</string>
   <string name="add">Hinzufügen</string>
-  <string name="app_name">RikkaHub</string>
+  <string name="app_name">RikkaHub Ultra</string>
   <string name="asr_button_content_description">Spracherkennung</string>
   <string name="asr_button_stop">Stopp</string>
   <string name="assistant_page_image_url">Bild-URL</string>
@@ -648,7 +648,6 @@
   <string name="regenerate">Neu generieren</string>
   <string name="regenerate_confirm_message">Bist du sicher, dass du diese Nachricht neu generieren möchtest? Alle Nachrichten unterhalb dieser Nachricht werden gelöscht.</string>
   <string name="render_with_webview">Mit WebView rendern</string>
-  <string name="rikkahub_provider_description">Offizieller kostenloser KI-Dienst, der mit Sponsorengeldern der Nutzer einige kostenlose Modelle als Fallback für neue Nutzer bereitstellt. Kein API-Schlüssel erforderlich. Es gelten strenge Ratenlimits; wenn du einen eigenen Anbieter erworben hast, nutze bitte möglichst deinen eigenen Anbieter.</string>
   <string name="safe_mode_assistants">Assistenten</string>
   <string name="menu_page_night_greeting">Es ist spät, pass auf dich auf\uD83D\uDC4B</string>
   <string name="mermaid_export">Export</string>
@@ -875,7 +874,7 @@
   <string name="setting_page_search_title">Suchdienst</string>
   <string name="setting_page_share">Teilen</string>
   <string name="setting_page_share_desc">Teile diese App mit Freunden</string>
-  <string name="setting_page_share_text">RikkaHub - Open Source Android AI Assistant\n\nWebsite: https://rikka-ai.com/</string>
+  <string name="setting_page_share_text">RikkaHub Ultra - Open Source Android AI Assistant\n\nWebsite: https://github.com/Diamond242/rikkahub-ultra</string>
   <string name="setting_page_sponsor_alert_confirm">Spenden</string>
   <string name="setting_page_sponsor_alert_desc">Du hast die App über 100 Mal gestartet! Wenn sie dir gefällt, erwäge bitte, den Entwickler zu unterstützen.</string>
   <string name="setting_page_sponsor_alert_dismiss">Nicht jetzt</string>

@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.assistant
 
+import me.rerere.rikkahub.data.datastore.DEFAULT_ASSISTANT_ID
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,7 +43,11 @@ class AssistantVM(
             cleanupAssistantFiles(assistant)
 
             settingsStore.update { settings ->
-                settings.copy(assistants = settings.assistants.filter { it.id != assistant.id })
+                settings.copy(
+                    assistants = settings.assistants.filter { it.id != assistant.id },
+                    // if the deleted assistant was selected, fall back to the default assistant
+                    assistantId = if (settings.assistantId == assistant.id) DEFAULT_ASSISTANT_ID else settings.assistantId,
+                )
             }
             memoryRepository.deleteFilesOfAssistant(assistant.id.toString())
             chatService.deleteConversationsOfAssistant(assistant.id)

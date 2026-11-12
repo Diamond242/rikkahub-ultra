@@ -41,16 +41,16 @@ val DEFAULT_PROVIDERS = listOf(
         description = {
             Text(
                 text = buildAnnotatedString {
-                    append("提供 OpenAI、Claude、Google Gemini 等主流模型的高并发和稳定服务")
+                    append(stringResource(R.string.provider_aihubmix_desc))
                     appendLine()
-                    append("官网：")
+                    append(stringResource(R.string.provider_label_website))
                     withLink(LinkAnnotation.Url("https://aihubmix.com?aff=pG7r")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
                             append("https://aihubmix.com")
                         }
                     }
                     appendLine()
-                    append("充值: ")
+                    append(stringResource(R.string.provider_label_top_up))
                     withLink(LinkAnnotation.Url("https://console.aihubmix.com/topup")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
                             append("https://console.aihubmix.com/topup")
@@ -61,7 +61,7 @@ val DEFAULT_PROVIDERS = listOf(
         },
         shortDescription = {
             Text(
-                text = "支持gpt, claude, gemini等200+模型"
+                text = stringResource(R.string.provider_aihubmix_short)
             )
         },
     ),
@@ -75,18 +75,18 @@ val DEFAULT_PROVIDERS = listOf(
         description = {
             Text(
                 text = buildAnnotatedString {
-                    append("APIMart 是专注 AI 图片/视频生成的低价 API 平台，GPT-Image-2 低至 $0.006/张，1 美元可出图 160+ 张。图片、视频一套异步 API 通吃，提交任务拿 ID、回调取结果，跑批万张不超时、换模型不改代码。按量付费、无月费。")
+                    append(stringResource(R.string.provider_apimart_desc))
                     appendLine()
                     withLink(LinkAnnotation.Url("https://go.apimart.ai/gh-rikkahub")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append("通过此注册链接注册即可开用")
+                            append(stringResource(R.string.provider_apimart_signup))
                         }
                     }
                 }
             )
         },
         shortDescription = {
-            Text("AI 图片/视频生成，GPT-Image-2 低至 $0.006/张")
+            Text(stringResource(R.string.provider_apimart_short))
         },
     ),
     ProviderSetting.OpenAI(
@@ -196,7 +196,7 @@ val DEFAULT_PROVIDERS = listOf(
         description = {
             Text(
                 text = buildAnnotatedString {
-                    append("企业级AI服务, 官网：")
+                    append(stringResource(R.string.provider_302ai_desc))
                     withLink(LinkAnnotation.Url("https://302.ai/")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
                             append("https://302.ai/")
@@ -233,8 +233,8 @@ val DEFAULT_PROVIDERS = listOf(
         description = {
             Text(
                 text = buildAnnotatedString {
-                    append("可靠高效的 API 中继服务，提供 Claude、Codex、Gemini 等中继服务。注重隐私·无数据倒卖·无模型掺水，充值额度 1:1，按量付费。多线路冗余、跨区域容灾、自动故障切换，长链路 SSE 不中断。\n")
-                    append("官网：")
+                    append(stringResource(R.string.provider_suixiang_desc) + "\n")
+                    append(stringResource(R.string.provider_label_website))
                     withLink(LinkAnnotation.Url("https://sui-xiang.com")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
                             append("https://sui-xiang.com")
@@ -245,7 +245,7 @@ val DEFAULT_PROVIDERS = listOf(
         },
         shortDescription = {
             Text(
-                text = "Claude、Codex、Gemini 等中继服务，1:1 充值"
+                text = stringResource(R.string.provider_suixiang_short)
             )
         },
     ),
@@ -259,17 +259,17 @@ val DEFAULT_PROVIDERS = listOf(
         description = {
             Text(
                 text = buildAnnotatedString {
-                    append("MaruCode 是一家偶尔做做慈善的小破站 API，自营号池，主要提供 Codex、Claude Code、GPT Image 等主流模型，支持 Websocket 协议，明码标价(Codex 0.25x, CC 1.5x)，透明汇率(1:1)。")
+                    append(stringResource(R.string.provider_marucode_desc))
                     appendLine()
                     withLink(LinkAnnotation.Url("https://api.muteki.site/register?aff=Rikkahub&promo=Rikkahub")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append("新用户注册送 2 刀")
+                            append(stringResource(R.string.provider_marucode_signup_bonus))
                         }
                     }
                     appendLine()
                     withLink(LinkAnnotation.Url("https://images-2.muteki.site")) {
                         withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append("生图工作台🖼️")
+                            append(stringResource(R.string.provider_marucode_image_studio))
                         }
                     }
                 }
@@ -292,5 +292,140 @@ val DEFAULT_PROVIDERS = listOf(
         apiKey = "",
         enabled = false,
         builtIn = true,
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("97fb1325-5f4f-5981-8c0b-f57346d29665"),
+        name = "Groq",
+        baseUrl = "https://api.groq.com/openai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("97fb1325-5f4f-5981-8c0b-f57346d29665") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("76c5f600-a6b7-5cb8-b6d9-0d3ef796db7a"),
+        name = "NVIDIA NIM",
+        baseUrl = "https://integrate.api.nvidia.com/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("76c5f600-a6b7-5cb8-b6d9-0d3ef796db7a") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("7803fc83-af3d-5e09-8821-33cdcf1682f6"),
+        name = "Mistral",
+        baseUrl = "https://api.mistral.ai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("7803fc83-af3d-5e09-8821-33cdcf1682f6") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("ef29c2ad-ea6c-5bcb-9f22-0c66c9c7bd7e"),
+        name = "Cohere",
+        baseUrl = "https://api.cohere.ai/compatibility/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("ef29c2ad-ea6c-5bcb-9f22-0c66c9c7bd7e") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("33fb36c5-d946-5a3c-ba42-103e96966f7e"),
+        name = "Z.ai",
+        baseUrl = "https://api.z.ai/api/paas/v4",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("33fb36c5-d946-5a3c-ba42-103e96966f7e") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("47814e33-8bb6-543c-99a7-785ed6f1b29a"),
+        name = "SiliconFlow (Global)",
+        baseUrl = "https://api.siliconflow.com/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("47814e33-8bb6-543c-99a7-785ed6f1b29a") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("65e59018-c4ab-5087-ad1e-6dc2a665c331"),
+        name = "LLM7",
+        baseUrl = "https://api.llm7.io/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("65e59018-c4ab-5087-ad1e-6dc2a665c331") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("4efb9dd2-f0f0-5b71-bc12-ef3273de4e30"),
+        name = "Pollinations",
+        baseUrl = "https://gen.pollinations.ai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("4efb9dd2-f0f0-5b71-bc12-ef3273de4e30") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("531dac70-e404-5164-be97-8e44c19c92ae"),
+        name = "Cerebras",
+        baseUrl = "https://api.cerebras.ai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("531dac70-e404-5164-be97-8e44c19c92ae") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("f134f417-7c91-5091-8879-4131dfa50e2d"),
+        name = "SambaNova",
+        baseUrl = "https://api.sambanova.ai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("f134f417-7c91-5091-8879-4131dfa50e2d") },
+    ),
+    ProviderSetting.Claude(
+        id = Uuid.parse("e7152bdc-7cca-5acf-ab4a-82ff25541f56"),
+        name = "Anthropic",
+        baseUrl = "https://api.anthropic.com/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("e7152bdc-7cca-5acf-ab4a-82ff25541f56") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("6b381ff2-51c6-5339-bde5-40f564be2d28"),
+        name = "Ollama",
+        baseUrl = "http://localhost:11434/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("6b381ff2-51c6-5339-bde5-40f564be2d28") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("104dcd8a-983c-5d56-9e14-3a238290c2c9"),
+        name = "AvalAI",
+        baseUrl = "https://api.avalai.ir/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("104dcd8a-983c-5d56-9e14-3a238290c2c9") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("4473f8e9-12b2-5ebe-9c94-e4f46d039c3b"),
+        name = "GapGPT",
+        baseUrl = "https://api.gapgpt.app/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("4473f8e9-12b2-5ebe-9c94-e4f46d039c3b") },
+    ),
+    ProviderSetting.OpenAI(
+        id = Uuid.parse("f6c07569-4d0a-5e64-a8a5-dafc60771279"),
+        name = "Metis",
+        baseUrl = "https://api.metisai.ir/openai/v1",
+        apiKey = "",
+        enabled = false,
+        builtIn = true,
+        description = { ProviderSignupDescription("f6c07569-4d0a-5e64-a8a5-dafc60771279") },
     ),
 )

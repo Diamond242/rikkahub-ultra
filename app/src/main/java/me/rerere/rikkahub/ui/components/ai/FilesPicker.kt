@@ -266,7 +266,7 @@ internal fun FilesPicker(
                                     )
                                 },
                                 trailingContent = {
-                                    Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                                    Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                                 },
                             ) {
                                 Text(
@@ -483,7 +483,7 @@ private fun ExtensionPickerPage(
             title = stringResource(R.string.assistant_page_tab_extensions),
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(HugeIcons.ArrowLeft01, contentDescription = stringResource(R.string.back))
+                    Icon(me.rerere.rikkahub.ui.components.ui.startArrowIcon(), contentDescription = stringResource(R.string.back))
                 }
             },
         )

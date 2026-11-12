@@ -151,7 +151,7 @@ internal fun SearchPickerPage(
             title = stringResource(R.string.use_web_search),
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(HugeIcons.ArrowLeft01, contentDescription = stringResource(R.string.back))
+                    Icon(me.rerere.rikkahub.ui.components.ui.startArrowIcon(), contentDescription = stringResource(R.string.back))
                 }
             },
         )
@@ -328,7 +328,7 @@ private fun SearchPicker(
                                 contentDescription = stringResource(R.string.search_picker_title),
                             )
                         }
-                        Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                        Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                     }
                 },
             ) {
@@ -370,7 +370,7 @@ internal fun SearchProviderPicker(
             title = stringResource(R.string.search_picker_select_provider),
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(HugeIcons.ArrowLeft01, contentDescription = stringResource(R.string.back))
+                    Icon(me.rerere.rikkahub.ui.components.ui.startArrowIcon(), contentDescription = stringResource(R.string.back))
                 }
             },
         )

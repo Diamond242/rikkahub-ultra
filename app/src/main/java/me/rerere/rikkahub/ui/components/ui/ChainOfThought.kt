@@ -391,7 +391,7 @@ private class ChainOfThoughtScopeImpl(
                 // 指示器：onClick 显示向右箭头，content 显示展开/折叠箭头
                 if (onClick != null) {
                     Icon(
-                        imageVector = HugeIcons.ArrowRight01,
+                        imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,

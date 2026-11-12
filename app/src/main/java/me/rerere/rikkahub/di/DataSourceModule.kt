@@ -31,7 +31,6 @@ import me.rerere.rikkahub.data.db.AppDatabaseFactory
 import me.rerere.rikkahub.data.db.fts.MessageFtsManager
 import me.rerere.rikkahub.data.remote.ModelsDevUpdater
 import me.rerere.rikkahub.data.remote.RemoteFileStore
-import me.rerere.rikkahub.data.remote.RikkaHubAPI
 import me.rerere.rikkahub.data.remote.SettingsProxyAuthenticator
 import me.rerere.rikkahub.data.remote.SettingsProxySelector
 import me.rerere.rikkahub.data.remote.SettingsSocks5Authenticator
@@ -41,12 +40,9 @@ import me.rerere.rikkahub.data.sync.S3Sync
 import me.rerere.rikkahub.data.sync.webdav.WebDavSync
 import me.rerere.rikkahub.service.memoryDreamKeepAlive
 import me.rerere.search.SearchService
-import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.Locale
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
@@ -208,7 +204,7 @@ val dataSourceModule = module {
                 if (originalRequest.header(HttpHeaders.UserAgent) == null) {
                     val userAgent = settingsStore.settingsFlow.value.networkSetting.userAgent
                         .trim()
-                        .ifEmpty { "RikkaHub-Android/${BuildConfig.VERSION_NAME}" }
+                        .ifEmpty { "RikkaHub-Ultra-Android/${BuildConfig.VERSION_NAME}" }
                     requestBuilder.addHeader(HttpHeaders.UserAgent, userAgent)
                 }
 
@@ -242,7 +238,7 @@ val dataSourceModule = module {
     }
 
     single {
-        SponsorAPI.create(get())
+        SponsorAPI(context = get(), client = get())
     }
 
     single {
@@ -306,14 +302,4 @@ val dataSourceModule = module {
         MediaGenerationManager(client = get())
     }
 
-    single<Retrofit> {
-        Retrofit.Builder()
-            .baseUrl("https://api.rikka-ai.com")
-            .addConverterFactory(get<Json>().asConverterFactory("application/json; charset=UTF8".toMediaType()))
-            .build()
-    }
-
-    single<RikkaHubAPI> {
-        get<Retrofit>().create(RikkaHubAPI::class.java)
-    }
 }

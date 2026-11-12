@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeFlexibleTopAppBar
@@ -80,6 +81,10 @@ import me.rerere.rikkahub.R
 import me.rerere.rikkahub.ui.components.ui.QRCodeScannerDialog
 import me.rerere.rikkahub.Screen
 import me.rerere.rikkahub.data.datastore.RECOMMENDED_PROVIDERS
+import me.rerere.rikkahub.data.datastore.ProviderFilter
+import me.rerere.rikkahub.data.datastore.ProviderTier
+import me.rerere.rikkahub.data.datastore.matches
+import me.rerere.rikkahub.data.datastore.meta
 import me.rerere.rikkahub.ui.components.nav.BackButton
 import me.rerere.rikkahub.ui.components.ui.AutoAIIcon
 import me.rerere.rikkahub.ui.components.ui.ItemAction
@@ -105,22 +110,22 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
     val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     var searchQuery by remember { mutableStateOf("") }
+    var providerFilter by rememberSaveable { mutableStateOf(ProviderFilter.ALL) }
     var deleteTarget by remember { mutableStateOf<ProviderSetting?>(null) }
     val lazyListState = rememberLazyListState()
     val reorderableState = rememberReorderableLazyListState(lazyListState) { from, to ->
         val newProviders = settings.providers.toMutableList().apply {
-            add(to.index, removeAt(from.index))
+            val fromIdx = indexOfFirst { it.id == from.key }
+            val toIdx = indexOfFirst { it.id == to.key }
+            if (fromIdx >= 0 && toIdx >= 0) add(toIdx, removeAt(fromIdx))
         }
         vm.updateSettings { it.copy(providers = newProviders) }
     }
 
-    val filteredProviders = remember(settings.providers, searchQuery) {
-        if (searchQuery.isBlank()) {
-            settings.providers
-        } else {
-            settings.providers.filter { provider ->
-                provider.name.contains(searchQuery, ignoreCase = true)
-            }
+    val filteredProviders = remember(settings.providers, searchQuery, providerFilter) {
+        settings.providers.filter { provider ->
+            provider.matches(providerFilter) &&
+                (searchQuery.isBlank() || provider.name.contains(searchQuery, ignoreCase = true))
         }
     }
 
@@ -205,6 +210,25 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
                 ),
             )
 
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                listOf(
+                    ProviderFilter.ALL to R.string.provider_filter_all,
+                    ProviderFilter.FREE to R.string.provider_filter_free,
+                    ProviderFilter.NO_VPN to R.string.provider_filter_no_vpn,
+                ).forEach { (filter, label) ->
+                    FilterChip(
+                        selected = providerFilter == filter,
+                        onClick = { providerFilter = filter },
+                        label = { Text(stringResource(label)) },
+                    )
+                }
+            }
 
             LazyColumn(
                 modifier = Modifier
@@ -617,7 +641,7 @@ private fun AddButton(onAdd: (ProviderSetting) -> Unit) {
                                     style = MaterialTheme.typography.titleMediumEmphasized,
                                     modifier = Modifier.weight(1f),
                                 )
-                                Icon(HugeIcons.ArrowRight01, contentDescription = null)
+                                Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null)
                             }
                         }
                     }
@@ -695,9 +719,23 @@ private fun ProviderItem(
                             )
                         )
                     }
+                    provider.meta?.let { meta ->
+                        when (meta.tier) {
+                            ProviderTier.FREE -> Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free)) }
+                            ProviderTier.TRIAL -> Tag(type = TagType.WARNING) { Text(stringResource(R.string.provider_tier_trial)) }
+                            ProviderTier.FREE_QUOTA -> Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free_quota)) }
+                            ProviderTier.PAID -> Tag(type = TagType.DEFAULT) { Text(stringResource(R.string.provider_tier_paid)) }
+                        }
+                        if (meta.noKeyRequired) {
+                            Tag(type = TagType.INFO) { Text(stringResource(R.string.provider_badge_no_key)) }
+                        }
+                        if (meta.worksInIranWithoutVpn) {
+                            Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_badge_no_vpn)) }
+                        }
+                    }
                     if (provider.name == "AiHubMix") {
                         Tag(type = TagType.INFO) {
-                            Text("10% 优惠")
+                            Text(stringResource(R.string.provider_discount_10_percent))
                         }
                     }
                 }

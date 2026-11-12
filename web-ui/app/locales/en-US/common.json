@@ -119,5 +119,10 @@
     "unlock": "Unlock",
     "unlocking": "Unlocking...",
     "unlock_failed": "Failed to unlock Web API access."
+  },
+  "fallback": {
+    "default_assistant": "Default assistant",
+    "unnamed_model": "Unnamed model",
+    "load_conversations_failed": "Failed to load conversations"
   }
 }

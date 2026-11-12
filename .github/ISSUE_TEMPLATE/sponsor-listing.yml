@@ -1,0 +1,40 @@
+name: Sponsor Listing
+description: Donated? Ask to be added to the in-app sponsor list · حمایت کرده‌اید؟ درخواست ثبت در فهرست حامیان
+title: "sponsor: "
+labels: ["sponsor"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for supporting RikkaHub Ultra! 💚 Fill in the form and we will add you to `sponsors.json`, which the app shows on the donate page.
+        از حمایت شما از RikkaHub Ultra سپاسگزاریم! 💚 فرم را پر کنید تا نامتان به `sponsors.json` و صفحهٔ حمایت مالی برنامه اضافه شود.
+
+  - type: input
+    id: name
+    attributes:
+      label: Sponsor Name | نام حامی
+      description: The name to show in the app. / نامی که در برنامه نمایش داده می‌شود.
+    validations:
+      required: true
+
+  - type: input
+    id: avatar
+    attributes:
+      label: Avatar URL (optional) | لینک تصویر (اختیاری)
+    validations:
+      required: false
+
+  - type: input
+    id: link
+    attributes:
+      label: Website (optional) | وب‌سایت (اختیاری)
+    validations:
+      required: false
+
+  - type: input
+    id: proof
+    attributes:
+      label: Transaction / Network | تراکنش یا شبکه
+      description: Transaction hash or the network you used, so we can confirm it. Never share private keys. / شناسهٔ تراکنش یا شبکهٔ استفاده‌شده برای تأیید. هرگز کلید خصوصی ارسال نکنید.
+    validations:
+      required: false

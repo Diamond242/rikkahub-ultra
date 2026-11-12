@@ -1,22 +1,26 @@
 # terminal
 
-终端模拟器核心, 供工作区终端页使用。界面部分 (`TerminalView`) 仍使用上游的 `terminal-view` aar。
+Terminal emulator core used by the workspace terminal page. The UI part (`TerminalView`) still uses the upstream
+`terminal-view` aar.
 
-## 来源
+## Origin
 
-`src/main/java` 与 `src/test/java` 取自 [termux-app](https://github.com/termux/termux-app) 的
-`terminal-emulator` 模块, tag `v0.118.0` (commit `6e2689f55295fa444be8ac8592c527c2c5ef3253`),
-按 Apache License 2.0 发布, 全文见 [LICENSE](LICENSE)。包名保持 `com.termux.terminal` 不变,
-以便与 `terminal-view` aar 二进制兼容。
+`src/main/java` and `src/test/java` come from the `terminal-emulator` module of
+[termux-app](https://github.com/termux/termux-app), tag `v0.118.0` (commit `6e2689f55295fa444be8ac8592c527c2c5ef3253`),
+released under the Apache License 2.0; see [LICENSE](LICENSE) for the full text. The package name stays
+`com.termux.terminal` to remain binary compatible with the `terminal-view` aar.
 
-## 与上游的差异
+## Differences from upstream
 
-- 原生部分不用上游的 `termux.c`, 改为 `src/main/cpp/termux_pty.cpp`, 以 16KB 页对齐编译
-- `TerminalSession` 不再直接管理本地进程, 改为通过 `TerminalTransport` 收发数据, 以便接入远程 shell:
-  本地 pty 进程挪到 `LocalPtyTransport` (fd 改由 `ParcelFileDescriptor` 持有, 不再反射 `FileDescriptor` 私有字段);
-  进程在后台线程启动, 启动失败时在终端里打印原因; 退出前等待读线程取完最后的输出;
-  去掉只对本地进程有意义的 `getPid()` / `getCwd()`
-- 主线程写入不会阻塞在没人读取的队列上: 启动期间的输入先暂存 (最多 4096 字节, 放不下的整段丢弃), 启动后再发送;
-  transport 不再接收输入后, 写线程继续清空队列直到会话清理
-- 关闭本地终端时杀掉整个会话里的进程, 而不只是会话首进程: 首进程是 PRoot 时,
-  shell 和它的任务是被跟踪的进程, 只杀 PRoot 会让它们脱离跟踪继续运行
+- The native part does not use upstream's `termux.c`; it uses `src/main/cpp/termux_pty.cpp` instead, compiled with 16 KB
+  page alignment
+- `TerminalSession` no longer manages a local process directly; it sends and receives data through `TerminalTransport` so
+  remote shells can be plugged in. The local pty process moved to `LocalPtyTransport` (the fd is held by a
+  `ParcelFileDescriptor` instead of reflecting the private field of `FileDescriptor`); the process starts on a background
+  thread and prints the reason in the terminal if it fails to start; before exiting it waits for the reader thread to drain
+  the last output; `getPid()` / `getCwd()`, which only make sense for local processes, were removed
+- Writes from the main thread never block on a queue nobody reads: input during startup is buffered first (at most 4096 bytes;
+  a chunk that does not fit is dropped as a whole) and sent after startup; once the transport stops accepting input, the
+  writer thread keeps draining the queue until the session is cleaned up
+- Closing a local terminal kills every process in the session, not just the session leader: when the leader is PRoot, the
+  shell and its jobs are traced processes, and killing only PRoot would leave them running untraced

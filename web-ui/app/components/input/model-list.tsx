@@ -358,14 +358,14 @@ export function ModelList({
 
         <div className="space-y-3">
           <div className="relative">
-            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-2 size-3.5 -translate-y-1/2" />
+            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 start-2 size-3.5 -translate-y-1/2" />
             <Input
               value={searchKeywords}
               onChange={(event) => {
                 setSearchKeywords(event.target.value);
               }}
               placeholder={t("model_list.search_placeholder")}
-              className="h-8 pl-7 text-xs"
+              className="h-8 ps-7 text-xs"
             />
           </div>
 

@@ -38,6 +38,8 @@ import me.rerere.ai.core.ReasoningLevel
 import me.rerere.ai.core.Tool
 import me.rerere.ai.provider.ModelType
 import me.rerere.ai.provider.ProviderManager
+import me.rerere.rikkahub.utils.friendlyErrorKind
+import me.rerere.rikkahub.utils.messageRes
 import me.rerere.ai.provider.ProviderSetting
 import me.rerere.ai.provider.TextGenerationParams
 import me.rerere.ai.ui.StreamChunk
@@ -72,6 +74,8 @@ fun ProviderConnectionTester(
         var streamingState: UiState<String> by remember { mutableStateOf(UiState.Idle) }
         var toolsState: UiState<String> by remember { mutableStateOf(UiState.Idle) }
         var streamingText by remember { mutableStateOf("") }
+        var keyState: UiState<String> by remember { mutableStateOf(UiState.Idle) }
+        val keyOkText = stringResource(R.string.key_test_success)
 
         fun resetStates() {
             nonStreamingState = UiState.Idle
@@ -87,6 +91,12 @@ fun ProviderConnectionTester(
             },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    TestResultItem(
+                        label = stringResource(R.string.key_test_button),
+                        state = keyState,
+                        resultText = (keyState as? UiState.Success)?.data ?: ""
+                    )
+
                     ModelSelector(
                         modelId = model?.id,
                         providers = listOf(internalProvider),
@@ -123,6 +133,19 @@ fun ProviderConnectionTester(
             confirmButton = {
                 TextButton(
                     onClick = {
+                        scope.launch {
+                            keyState = UiState.Loading
+                            runCatching {
+                                providerManager.getProviderByType(internalProvider).listModels(internalProvider)
+                            }.onSuccess { keyState = UiState.Success(keyOkText.format(it.size)) }
+                                .onFailure { e ->
+                                    if (e is kotlinx.coroutines.CancellationException) throw e
+                                    val kind = e.friendlyErrorKind()
+                                    keyState = UiState.Error(
+                                        if (kind != null) Exception(context.getString(kind.messageRes()) + "\n\n" + (e.message ?: ""), e) else e
+                                    )
+                                }
+                        }
                         if (model == null) return@TextButton
                         val provider = providerManager.getProviderByType(internalProvider)
                         resetStates()

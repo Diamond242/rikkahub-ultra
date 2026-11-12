@@ -1,5 +1,12 @@
 package me.rerere.rikkahub.ui.components.ai
 
+import me.rerere.rikkahub.data.datastore.isFreeUsable
+import me.rerere.rikkahub.data.datastore.labelRes
+import me.rerere.rikkahub.data.datastore.isFreeVariant
+import me.rerere.hugeicons.stroke.Sorting01
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.material3.IconToggleButton
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -65,6 +72,8 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import me.rerere.ai.provider.Modality
+import me.rerere.rikkahub.data.datastore.meta
+import androidx.compose.foundation.horizontalScroll
 import me.rerere.ai.provider.Model
 import me.rerere.ai.provider.ModelAbility
 import me.rerere.ai.provider.ModelType
@@ -352,7 +361,7 @@ fun ModelListSheet(
                 currentModel = state.modelId,
                 providers = state.filteredProviders,
                 modelType = state.type,
-                onSelect = {
+                onSelectModel = {
                     onSelect(it)
                     dismiss()
                 },
@@ -369,7 +378,7 @@ private fun ColumnScope.ModelList(
     currentModel: Uuid? = null,
     providers: List<ProviderSetting>,
     modelType: ModelType,
-    onSelect: (Model) -> Unit,
+    onSelectModel: (Model) -> Unit,
     onDismiss: () -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -388,6 +397,44 @@ private fun ColumnScope.ModelList(
     }
 
     var searchKeywords by remember { mutableStateOf("") }
+    // quick filter chips (persisted): free, novpn, vision, reasoning, tools
+    var chipFilterPref by rememberSharedPreferenceString("model_list_chip_filters", "")
+    val chipFilters = remember(chipFilterPref) { chipFilterPref.orEmpty().split(",").filter { it.isNotBlank() }.toSet() }
+    fun chipOk(p: ProviderSetting, m: Model): Boolean = chipFilters.all { f ->
+        when (f) {
+            "free" -> m.isFreeVariant || p.meta?.tier.isFreeUsable
+            "novpn" -> p.meta?.worksInIranWithoutVpn == true
+            "vision" -> Modality.IMAGE in m.inputModalities
+            "reasoning" -> ModelAbility.REASONING in m.abilities
+            "tools" -> ModelAbility.TOOL in m.abilities
+            else -> true
+        }
+    }
+    // recently used models (persisted ids, newest first)
+    var recentPref by rememberSharedPreferenceString("model_list_recent_models", "")
+    val recentModels = run {
+        val favIds = favoriteModels.map { it.first.id }.toSet()
+        recentPref.orEmpty().split(",").filter { it.isNotBlank() }.mapNotNull { s ->
+            providers.firstNotNullOfOrNull { p -> p.models.firstOrNull { it.id.toString() == s && it.type == modelType }?.let { it to p } }
+        }.filter { it.first.id !in favIds }.take(5)
+    }
+    val showRecent = searchKeywords.isBlank() && chipFilters.isEmpty() && recentModels.isNotEmpty()
+    val recentOffset = if (showRecent) 1 + recentModels.size else 0
+    val onSelect: (Model) -> Unit = { m ->
+        val id = m.id.toString()
+        recentPref = (listOf(id) + recentPref.orEmpty().split(",").filter { it.isNotBlank() && it != id }).take(8).joinToString(",")
+        onSelectModel(m)
+    }
+    // sort mode persisted in shared prefs: "default" | "quality" | "manual"
+    var sortModePref by rememberSharedPreferenceString("model_list_sort_mode", "default")
+    val sortMode = sortModePref.orEmpty().ifBlank { "default" }
+    val sortByQuality = sortMode == "quality"
+    val sortManual = sortMode == "manual"
+    var sortMenuExpanded by remember { mutableStateOf(false) }
+    var manualOrderPref by rememberSharedPreferenceString("model_list_manual_order", "")
+    var draggingManualOrder by remember { mutableStateOf<List<String>?>(null) }
+    val appContext = LocalContext.current
+    val qualityRanking = remember { ModelQualityRanking.load(appContext) }
 
     // 折叠的供应商（持久化），搜索时全部展开
     var collapsedProvidersPref by rememberSharedPreferenceString("model_list_collapsed_providers", "")
@@ -409,10 +456,10 @@ private fun ColumnScope.ModelList(
         }
     }
 
-    val searchFilteredModelsByProvider = remember(providers, modelType, searchKeywords) {
+    val searchFilteredModelsByProvider = remember(providers, modelType, chipFilters, searchKeywords) {
         providers.associate { provider ->
             provider.id to provider.models.fastFilter {
-                it.type == modelType && it.displayName.contains(searchKeywords, true)
+                it.type == modelType && it.displayName.contains(searchKeywords, true) && chipOk(provider, it)
             }
         }
     }
@@ -423,12 +470,27 @@ private fun ColumnScope.ModelList(
         }
     }
 
+    // sort-by-quality mode: flat list, same model from different providers grouped, unknown scores last
+    val qualityModels = remember(providers, modelType, chipFilters, searchKeywords, sortByQuality, qualityRanking) {
+        if (!sortByQuality) return@remember emptyList()
+        providers.flatMap { provider ->
+            provider.models
+                .fastFilter { it.type == modelType && it.displayName.contains(searchKeywords, true) && chipOk(provider, it) }
+                .map { Triple(provider, it, qualityRanking.score(it.modelId)) }
+        }.sortedWith(
+            compareBy<Triple<ProviderSetting, Model, Double?>> { if (it.third == null) 1 else 0 }
+                .thenByDescending { it.third ?: 0.0 }
+                .thenBy { qualityRanking.canonicalId(it.second.modelId) }
+                .thenBy { it.first.name }
+        )
+    }
+
     // 计算当前选中模型的位置
-    val selectedModelPosition = remember(currentModel, favoriteModels, providers, typeFilteredModelsByProvider) {
+    val selectedModelPosition = remember(currentModel, recentOffset, favoriteModels, providers, typeFilteredModelsByProvider) {
         // 仅用于初始定位，搜索关键词此时为空
         if (currentModel == null) return@remember 0
 
-        var position = 0
+        var position = recentOffset
 
         // 跳过无providers提示
         if (providers.isEmpty()) {
@@ -469,6 +531,22 @@ private fun ColumnScope.ModelList(
         0
     }
 
+    // manual mode: flat list ordered by user-defined order; unknown models appended in default order
+    val manualFullIds = remember(providers, modelType, manualOrderPref, draggingManualOrder) {
+        val all = providers.flatMap { pr -> pr.models.fastFilter { it.type == modelType }.map { it.id.toString() } }
+        val saved = draggingManualOrder ?: manualOrderPref.orEmpty().split(",").filter { it.isNotBlank() }
+        val allSet = all.toSet()
+        val savedKept = saved.filter { it in allSet }
+        savedKept + all.filter { it !in savedKept.toSet() }
+    }
+    val manualModels = remember(providers, modelType, chipFilters, searchKeywords, manualFullIds, sortManual) {
+        if (!sortManual) return@remember emptyList()
+        val byId = providers.flatMap { pr ->
+            pr.models.fastFilter { it.type == modelType && it.displayName.contains(searchKeywords, true) && chipOk(pr, it) }.map { pr to it }
+        }.associateBy { it.second.id.toString() }
+        manualFullIds.mapNotNull { byId[it] }
+    }
+
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemIndex = selectedModelPosition
     )
@@ -481,13 +559,43 @@ private fun ColumnScope.ModelList(
             ids.add(toPos, ids.removeAt(fromPos))
             draggingFavoriteOrder = ids
         }
+        val fk = from.key as? String
+        val tk = to.key as? String
+        if (fk != null && tk != null && fk.startsWith("manual:") && tk.startsWith("manual:")) {
+            val mids = manualFullIds.toMutableList()
+            val f = mids.indexOf(fk.removePrefix("manual:"))
+            val t = mids.indexOf(tk.removePrefix("manual:"))
+            if (f >= 0 && t >= 0) {
+                mids.add(t, mids.removeAt(f))
+                draggingManualOrder = mids
+            }
+        }
+    }
+    val favoriteTail: @Composable (Model) -> Unit = { model ->
+        val favorite = settings.value.favoriteModels.contains(model.id)
+        IconButton(
+            onClick = {
+                coroutineScope.launch {
+                    settingsStore.update { st ->
+                        if (favorite) st.copy(favoriteModels = st.favoriteModels.filter { it != model.id })
+                        else st.copy(favoriteModels = st.favoriteModels + model.id)
+                    }
+                }
+            }
+        ) {
+            if (favorite) {
+                Icon(HeartIcon, contentDescription = null, modifier = Modifier.size(20.dp), tint = MaterialTheme.colorScheme.primary)
+            } else {
+                Icon(imageVector = HugeIcons.Favourite, contentDescription = null, modifier = Modifier.size(20.dp))
+            }
+        }
     }
     val haptic = LocalHapticFeedback.current
 
-    val providerPositions = remember(providers, favoriteModels, visibleModelsByProvider) {
-        var currentIndex = 0
+    val providerPositions = remember(providers, recentOffset, favoriteModels, visibleModelsByProvider) {
+        var currentIndex = recentOffset
         if (providers.isEmpty()) {
-            currentIndex = 1 // no providers item
+            currentIndex += 1 // no providers item
         }
         if (favoriteModels.isNotEmpty()) {
             currentIndex += 1 // favorite header
@@ -527,8 +635,64 @@ private fun ColumnScope.ModelList(
             leadingIcon = {
                 Icon(HugeIcons.Search01, null)
             },
+            trailingIcon = {
+                androidx.compose.foundation.layout.Box {
+                    IconButton(onClick = { sortMenuExpanded = true }) {
+                        Icon(
+                            imageVector = HugeIcons.Sorting01,
+                            contentDescription = stringResource(R.string.model_list_sort),
+                            tint = if (sortMode != "default") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    androidx.compose.material3.DropdownMenu(
+                        expanded = sortMenuExpanded,
+                        onDismissRequest = { sortMenuExpanded = false },
+                    ) {
+                        listOf(
+                            "default" to R.string.model_list_sort_default,
+                            "quality" to R.string.model_list_sort_by_quality,
+                            "manual" to R.string.model_list_sort_manual,
+                        ).forEach { (mode, label) ->
+                            androidx.compose.material3.DropdownMenuItem(
+                                text = { Text(stringResource(label)) },
+                                onClick = {
+                                    sortModePref = mode
+                                    sortMenuExpanded = false
+                                },
+                                leadingIcon = {
+                                    androidx.compose.material3.RadioButton(selected = sortMode == mode, onClick = null)
+                                },
+                            )
+                        }
+                    }
+                }
+            },
             maxLines = 1,
         )
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .horizontalScroll(androidx.compose.foundation.rememberScrollState())
+            .padding(horizontal = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        listOf(
+            "free" to R.string.model_filter_free,
+            "novpn" to R.string.provider_filter_no_vpn,
+            "vision" to R.string.model_filter_vision,
+            "reasoning" to R.string.model_filter_reasoning,
+            "tools" to R.string.model_filter_tools,
+        ).forEach { (key, label) ->
+            androidx.compose.material3.FilterChip(
+                selected = key in chipFilters,
+                onClick = {
+                    chipFilterPref = (if (key in chipFilters) chipFilters - key else chipFilters + key).joinToString(",")
+                },
+                label = { Text(stringResource(label)) },
+            )
+        }
     }
 
     LazyColumn(
@@ -546,6 +710,28 @@ private fun ColumnScope.ModelList(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.extendColors.gray6,
                     modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
+
+        if (showRecent) {
+            item(key = "recent:header") {
+                Text(
+                    text = stringResource(R.string.model_list_recent),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(bottom = 4.dp, top = 8.dp)
+                )
+            }
+            items(items = recentModels, key = { "recent:" + it.first.id.toString() }) { (model, provider) ->
+                ModelItem(
+                    model = model,
+                    onSelect = onSelect,
+                    modifier = Modifier.animateItem(),
+                    providerSetting = provider,
+                    select = currentModel == model.id,
+                    onDismiss = { onDismiss() },
+                    subtitle = provider.name,
                 )
             }
         }
@@ -626,7 +812,84 @@ private fun ColumnScope.ModelList(
             }
         }
 
-        providers.fastForEach { providerSetting ->
+        if (sortByQuality) {
+            item(key = "quality:header") {
+                Text(
+                    text = stringResource(R.string.model_list_sort_by_quality) +
+                        if (qualityRanking.source.isNotBlank()) " · " + stringResource(
+                            R.string.model_list_quality_source, qualityRanking.source, qualityRanking.date
+                        ) else "",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+            items(
+                items = qualityModels,
+                key = { "quality:" + it.second.id.toString() }
+            ) { (provider, model, score) ->
+                ModelItem(
+                    model = model,
+                    onSelect = onSelect,
+                    modifier = Modifier.animateItem(),
+                    providerSetting = provider,
+                    select = currentModel == model.id,
+                    onDismiss = { onDismiss() },
+                    subtitle = provider.name + (score?.let {
+                        " · " + stringResource(R.string.model_list_quality_score, it.toInt().toString())
+                    } ?: ""),
+                    tail = { favoriteTail(model) },
+                )
+            }
+        } else if (sortManual) {
+            item(key = "manual:header") {
+                Text(
+                    text = stringResource(R.string.model_list_sort_manual_hint),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+            }
+            items(
+                items = manualModels,
+                key = { "manual:" + it.second.id.toString() }
+            ) { (provider, model) ->
+                ReorderableItem(
+                    state = reorderableState,
+                    key = "manual:" + model.id.toString()
+                ) { isDragging ->
+                    ModelItem(
+                        model = model,
+                        onSelect = onSelect,
+                        modifier = Modifier
+                            .scale(if (isDragging) 0.95f else 1f)
+                            .animateItem(),
+                        providerSetting = provider,
+                        select = currentModel == model.id,
+                        onDismiss = { onDismiss() },
+                        subtitle = provider.name,
+                        tail = { favoriteTail(model) },
+                        dragHandle = {
+                            Icon(
+                                imageVector = HugeIcons.DragDropHorizontal,
+                                contentDescription = null,
+                                modifier = Modifier.longPressDraggableHandle(
+                                    onDragStarted = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                                    },
+                                    onDragStopped = {
+                                        haptic.performHapticFeedback(HapticFeedbackType.GestureEnd)
+                                        val order = draggingManualOrder ?: return@longPressDraggableHandle
+                                        manualOrderPref = order.joinToString(",")
+                                        draggingManualOrder = null
+                                    }
+                                )
+                            )
+                        }
+                    )
+                }
+            }
+        } else providers.fastForEach { providerSetting ->
             val collapsed = isCollapsed(providerSetting)
             stickyHeader(key = "header:${providerSetting.id}") {
                 Row(
@@ -640,7 +903,7 @@ private fun ColumnScope.ModelList(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
                     Icon(
-                        imageVector = if (collapsed) HugeIcons.ArrowRight01 else HugeIcons.ArrowDown01,
+                        imageVector = if (collapsed) me.rerere.rikkahub.ui.components.ui.endArrowIcon() else HugeIcons.ArrowDown01,
                         contentDescription = null,
                         modifier = Modifier.size(16.dp),
                         tint = MaterialTheme.colorScheme.primary,
@@ -739,7 +1002,7 @@ private fun ColumnScope.ModelList(
                 }
             }
     }
-    if (providers.isNotEmpty()) {
+    if (providers.isNotEmpty() && sortMode == "default") {
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.fillMaxWidth(),
@@ -775,7 +1038,8 @@ private fun ModelItem(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
     tail: @Composable RowScope.() -> Unit = {},
-    dragHandle: @Composable (RowScope.() -> Unit)? = null
+    dragHandle: @Composable (RowScope.() -> Unit)? = null,
+    subtitle: String? = null,
 ) {
     val navController = LocalNavController.current
     val interactionSource = remember { MutableInteractionSource() }
@@ -830,10 +1094,20 @@ private fun ModelItem(
                 ) {
                     Text(
                         text = model.displayName,
-                        style = MaterialTheme.typography.titleSmall,
+                        style = MaterialTheme.typography.titleSmall.copy(textDirection = androidx.compose.ui.text.style.TextDirection.Content),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
+
+                    if (subtitle != null) {
+                        Text(
+                            text = subtitle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
 
                     FlowRow(
                         modifier = Modifier
@@ -846,6 +1120,17 @@ private fun ModelItem(
                         ModelModalityTag(model = model)
 
                         ModelAbilityTag(model = model)
+
+                        if (model.isFreeVariant) {
+                            Tag(type = TagType.SUCCESS) { Text(stringResource(R.string.provider_tier_free)) }
+                        } else providerSetting.meta?.let { meta ->
+                            Tag(type = if (meta.tier == me.rerere.rikkahub.data.datastore.ProviderTier.PAID) TagType.WARNING else TagType.SUCCESS) {
+                                Text(stringResource(meta.tier.labelRes))
+                            }
+                        }
+                        if (model.contextLength in 1 until 1_000_000) {
+                            Tag(type = TagType.INFO) { Text("${model.contextLength / 1000}K") }
+                        }
                     }
                 }
                 tail()
@@ -890,7 +1175,7 @@ fun ModelModalityTag(model: Model) {
             )
         }
         Icon(
-            imageVector = HugeIcons.ArrowRight01,
+            imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
             contentDescription = null,
             modifier = Modifier.size(LocalTextStyle.current.lineHeight.toDp())
         )

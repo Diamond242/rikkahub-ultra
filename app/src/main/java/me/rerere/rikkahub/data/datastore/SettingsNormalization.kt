@@ -2,7 +2,19 @@ package me.rerere.rikkahub.data.datastore
 
 /** 读盘后和每次修改后都要过一遍，保证内存里的设置始终是规整的。 */
 internal fun Settings.normalized(): Settings =
-    withBuiltInDefaults().withoutInvalidReferences().withValuesInRange()
+    withoutRemovedServices().withBuiltInDefaults().withoutInvalidReferences().withValuesInRange()
+
+// RikkaHub Ultra: drop the upstream RikkaHub search service (api.rikka-ai.com) from old settings/backups,
+// keeping the selected search service pointing at the same entry when it still exists.
+internal fun Settings.withoutRemovedServices(): Settings {
+    if (searchServices.none { it is me.rerere.search.SearchServiceOptions.RikkaHubOptions }) return this
+    val selectedId = searchServices.getOrNull(searchServiceSelected)?.id
+    val remaining = searchServices
+        .filterNot { it is me.rerere.search.SearchServiceOptions.RikkaHubOptions }
+        .ifEmpty { listOf(me.rerere.search.SearchServiceOptions.DEFAULT) }
+    val newSelected = remaining.indexOfFirst { it.id == selectedId }.coerceAtLeast(0)
+    return copy(searchServices = remaining, searchServiceSelected = newSelected)
+}
 
 // 补齐缺失的内置提供商/助手/TTS，内置提供商的描述信息始终以代码里的为准
 internal fun Settings.withBuiltInDefaults(): Settings {
