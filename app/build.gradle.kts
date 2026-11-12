@@ -28,9 +28,9 @@ android {
         applicationId = "top.vahid.rikkahubultra"
         minSdk = 26
         targetSdk = 37
-        versionCode = 194
+        versionCode = 195
         // <upstream version>-ultra.<fork release>; GitHub release tags must be v<versionName> for the update checker
-        versionName = "3.1.1-ultra.1"
+        versionName = "3.1.1-ultra.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 

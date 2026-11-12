@@ -7,6 +7,11 @@ GitHub release tags use the form `v<versionName>` (for example `v3.1.1-ultra.1`)
 یادداشت‌های انتشار **RikkaHub Ultra**. این فایل در «تنظیمات › درباره › یادداشت‌های انتشار» نمایش داده می‌شود.
 
 <!-- lang:en -->
+## 3.1.1-ultra.2
+
+- Fixed a garbled line in the Persian release notes.
+- Release builds are now signed with the permanent RikkaHub Ultra key.
+
 ## 3.1.1-ultra.1
 
 First release of the fork, based on RikkaHub 3.1.1.
@@ -37,6 +42,11 @@ First release of the fork, based on RikkaHub 3.1.1.
 - Named built-in assistants (Simple / Smart, Smart is the default) with an info button; visible delete action for assistants.
 
 <!-- lang:fa -->
+## ۳.۱.۱-ultra.2
+
+- رفع خطای نمایش یک خط خراب در یادداشت‌های انتشار فارسی.
+- نسخه‌های انتشار اکنون با کلید دائمی RikkaHub Ultra امضا می‌شوند.
+
 ## ۳.۱.۱-ultra.1
 
 نخستین انتشار این نسخه، بر پایهٔ RikkaHub 3.1.1.
