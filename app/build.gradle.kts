@@ -79,6 +79,10 @@ android {
     buildTypes {
         release {
             signingConfig = signingConfigs.getByName("release")
+            // Firebase is disabled until we have our own project (docs/TODO.md): never upload mapping files
+            configure<com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension> {
+                mappingFileUploadEnabled = false
+            }
             optimization {
                 enable = true
             }

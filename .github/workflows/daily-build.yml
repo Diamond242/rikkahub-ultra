@@ -80,16 +80,30 @@ jobs:
             ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+      # Secrets (Settings > Secrets and variables > Actions):
+      #   KEY_BASE64           base64 of the release keystore (.jks)
+      #   SIGNING_CONFIG       local.properties lines: storeFile=app.key, storePassword=..., keyAlias=..., keyPassword=...
+      #   GOOGLE_SERVICES_JSON optional; without it the placeholder config is used (Firebase stays disabled, docs/TODO.md)
       - name: Prepare build files
+        env:
+          KEY_BASE64: ${{ secrets.KEY_BASE64 }}
+          SIGNING_CONFIG: ${{ secrets.SIGNING_CONFIG }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
         run: |
-          # decode the base64 encoded keystore
-          echo "${{ secrets.KEY_BASE64 }}" | base64 -d > app/app.key
-
+          if [ -z "$KEY_BASE64" ] || [ -z "$SIGNING_CONFIG" ]; then
+            echo "::error::KEY_BASE64 and SIGNING_CONFIG secrets are required to sign the APKs"
+            exit 1
+          fi
+          # decode the base64 encoded keystore (storeFile=app.key resolves to app/app.key)
+          printf '%s' "$KEY_BASE64" | base64 -d > app/app.key
           # write the signing config to local.properties
-          echo "${{ secrets.SIGNING_CONFIG }}" > local.properties
-
-          # write the Google Services config
-          echo '${{ secrets.GOOGLE_SERVICES_JSON }}' > app/google-services.json
+          printf '%s\n' "$SIGNING_CONFIG" > local.properties
+          # Google Services config: our own project once it exists, otherwise the placeholder
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          else
+            cp app/google-services.placeholder.json app/google-services.json
+          fi
 
       - name: Gradle Build
         run: |
@@ -113,3 +127,7 @@ jobs:
           files: |
             app/build/outputs/apk/github/release/*.apk
             app/build/outputs/mapping/githubRelease/mapping.txt
+
+      - name: Remove signing files
+        if: always()
+        run: rm -f app/app.key local.properties
