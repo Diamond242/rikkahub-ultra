@@ -119,6 +119,7 @@ jobs:
           tag_name: nightly            # fixed tag: every run replaces the same "latest nightly build"
           name: Nightly Build
           prerelease: true
+          make_latest: false     # never replaces the official "latest" release used by the in-app update check
           body: |
             Automatic nightly build (commit `${{ github.sha }}`)
 

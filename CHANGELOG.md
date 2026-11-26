@@ -7,6 +7,16 @@ GitHub release tags use the form `v<versionName>` (for example `v3.1.1-ultra.1`)
 یادداشت‌های انتشار **RikkaHub Ultra**. این فایل در «تنظیمات › درباره › یادداشت‌های انتشار» نمایش داده می‌شود.
 
 <!-- lang:en -->
+## 3.1.1-ultra.3
+
+**Independence from upstream**
+- Update checks read only this repository's GitHub releases. Versions like `3.1.1-ultra.3` are compared correctly (newer than `3.1.1`, older than `3.1.2`), and when GitHub's API rate limit is hit the app reads the public release page instead of showing an error.
+- Firebase Analytics and Crashlytics are turned off: the app collects and sends no usage or crash data.
+- Removed the built-in providers that carried upstream's affiliate links (APIMart, SuiXiang, MaruCode, NaAPI). If you had set one up with a key or models, it stays in your list as a normal custom provider.
+- The app's own link scheme is now `rikkahub-ultra://`, so it no longer clashes with the original RikkaHub.
+- MCP servers with OAuth sign-in now see the app as "RikkaHub Ultra"; its client information is hosted by this project.
+- Cleanup: removed unused Afdian, QQ group and Discord leftovers.
+
 ## 3.1.1-ultra.2
 
 - Fixed a garbled line in the Persian release notes.
@@ -42,6 +52,16 @@ First release of the fork, based on RikkaHub 3.1.1.
 - Named built-in assistants (Simple / Smart, Smart is the default) with an info button; visible delete action for assistants.
 
 <!-- lang:fa -->
+## ۳.۱.۱-ultra.3
+
+**استقلال از نسخهٔ اصلی**
+- بررسی به‌روزرسانی فقط از انتشارهای گیت‌هاب همین مخزن انجام می‌شود. نسخه‌هایی مثل `3.1.1-ultra.3` درست مقایسه می‌شوند (جدیدتر از `3.1.1` و قدیمی‌تر از `3.1.2`). اگر سقف درخواست‌های API گیت‌هاب پر شود، برنامه به‌جای نمایش خطا، صفحهٔ عمومی انتشار را می‌خواند.
+- Firebase Analytics و Crashlytics خاموش شدند. برنامه هیچ دادهٔ استفاده یا گزارش خطایی جمع نمی‌کند و نمی‌فرستد.
+- ارائه‌دهنده‌های داخلی که لینک کمیسیون نسخهٔ اصلی را داشتند حذف شدند (APIMart، SuiXiang، MaruCode، NaAPI). اگر یکی از آن‌ها را با کلید یا مدل تنظیم کرده بودید، به‌صورت ارائه‌دهندهٔ سفارشی در فهرستتان می‌ماند.
+- طرح لینک اختصاصی برنامه اکنون `rikkahub-ultra://` است و دیگر با RikkaHub اصلی تداخل ندارد.
+- سرورهای MCP که ورود OAuth دارند، اکنون برنامه را با نام «RikkaHub Ultra» می‌شناسند. اطلاعات کلاینت روی سایت خود پروژه میزبانی می‌شود.
+- پاک‌سازی: باقی‌ماندهٔ بی‌استفادهٔ Afdian، گروه QQ و Discord حذف شد.
+
 ## ۳.۱.۱-ultra.2
 
 - رفع خطای نمایش یک خط خراب در یادداشت‌های انتشار فارسی.

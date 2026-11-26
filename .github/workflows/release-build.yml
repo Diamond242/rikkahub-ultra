@@ -1,0 +1,98 @@
+name: Release Build
+
+# Builds the signed release APKs for an official release and uploads them as a workflow artifact.
+# It does not publish anything: the maintainer downloads the artifact, verifies it and creates the
+# GitHub release (tag v<versionName>, marked latest) by hand.
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: recursive # fetch submodules
+
+      # Same JetBrains Runtime 21 that ships with Android Studio
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'jetbrains'
+          java-version: '21'
+        env:
+          # the JetBrains installer queries the GitHub API; the token avoids rate limits
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # preBuild of the web module runs `pnpm run build` for the web UI, so Node and pnpm are required
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: web-ui/pnpm-lock.yaml
+
+      # the Gradle buildWebUi task only builds, so install the web UI dependencies here
+      - name: Install web-ui dependencies
+        working-directory: web-ui
+        run: pnpm install --frozen-lockfile
+
+      - name: Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+
+      # Secrets (Settings > Secrets and variables > Actions):
+      #   KEY_BASE64           base64 of the release keystore (.jks)
+      #   SIGNING_CONFIG       local.properties lines: storeFile=app.key, storePassword=..., keyAlias=..., keyPassword=...
+      #   GOOGLE_SERVICES_JSON optional; without it the placeholder config is used (Firebase stays disabled, docs/TODO.md)
+      - name: Prepare build files
+        env:
+          KEY_BASE64: ${{ secrets.KEY_BASE64 }}
+          SIGNING_CONFIG: ${{ secrets.SIGNING_CONFIG }}
+          GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: |
+          if [ -z "$KEY_BASE64" ] || [ -z "$SIGNING_CONFIG" ]; then
+            echo "::error::KEY_BASE64 and SIGNING_CONFIG secrets are required to sign the APKs"
+            exit 1
+          fi
+          # decode the base64 encoded keystore (storeFile=app.key resolves to app/app.key)
+          printf '%s' "$KEY_BASE64" | base64 -d > app/app.key
+          # write the signing config to local.properties
+          printf '%s\n' "$SIGNING_CONFIG" > local.properties
+          # Google Services config: our own project once it exists, otherwise the placeholder
+          if [ -n "$GOOGLE_SERVICES_JSON" ]; then
+            printf '%s' "$GOOGLE_SERVICES_JSON" > app/google-services.json
+          else
+            cp app/google-services.placeholder.json app/google-services.json
+          fi
+
+      - name: Gradle Build
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleGithubRelease
+
+      - name: Upload signed APKs
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-apks
+          path: |
+            app/build/outputs/apk/github/release/*.apk
+            app/build/outputs/mapping/githubRelease/mapping.txt
+          retention-days: 14
+
+      - name: Remove signing files
+        if: always()
+        run: rm -f app/app.key local.properties
