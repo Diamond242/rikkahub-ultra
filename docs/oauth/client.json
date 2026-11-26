@@ -1,0 +1,9 @@
+{
+  "client_id": "https://diamond242.github.io/rikkahub-ultra/oauth/client.json",
+  "client_name": "RikkaHub Ultra",
+  "client_uri": "https://github.com/Diamond242/rikkahub-ultra",
+  "redirect_uris": ["http://localhost:52134/oauth/callback"],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none"
+}
