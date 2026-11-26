@@ -7,6 +7,8 @@ object AppLinks {
     const val GITHUB = "https://github.com/$GITHUB_OWNER/$GITHUB_REPO"
     const val LICENSE = "$GITHUB/blob/master/LICENSE"
     const val RELEASES = "$GITHUB/releases"
+    /** Redirects to /releases/tag/<tag>; used when the REST API is rate limited (60 requests/hour per IP). */
+    const val LATEST_RELEASE_PAGE = "$GITHUB/releases/latest"
     const val LATEST_RELEASE_API = "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
     const val RAW_BASE = "https://raw.githubusercontent.com/$GITHUB_OWNER/$GITHUB_REPO/master"
     const val SPONSORS_JSON = "$RAW_BASE/sponsors.json"

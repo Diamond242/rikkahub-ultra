@@ -60,6 +60,12 @@ class UpdateChecker(
                         response.isSuccessful -> json.decodeFromString<GithubRelease>(response.body.string()).toUpdateInfo()
                         // No release published yet: treat as "up to date" instead of showing an error card.
                         response.code == 404 -> UpdateInfo.upToDate()
+                        // GitHub's REST API allows only 60 requests/hour per IP (shared VPN IPs hit this often):
+                        // fall back to the public release page of our own repo instead of showing an error.
+                        response.code == 403 || response.code == 429 -> {
+                            response.close()
+                            checkViaReleasePage()
+                        }
                         else -> throw Exception("HTTP ${response.code}")
                     }
                 } catch (e: Exception) {
@@ -70,6 +76,30 @@ class UpdateChecker(
     }.catch {
         emit(UiState.Error(it))
     }.flowOn(Dispatchers.IO)
+
+    /** Reads the tag from the redirect of [AppLinks.LATEST_RELEASE_PAGE] (always our repo, never upstream). */
+    private suspend fun checkViaReleasePage(): UpdateInfo {
+        val response = client.newCall(
+            Request.Builder()
+                .url(AppLinks.LATEST_RELEASE_PAGE)
+                .head()
+                .addHeader("User-Agent", "RikkaHub-Ultra ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}")
+                .build()
+        ).await()
+        val finalUrl = response.request.url.toString()
+        val code = response.code
+        response.close()
+        if (code == 404) return UpdateInfo.upToDate()
+        if (code !in 200..399) throw Exception("HTTP $code")
+        val tag = releaseTagFromUrl(finalUrl) ?: return UpdateInfo.upToDate()
+        return UpdateInfo(
+            version = normalizeTag(tag),
+            publishedAt = "",
+            changelog = "",
+            downloads = emptyList(),
+            pageUrl = finalUrl,
+        )
+    }
 
     fun downloadUpdate(context: Context, download: UpdateDownload) {
         runCatching {
@@ -132,8 +162,20 @@ internal data class GithubAsset(
     val size: Long = 0,
 )
 
+/** "v3.1.1-ultra.2" -> "3.1.1-ultra.2" */
+internal fun normalizeTag(tag: String): String = tag.trim().removePrefix("v").removePrefix("V")
+
+/** Extracts the tag from ".../<owner>/<repo>/releases/tag/<tag>" of OUR repo only; null for anything else. */
+internal fun releaseTagFromUrl(url: String): String? {
+    val prefix = "${AppLinks.GITHUB}/releases/tag/"
+    if (!url.startsWith(prefix, ignoreCase = true)) return null
+    return url.substring(prefix.length).substringBefore('?').substringBefore('#').trimEnd('/')
+        .let { java.net.URLDecoder.decode(it, "UTF-8") }
+        .takeIf { it.isNotBlank() && '/' !in it }
+}
+
 internal fun GithubRelease.toUpdateInfo(): UpdateInfo = UpdateInfo(
-    version = tagName.trim().removePrefix("v").removePrefix("V"),
+    version = normalizeTag(tagName),
     publishedAt = publishedAt.orEmpty(),
     changelog = body.orEmpty(),
     // APKs only; arm64-v8a first because almost every modern phone uses it
@@ -163,7 +205,7 @@ value class Version(val value: String) : Comparable<Version> {
 
     private fun parse(): ParsedVersion {
         // 去掉 build metadata（+号后面的部分）
-        val withoutBuild = value.split("+").first()
+        val withoutBuild = value.trim().removePrefix("v").removePrefix("V").split("+").first()
         // 分离主版本号和预发布标识符
         val hyphenIndex = withoutBuild.indexOf('-')
         val (coreStr, prereleaseStr) = if (hyphenIndex >= 0) {
@@ -172,8 +214,16 @@ value class Version(val value: String) : Comparable<Version> {
             withoutBuild to null
         }
         val core = coreStr.split(".").map { it.toIntOrNull() ?: 0 }
-        val prerelease = prereleaseStr?.split(".")
-        return ParsedVersion(core, prerelease)
+        var prerelease = prereleaseStr?.split(".")
+        // RikkaHub Ultra: "<upstream>-ultra.N" is a fork release built ON TOP of <upstream>, so it is not a
+        // SemVer prerelease: 3.1.1-rc.1 < 3.1.1 < 3.1.1-ultra.1 < 3.1.1-ultra.2 < 3.1.2
+        var fork = 0
+        if (prerelease != null && prerelease.first().equals(FORK_TAG, ignoreCase = true)) {
+            val n = prerelease.getOrNull(1)?.toIntOrNull()
+            fork = n ?: 1
+            prerelease = prerelease.drop(if (n != null) 2 else 1).ifEmpty { null }
+        }
+        return ParsedVersion(core, prerelease, fork)
     }
 
     override fun compareTo(other: Version): Int {
@@ -188,6 +238,9 @@ value class Version(val value: String) : Comparable<Version> {
             if (ap != bp) return ap.compareTo(bp)
         }
 
+        // RikkaHub Ultra: same upstream version -> higher fork release wins (plain upstream = 0)
+        if (a.fork != b.fork) return a.fork.compareTo(b.fork)
+
         // 主版本号相同时比较预发布标识符
         // 有预发布标识符的版本优先级低于没有的：1.0.0-alpha < 1.0.0
         return when {
@@ -199,6 +252,8 @@ value class Version(val value: String) : Comparable<Version> {
     }
 
     companion object {
+        private const val FORK_TAG = "ultra"
+
         fun compare(version1: String, version2: String): Int {
             return Version(version1).compareTo(Version(version2))
         }
@@ -232,6 +287,7 @@ value class Version(val value: String) : Comparable<Version> {
 private data class ParsedVersion(
     val core: List<Int>,
     val prerelease: List<String>?,
+    val fork: Int = 0,
 )
 
 // 扩展操作符函数，使比较更直观
