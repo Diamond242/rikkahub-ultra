@@ -7,7 +7,7 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 class QRCodeDecoderTest {
-    private val content = "rikkahub://provider/eyJ0eXBlIjoib3BlbmFpIiwibmFtZSI6IuS4reaWhyJ9"
+    private val content = "rikkahub-ultra://provider/eyJ0eXBlIjoib3BlbmFpIiwibmFtZSI6IuS4reaWhyJ9"
 
     /** 生成二维码的灰度帧，四周留白并在每行末尾加 [padding] 字节填充，模拟相机帧的 rowStride */
     private fun frame(width: Int, height: Int, padding: Int): ByteArray {

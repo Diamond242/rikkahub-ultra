@@ -9,8 +9,8 @@
 | دسته | تعداد |
 |---|---|
 | انواع پروتکل LLM (OpenAI Chat/Responses، Gemini/Vertex/Interactions، Anthropic، ChatGPT-OAuth، Grok-OAuth) | ۵ نوع / ۸ حالت API |
-| ارائه‌دهندگان LLM پیش‌فرض (DefaultProviders) | ۲۰ |
-| ارائه‌دهندگان پیشنهادی (RecommendedProviders؛ ۳ مورد تکراری) | ۴ (۱ مورد جدید: NaAPI) |
+| ارائه‌دهندگان LLM پیش‌فرض (DefaultProviders) | ۱۷ |
+| ارائه‌دهندگان پیشنهادی (RecommendedProviders) | ۰ (موارد دارای لینک کمیسیون حذف شدند) |
 | حساب‌های OAuth برای LLM | ۲ (ChatGPT، Grok) |
 | موتورهای جستجو و خواندن وب | ۲۰ |
 | ارائه‌دهندگان TTS (تبدیل متن به گفتار) | ۱۲ |
@@ -43,25 +43,22 @@
 | 1 | OpenAI | OpenAI | `https://api.openai.com/v1` | API key | نامشخص | https://platform.openai.com/api-keys | IP ایران مسدود است |
 | 2 | Gemini | Google | `https://generativelanguage.googleapis.com/v1beta` | API key | نامشخص (در کد نیامده) | https://aistudio.google.com/apikey | IP ایران مسدود است |
 | 3 | AiHubMix | OpenAI | `https://aihubmix.com/v1` | API key | نامشخص | https://aihubmix.com | واسط؛ احتمالاً قابل دسترس |
-| 4 | APIMart | OpenAI | `https://api.apimart.ai/v1` | API key | نامشخص | https://apimart.ai | واسط |
-| 5 | SiliconFlow (硅基流动) | OpenAI | `https://api.siliconflow.cn/v1` | API key | نامشخص | https://cloud.siliconflow.cn/account/ak | شماره چینی لازم است |
-| 6 | DeepSeek | OpenAI | `https://api.deepseek.com/v1` | API key | نامشخص | https://platform.deepseek.com/api_keys | پرداخت دشوار است |
-| 7 | Moonshot / Kimi (月之暗面) | OpenAI | `https://api.moonshot.cn/v1` | API key | نامشخص | https://platform.moonshot.cn/console/api-keys | شماره چینی لازم است |
-| 8 | OpenRouter | OpenAI | `https://openrouter.ai/api/v1` | API key | نامشخص | https://openrouter.ai/keys | پرداخت با کریپتو ممکن است |
-| 9 | Vercel AI Gateway | OpenAI | `https://ai-gateway.vercel.sh/v1` | API key | نامشخص | https://vercel.com/dashboard | بررسی شود |
-| 10 | Alibaba Bailian (阿里云百炼) | OpenAI | `https://dashscope.aliyuncs.com/compatible-mode/v1` | API key | نامشخص | https://bailian.console.aliyun.com | احراز هویت چینی لازم است |
-| 11 | Volcengine Ark (火山引擎) | OpenAI | `https://ark.cn-beijing.volces.com/api/v3` | API key | نامشخص | https://console.volcengine.com/ark | احراز هویت چینی لازم است |
-| 12 | Zhipu (智谱) | OpenAI | `https://open.bigmodel.cn/api/paas/v4` | API key | نامشخص | https://bigmodel.cn/usercenter/proj-mgmt/apikeys | بررسی شود |
-| 13 | StepFun (阶跃星辰) | OpenAI | `https://api.stepfun.com/v1` | API key | نامشخص | https://platform.stepfun.com | بررسی شود |
-| 14 | 302.AI | OpenAI | `https://api.302.ai/v1` | API key | نامشخص | https://302.ai | واسط |
-| 15 | Tencent Hunyuan (腾讯) | OpenAI | `https://tokenhub.tencentmaas.com/v1` | API key | نامشخص | https://console.cloud.tencent.com/hunyuan | بررسی شود |
-| 16 | xAI | OpenAI | `https://api.x.ai/v1` | API key | نامشخص | https://console.x.ai/ | IP ایران احتمالاً مسدود است |
-| 17 | SuiXiang AI Gateway (随想AI网关) | OpenAI | `https://sui-xiang.com/v1` | API key | نامشخص | https://sui-xiang.com | واسط |
-| 18 | MaruCode | OpenAI | `https://api.muteki.site/v1` | API key | نامشخص | https://api.muteki.site | واسط |
-| 19 | MiniMax | **Anthropic** | `https://api.minimaxi.com/anthropic/v1` | API key | نامشخص | https://platform.minimaxi.com | بررسی شود |
-| 20 | Xiaomi MiMo | OpenAI | `https://api.xiaomimimo.com/v1` | API key | نامشخص | https://platform.xiaomimimo.com | بررسی شود |
+| 4 | SiliconFlow (硅基流动) | OpenAI | `https://api.siliconflow.cn/v1` | API key | نامشخص | https://cloud.siliconflow.cn/account/ak | شماره چینی لازم است |
+| 5 | DeepSeek | OpenAI | `https://api.deepseek.com/v1` | API key | نامشخص | https://platform.deepseek.com/api_keys | پرداخت دشوار است |
+| 6 | Moonshot / Kimi (月之暗面) | OpenAI | `https://api.moonshot.cn/v1` | API key | نامشخص | https://platform.moonshot.cn/console/api-keys | شماره چینی لازم است |
+| 7 | OpenRouter | OpenAI | `https://openrouter.ai/api/v1` | API key | نامشخص | https://openrouter.ai/keys | پرداخت با کریپتو ممکن است |
+| 8 | Vercel AI Gateway | OpenAI | `https://ai-gateway.vercel.sh/v1` | API key | نامشخص | https://vercel.com/dashboard | بررسی شود |
+| 9 | Alibaba Bailian (阿里云百炼) | OpenAI | `https://dashscope.aliyuncs.com/compatible-mode/v1` | API key | نامشخص | https://bailian.console.aliyun.com | احراز هویت چینی لازم است |
+| 10 | Volcengine Ark (火山引擎) | OpenAI | `https://ark.cn-beijing.volces.com/api/v3` | API key | نامشخص | https://console.volcengine.com/ark | احراز هویت چینی لازم است |
+| 11 | Zhipu (智谱) | OpenAI | `https://open.bigmodel.cn/api/paas/v4` | API key | نامشخص | https://bigmodel.cn/usercenter/proj-mgmt/apikeys | بررسی شود |
+| 12 | StepFun (阶跃星辰) | OpenAI | `https://api.stepfun.com/v1` | API key | نامشخص | https://platform.stepfun.com | بررسی شود |
+| 13 | 302.AI | OpenAI | `https://api.302.ai/v1` | API key | نامشخص | https://302.ai | واسط |
+| 14 | Tencent Hunyuan (腾讯) | OpenAI | `https://tokenhub.tencentmaas.com/v1` | API key | نامشخص | https://console.cloud.tencent.com/hunyuan | بررسی شود |
+| 15 | xAI | OpenAI | `https://api.x.ai/v1` | API key | نامشخص | https://console.x.ai/ | IP ایران احتمالاً مسدود است |
+| 16 | MiniMax | **Anthropic** | `https://api.minimaxi.com/anthropic/v1` | API key | نامشخص | https://platform.minimaxi.com | بررسی شود |
+| 17 | Xiaomi MiMo | OpenAI | `https://api.xiaomimimo.com/v1` | API key | نامشخص | https://platform.xiaomimimo.com | بررسی شود |
 
-ارائه‌دهندگان پیشنهادی (`RecommendedProviders.kt`): APIMart، SuiXiang، MaruCode و **NaAPI (钠API)** با آدرس `https://naapi.cc/v1`. همه از فرمت OpenAI استفاده می‌کنند.
+ارائه‌دهندگان پیشنهادی (`RecommendedProviders.kt`): فعلاً خالی است. APIMart، SuiXiang، MaruCode و NaAPI به‌خاطر لینک‌های کمیسیون (affiliate) نسخهٔ اصلی حذف شدند (۱۴۰۵/۰۹/۰۵). قرار است بعداً با حساب‌های کمیسیون خودمان دوباره اضافه شوند (docs/TODO.md).
 
 توانایی‌ها: در همهٔ این ارائه‌دهندگان، توانایی هر مدل (بینایی، ابزار، reasoning، تصویر، embeddings) در سطح مدل تعیین می‌شود. این اطلاعات از `models.dev` یا دستی تنظیم می‌شود و ارائه‌دهنده آن را تعیین نمی‌کند.
 
@@ -213,7 +210,7 @@
 | OpenAI / xAI / Anthropic | ثبت‌نام، Billing، Create key | Billing، API keys، کپی کلید |
 | ChatGPT / Grok (ورود با حساب) | دکمهٔ ورود، مرورگر یا کد دستگاه، تأیید | صفحهٔ ورود در برنامه، صفحهٔ تأیید، کد دستگاه |
 | DeepSeek / Moonshot / Zhipu / SiliconFlow / Bailian / Volcengine / StepFun / MiniMax / MiMo / Hunyuan | ثبت‌نام (احتمالاً شماره چینی)، احراز هویت، ساخت کلید | کنسول هر سرویس (ترجمهٔ برچسب‌های چینی) |
-| واسط‌های چینی (AiHubMix، APIMart، 302.AI، SuiXiang، MaruCode، NaAPI) | ثبت‌نام با ایمیل، شارژ، توکن | صفحهٔ توکن، شارژ |
+| واسط‌های چینی (AiHubMix، 302.AI) | ثبت‌نام با ایمیل، شارژ، توکن | صفحهٔ توکن، شارژ |
 | Groq | console.groq.com، Create API Key | صفحهٔ Keys، تنظیم TTS در برنامه |
 | جستجو (Tavily، Exa، Brave، Serper، Jina، Firecrawl، LinkUp، Perplexity، Ollama، Tinyfish) | ثبت‌نام و کپی کلید | داشبورد هر سرویس، صفحهٔ تنظیمات جستجو در برنامه |
 | SearXNG | راه‌اندازی خودمیزبان (Docker) یا نمونهٔ عمومی، فعال کردن فرمت JSON | فایل settings.yml، فرم برنامه |

@@ -116,7 +116,7 @@
 
         <data
           android:host="shortcut"
-          android:scheme="rikkahub" />
+          android:scheme="rikkahub-ultra" />
       </intent-filter>
     </activity>
     <service

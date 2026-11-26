@@ -303,7 +303,6 @@
   <string name="deep_thinking">深度思考</string>
   <string name="deep_thinking_seconds">思考了 %1$.1f 秒</string>
   <string name="delete">刪除</string>
-  <string name="donate_page_afdian_desc">適用於🇨🇳用戶</string>
   <string name="donate_page_donation_methods">贊助方式</string>
   <string name="donate_page_kofi_desc">供全球用戶使用</string>
   <string name="donate_page_sponsor_list">贊助用戶列表</string>
@@ -1810,7 +1809,6 @@
     <string name="share_sheet_title">共享你的LLM模型</string>
     <string name="provider_discount_10_percent" formatted="false">10% 優惠</string>
     <string name="asr_hotwords_placeholder">熱詞1, 熱詞2, 熱詞3</string>
-    <string name="donate_afdian">愛發電</string>
     <string name="update_downloading_package">正在下載更新包...</string>
     <string name="backup_restore_failed_kept_data">備份恢復失敗，已保留原資料。請重新匯入備份。</string>
     <string name="ocr_recognizing_image">正在識別圖片...</string>
@@ -1834,16 +1832,7 @@
     <string name="provider_label_top_up">充值：</string>
     <string name="provider_aihubmix_desc">提供 OpenAI、Claude、Google Gemini 等主流模型的高併發和穩定服務</string>
     <string name="provider_aihubmix_short">支援gpt, claude, gemini等200+模型</string>
-    <string name="provider_apimart_desc">APIMart 是專注 AI 圖片/影片生成的低價 API 平臺，GPT-Image-2 低至 $0.006/張，1 美元可出圖 160+ 張。圖片、影片一套非同步 API 通吃，提交任務拿 ID、回撥取結果，跑批萬張不超時、換模型不改程式碼。按量付費、無月費。</string>
-    <string name="provider_apimart_signup">透過此註冊連結註冊即可開用</string>
-    <string name="provider_apimart_short">AI 圖片/影片生成，GPT-Image-2 低至 $0.006/張</string>
     <string name="provider_302ai_desc">企業級AI服務, 官網：</string>
-    <string name="provider_suixiang_desc">可靠高效的 API 中繼服務，提供 Claude、Codex、Gemini 等中繼服務。注重隱私·無資料倒賣·無模型摻水，充值額度 1:1，按量付費。多線路冗餘、跨區域容災、自動故障切換，長鏈路 SSE 不中斷。</string>
-    <string name="provider_suixiang_short">Claude、Codex、Gemini 等中繼服務，1:1 充值</string>
-    <string name="provider_marucode_desc">MaruCode 是一家偶爾做做慈善的小破站 API，自營號池，主要提供 Codex、Claude Code、GPT Image 等主流模型，支援 Websocket 協議，明碼標價(Codex 0.25x, CC 1.5x)，透明匯率(1:1)。</string>
-    <string name="provider_marucode_signup_bonus">新使用者註冊送 2 刀</string>
-    <string name="provider_marucode_image_studio">生圖工作臺🖼️</string>
-    <string name="provider_naapi_desc">鈉API（naapi.cc）是 OpenAI 相容的 LLM 閘道器，以優惠價格提供 OpenAI、Anthropic、Google 等 300+ 模型訪問</string>
   <string name="setting_language_title">&#x8a9e;&#x8a00;</string>
   <string name="setting_language_follow_system">&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;</string>
   <string name="setting_language_desc">&#x9078;&#x64c7;&#x61c9;&#x7528;&#x7a0b;&#x5f0f;&#x8a9e;&#x8a00;&#xff0c;&#x9810;&#x8a2d;&#x8ddf;&#x96a8;&#x7cfb;&#x7d71;&#x8a9e;&#x8a00;</string>

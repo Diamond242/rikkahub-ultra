@@ -66,30 +66,6 @@ val DEFAULT_PROVIDERS = listOf(
         },
     ),
     ProviderSetting.OpenAI(
-        id = Uuid.parse("2a05506f-3a59-450a-a493-33a82bc85a81"),
-        name = "APIMart",
-        baseUrl = "https://api.apimart.ai/v1",
-        apiKey = "",
-        enabled = false,
-        builtIn = true,
-        description = {
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.provider_apimart_desc))
-                    appendLine()
-                    withLink(LinkAnnotation.Url("https://go.apimart.ai/gh-rikkahub")) {
-                        withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append(stringResource(R.string.provider_apimart_signup))
-                        }
-                    }
-                }
-            )
-        },
-        shortDescription = {
-            Text(stringResource(R.string.provider_apimart_short))
-        },
-    ),
-    ProviderSetting.OpenAI(
         id = Uuid.parse("56a94d29-c88b-41c5-8e09-38a7612d6cf8"),
         name = "硅基流动",
         baseUrl = "https://api.siliconflow.cn/v1",
@@ -221,60 +197,6 @@ val DEFAULT_PROVIDERS = listOf(
         apiKey = "",
         enabled = false,
         builtIn = true,
-        useResponseApi = true,
-    ),
-    ProviderSetting.OpenAI(
-        id = Uuid.parse("aecf04fd-cb5c-4582-aed2-e8bf393923fd"),
-        name = "随想AI网关",
-        baseUrl = "https://sui-xiang.com/v1",
-        apiKey = "",
-        enabled = false,
-        builtIn = true,
-        description = {
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.provider_suixiang_desc) + "\n")
-                    append(stringResource(R.string.provider_label_website))
-                    withLink(LinkAnnotation.Url("https://sui-xiang.com")) {
-                        withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append("https://sui-xiang.com")
-                        }
-                    }
-                }
-            )
-        },
-        shortDescription = {
-            Text(
-                text = stringResource(R.string.provider_suixiang_short)
-            )
-        },
-    ),
-    ProviderSetting.OpenAI(
-        id = Uuid.parse("afbc54ad-807e-4455-9594-7d7a546356ad"),
-        name = "MaruCode",
-        baseUrl = "https://api.muteki.site/v1",
-        apiKey = "",
-        enabled = false,
-        builtIn = true,
-        description = {
-            Text(
-                text = buildAnnotatedString {
-                    append(stringResource(R.string.provider_marucode_desc))
-                    appendLine()
-                    withLink(LinkAnnotation.Url("https://api.muteki.site/register?aff=Rikkahub&promo=Rikkahub")) {
-                        withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append(stringResource(R.string.provider_marucode_signup_bonus))
-                        }
-                    }
-                    appendLine()
-                    withLink(LinkAnnotation.Url("https://images-2.muteki.site")) {
-                        withStyle(SpanStyle(MaterialTheme.colorScheme.primary)) {
-                            append(stringResource(R.string.provider_marucode_image_studio))
-                        }
-                    }
-                }
-            )
-        },
         useResponseApi = true,
     ),
     ProviderSetting.Claude(

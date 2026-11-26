@@ -306,7 +306,6 @@
   <string name="deep_thinking">تفکر عمیق</string>
   <string name="deep_thinking_seconds">%1$.1f ثانیه فکر کرد</string>
   <string name="delete">حذف</string>
-  <string name="donate_page_afdian_desc">برای کاربران 🇨🇳</string>
   <string name="donate_page_donation_methods">روش‌های حمایت مالی</string>
   <string name="donate_page_kofi_desc">برای کاربران سراسر جهان</string>
   <string name="donate_page_sponsor_list">فهرست حامیان</string>
@@ -1813,7 +1812,6 @@
     <string name="share_sheet_title">مدل LLM خود را به اشتراک بگذارید</string>
     <string name="provider_discount_10_percent">۱۰٪ تخفیف</string>
     <string name="asr_hotwords_placeholder">واژهٔ کلیدی ۱، واژهٔ کلیدی ۲، واژهٔ کلیدی ۳</string>
-    <string name="donate_afdian">Afdian (爱发电)</string>
     <string name="update_downloading_package">در حال دانلود بستهٔ به‌روزرسانی...</string>
     <string name="backup_restore_failed_kept_data">بازیابی پشتیبان ناموفق بود. داده‌های قبلی حفظ شد. لطفاً پشتیبان را دوباره وارد کنید.</string>
     <string name="ocr_recognizing_image">در حال تشخیص متن تصویر...</string>
@@ -1837,16 +1835,7 @@
     <string name="provider_label_top_up">"شارژ حساب: "</string>
     <string name="provider_aihubmix_desc">دسترسی پایدار و با هم‌زمانی بالا به مدل‌های اصلی مانند OpenAI، Claude و Google Gemini</string>
     <string name="provider_aihubmix_short">بیش از ۲۰۰ مدل از جمله GPT، Claude و Gemini</string>
-    <string name="provider_apimart_desc">APIMart یک پلتفرم API کم‌هزینه با تمرکز بر تولید تصویر و ویدیو با هوش مصنوعی است. GPT-Image-2 از ۰٫۰۰۶ دلار برای هر تصویر (بیش از ۱۶۰ تصویر با ۱ دلار). یک API ناهمگام برای تصویر و ویدیو: ارسال کار، دریافت شناسه و گرفتن نتیجه از طریق callback؛ پردازش دسته‌ای هزاران مورد بدون timeout و تعویض مدل بدون تغییر کد. پرداخت به‌اندازهٔ مصرف، بدون هزینهٔ ماهانه.</string>
-    <string name="provider_apimart_signup">برای شروع از طریق این پیوند ثبت‌نام کنید</string>
-    <string name="provider_apimart_short">تولید تصویر و ویدیو با هوش مصنوعی؛ GPT-Image-2 از ۰٫۰۰۶ دلار برای هر تصویر</string>
     <string name="provider_302ai_desc">"خدمات هوش مصنوعی سازمانی. وب‌سایت: "</string>
-    <string name="provider_suixiang_desc">سرویس رلهٔ API قابل‌اعتماد و کارآمد برای Claude، Codex، Gemini و موارد دیگر. با تمرکز بر حریم خصوصی: بدون فروش داده و بدون مدل‌های بی‌کیفیت. شارژ ۱:۱ و پرداخت به‌اندازهٔ مصرف. مسیرهای پشتیبان، بازیابی بین‌منطقه‌ای و جابه‌جایی خودکار، جریان‌های طولانی SSE را پایدار نگه می‌دارند.</string>
-    <string name="provider_suixiang_short">رلهٔ Claude، Codex، Gemini و موارد دیگر با شارژ ۱:۱</string>
-    <string name="provider_marucode_desc">MaruCode یک سرویس API مستقل و کوچک با مخزن حساب اختصاصی است که عمدتاً Codex، Claude Code، GPT Image و دیگر مدل‌های محبوب را ارائه می‌دهد. پشتیبانی از WebSocket، قیمت‌گذاری شفاف (Codex 0.25x، CC 1.5x) و نرخ تبدیل ۱:۱.</string>
-    <string name="provider_marucode_signup_bonus">کاربران جدید هنگام ثبت‌نام ۲ دلار هدیه می‌گیرند</string>
-    <string name="provider_marucode_image_studio">استودیوی تصویر 🖼️</string>
-    <string name="provider_naapi_desc">NaAPI (naapi.cc) یک درگاه LLM سازگار با OpenAI است که بیش از ۳۰۰ مدل از OpenAI، Anthropic، Google و دیگران را با قیمت مناسب ارائه می‌دهد</string>
   <string name="setting_language_title">&#x632;&#x628;&#x627;&#x646;</string>
   <string name="setting_language_follow_system">&#x67e;&#x6cc;&#x631;&#x648;&#x6cc; &#x627;&#x632; &#x633;&#x6cc;&#x633;&#x62a;&#x645;</string>
   <string name="setting_language_desc">&#x632;&#x628;&#x627;&#x646; &#x628;&#x631;&#x646;&#x627;&#x645;&#x647; &#x631;&#x627; &#x627;&#x646;&#x62a;&#x62e;&#x627;&#x628; &#x6a9;&#x646;&#x6cc;&#x62f;&#x61b; &#x628;&#x647;&#x200c;&#x637;&#x648;&#x631; &#x67e;&#x6cc;&#x634;&#x200c;&#x641;&#x631;&#x636; &#x627;&#x632; &#x632;&#x628;&#x627;&#x646; &#x633;&#x6cc;&#x633;&#x62a;&#x645; &#x67e;&#x6cc;&#x631;&#x648;&#x6cc; &#x645;&#x6cc;&#x200c;&#x6a9;&#x646;&#x62f;</string>

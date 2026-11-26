@@ -6,7 +6,29 @@ internal fun Settings.normalized(): Settings =
 
 // RikkaHub Ultra: drop the upstream RikkaHub search service (api.rikka-ai.com) from old settings/backups,
 // keeping the selected search service pointing at the same entry when it still exists.
-internal fun Settings.withoutRemovedServices(): Settings {
+internal fun Settings.withoutRemovedServices(): Settings =
+    withoutRemovedSearchService().withoutRemovedProviders()
+
+// RikkaHub Ultra: built-in providers removed because they carried upstream's affiliate links
+// (APIMart, SuiXiang, MaruCode; NaAPI was only "recommended", so users got a random id for it).
+internal val REMOVED_BUILT_IN_PROVIDER_IDS: Set<kotlin.uuid.Uuid> = setOf(
+    kotlin.uuid.Uuid.parse("2a05506f-3a59-450a-a493-33a82bc85a81"), // APIMart
+    kotlin.uuid.Uuid.parse("aecf04fd-cb5c-4582-aed2-e8bf393923fd"), // SuiXiang
+    kotlin.uuid.Uuid.parse("afbc54ad-807e-4455-9594-7d7a546356ad"), // MaruCode
+)
+
+// Unused copies (no API key, no models) are dropped; ones the user configured are kept as normal custom
+// providers (builtIn is @Transient, so they load as deletable custom providers).
+internal fun Settings.withoutRemovedProviders(): Settings {
+    if (providers.none { it.id in REMOVED_BUILT_IN_PROVIDER_IDS }) return this
+    return copy(providers = providers.filterNot { provider ->
+        provider.id in REMOVED_BUILT_IN_PROVIDER_IDS &&
+            provider.models.isEmpty() &&
+            (provider as? me.rerere.ai.provider.ProviderSetting.ApiKey)?.apiKey.isNullOrBlank()
+    })
+}
+
+private fun Settings.withoutRemovedSearchService(): Settings {
     if (searchServices.none { it is me.rerere.search.SearchServiceOptions.RikkaHubOptions }) return this
     val selectedId = searchServices.getOrNull(searchServiceSelected)?.id
     val remaining = searchServices

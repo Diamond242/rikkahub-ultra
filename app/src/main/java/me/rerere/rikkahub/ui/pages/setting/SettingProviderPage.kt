@@ -159,8 +159,10 @@ fun SettingProviderPage(vm: SettingVM = koinViewModel()) {
                     BackButton()
                 },
                 actions = {
-                    RecommendProviderButton { provider ->
-                        addProvider(provider.copyProvider(Uuid.random()))
+                    if (RECOMMENDED_PROVIDERS.isNotEmpty()) {
+                        RecommendProviderButton { provider ->
+                            addProvider(provider.copyProvider(Uuid.random()))
+                        }
                     }
                     ImportProviderButton {
                         addProvider(it.copyProvider(Uuid.random()))
