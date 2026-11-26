@@ -148,7 +148,7 @@ internal fun RemoteBackupStatus(
             headlineContent = { Text(stringResource(R.string.backup_page_restore)) },
             supportingContent = { Text("${stringResource(R.string.backup_page_files)}: $fileCount") },
             leadingContent = { CardGroupIcon(HugeIcons.CloudDownload) },
-            trailingContent = { Icon(HugeIcons.ArrowRight01, contentDescription = null) },
+            trailingContent = { Icon(me.rerere.rikkahub.ui.components.ui.endArrowIcon(), contentDescription = null) },
         )
     }
 }

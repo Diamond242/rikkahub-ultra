@@ -1,5 +1,10 @@
 package me.rerere.rikkahub.ui.pages.setting
 
+import me.rerere.hugeicons.stroke.Refresh01
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.runtime.mutableIntStateOf
+import me.rerere.rikkahub.ui.components.ai.isFreeModelId
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -364,6 +369,7 @@ private fun SettingProviderConfigPage(
                     ProviderConnectionTester(
                         internalProvider = internalProvider,
                     )
+                    me.rerere.rikkahub.ui.pages.setting.components.KeyGuideButton(internalProvider)
 
                     if (!internalProvider.builtIn) {
                         IconButton(
@@ -470,16 +476,28 @@ private fun ModelList(
     onUpdateProvider: (ProviderSetting) -> Unit
 ) {
     val providerManager = koinInject<ProviderManager>()
-    val modelList by produceState(emptyList(), providerSetting) {
+    // Only refetch when connection settings change (not when models are added/removed) or on retry
+    var fetchNonce by remember { mutableIntStateOf(0) }
+    val connectionKey = remember(providerSetting) { providerSetting.copyProvider(models = emptyList()) }
+    var fetchLoading by remember { mutableStateOf(false) }
+    var fetchError by remember { mutableStateOf<String?>(null) }
+    val modelList by produceState(emptyList<Model>(), connectionKey, fetchNonce) {
+        fetchLoading = true
+        fetchError = null
         runCatching {
-            println("loading models...")
-            value = providerManager.getProviderByType(providerSetting)
+            providerManager.getProviderByType(providerSetting)
                 .listModels(providerSetting)
+                .distinctBy { it.modelId }
                 .sortedBy { it.modelId }
                 .toList()
+        }.onSuccess {
+            value = it
         }.onFailure {
             it.printStackTrace()
+            if (it is kotlinx.coroutines.CancellationException) throw it
+            fetchError = it.message?.takeIf { msg -> msg.isNotBlank() } ?: it.javaClass.simpleName
         }
+        fetchLoading = false
     }
     var expanded by rememberSaveable { mutableStateOf(true) }
     val lazyListState = rememberLazyListState()
@@ -546,7 +564,10 @@ private fun ModelList(
                 },
                 expanded = expanded,
                 parentProvider = providerSetting,
-                onUpdateProvider = onUpdateProvider
+                onUpdateProvider = onUpdateProvider,
+                loading = fetchLoading,
+                error = fetchError,
+                onRefresh = { fetchNonce++ },
             )
         }
     }
@@ -722,7 +743,10 @@ private fun AddModelButton(
     onAddModel: (Model) -> Unit,
     onRemoveModel: (Model) -> Unit,
     parentProvider: ProviderSetting,
-    onUpdateProvider: (ProviderSetting) -> Unit
+    onUpdateProvider: (ProviderSetting) -> Unit,
+    loading: Boolean = false,
+    error: String? = null,
+    onRefresh: () -> Unit = {},
 ) {
     val dialogState = useEditState<Model> {
         onAddModel(it.copy(displayName = it.displayName.trim()))
@@ -736,6 +760,10 @@ private fun AddModelButton(
         ModelPicker(
             models = models,
             selectedModels = selectedModels,
+            expanded = expanded,
+            loading = loading,
+            error = error,
+            onRefresh = onRefresh,
             onModelSelected = { model ->
                 val inputModalities = ModelRegistry.MODEL_INPUT_MODALITIES.getData(model.modelId)
                 val outputModalities = ModelRegistry.MODEL_OUTPUT_MODALITIES.getData(model.modelId)
@@ -883,7 +911,11 @@ private fun ModelPicker(
     onModelSelected: (Model) -> Unit,
     onModelDeselected: (Model) -> Unit,
     onAllModelSelected: (List<Model>) -> Unit,
-    onAllModelDeselected: (List<Model>) -> Unit
+    onAllModelDeselected: (List<Model>) -> Unit,
+    expanded: Boolean = true,
+    loading: Boolean = false,
+    error: String? = null,
+    onRefresh: () -> Unit = {},
 ) {
     var showModal by remember { mutableStateOf(false) }
     if (showModal) {
@@ -928,22 +960,72 @@ private fun ModelPicker(
                         selectedModels.none { it.modelId == model.modelId }
                     }
 
-                    TextButton(
-                        onClick = {
-                            if (unselectedCount > 0) {
-                                onAllModelSelected(filteredModels)
-                            } else {
-                                onAllModelDeselected(filteredModels)
-                            }
-                        },
-                    ) {
-                        Text(
-                            if (unselectedCount > 0) stringResource(
-                                R.string.setting_provider_page_select_all,
-                                unselectedCount
-                            ) else stringResource(R.string.setting_provider_page_deselect_models)
-                        )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onRefresh, enabled = !loading) {
+                            Icon(HugeIcons.Refresh01, stringResource(R.string.setting_provider_page_retry))
+                        }
+                        TextButton(
+                            onClick = {
+                                if (unselectedCount > 0) {
+                                    onAllModelSelected(filteredModels)
+                                } else {
+                                    onAllModelDeselected(filteredModels)
+                                }
+                            },
+                            enabled = filteredModels.isNotEmpty(),
+                        ) {
+                            Text(
+                                if (unselectedCount > 0) stringResource(
+                                    R.string.setting_provider_page_select_all,
+                                    unselectedCount
+                                ) else stringResource(R.string.setting_provider_page_deselect_models)
+                            )
+                        }
                     }
+                }
+
+                val freeUnselected = filteredModels.filter { model ->
+                    isFreeModelId(model.modelId) && selectedModels.none { it.modelId == model.modelId }
+                }
+                if (freeUnselected.isNotEmpty()) {
+                    TextButton(
+                        onClick = { onAllModelSelected(freeUnselected) },
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                    ) {
+                        Text(stringResource(R.string.setting_provider_page_add_all_free, freeUnselected.size))
+                    }
+                }
+
+                if (loading) {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp))
+                    Text(
+                        text = stringResource(R.string.setting_provider_page_fetch_models_loading),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                    )
+                } else if (error != null) {
+                    Surface(
+                        color = MaterialTheme.colorScheme.errorContainer,
+                        shape = MaterialTheme.shapes.medium,
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            Text(
+                                text = stringResource(R.string.setting_provider_page_fetch_models_error, error),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onErrorContainer,
+                            )
+                            TextButton(onClick = onRefresh) {
+                                Text(stringResource(R.string.setting_provider_page_retry))
+                            }
+                        }
+                    }
+                } else if (models.isEmpty()) {
+                    Text(
+                        text = stringResource(R.string.setting_provider_page_fetch_models_empty),
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                    )
                 }
 
                 LazyColumn(
@@ -1036,19 +1118,28 @@ private fun ModelPicker(
     }
     BadgedBox(
         badge = {
-            if (models.isNotEmpty()) {
+            if (error != null) {
+                Badge { Text("!") }
+            } else if (models.isNotEmpty()) {
                 Badge {
                     Text(models.size.toString())
                 }
             }
         }
     ) {
-        IconButton(
+        FilledTonalButton(
             onClick = {
                 showModal = true
+                if (models.isEmpty() && !loading) onRefresh()
             }
         ) {
-            Icon(HugeIcons.Package01, null)
+            Icon(HugeIcons.Package01, contentDescription = stringResource(R.string.setting_provider_page_fetch_models))
+            AnimatedVisibility(expanded) {
+                Row {
+                    Spacer(modifier = Modifier.size(8.dp))
+                    Text(stringResource(R.string.setting_provider_page_fetch_models))
+                }
+            }
         }
     }
 }

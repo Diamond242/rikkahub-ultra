@@ -111,7 +111,7 @@ fun TTSController() {
                     }
                 ) {
                     Icon(
-                        imageVector = if (expand) HugeIcons.ArrowLeft01 else HugeIcons.ArrowRight01,
+                        imageVector = if (expand) me.rerere.rikkahub.ui.components.ui.startArrowIcon() else me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                         contentDescription = null,
                     )
                 }

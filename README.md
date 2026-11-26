@@ -1,99 +1,121 @@
 <div align="center">
-  <img src="docs/icon.png" alt="App Icon" width="100" />
-  <h1>RikkaHub</h1>
+  <img src="docs/brand/icon.png" alt="RikkaHub Ultra" width="120" />
+  <h1>RikkaHub <img src="https://img.shields.io/badge/-Ultra-16A34A?style=flat-square" alt="Ultra" height="22" /></h1>
 
-A native Android LLM chat client that supports switching between different providers for
-conversations 🤖💬
+A native Android LLM chat client that lets you switch between providers — now with full Persian support,
+free and Iranian providers, and a friendlier setup.
 
-Click to join our Discord server 👉 [【RikkaHub】](https://discord.gg/9weBqxe5c4)
+**English** | [فارسی](README.fa.md)
 
-[简体中文](README_ZH_CN.md) | [繁體中文](README_ZH_TW.md) | English
+[Download](https://github.com/Diamond242/rikkahub-ultra/releases/latest) ·
+[Documentation](https://vahid.top/rikkahub-ultra) ·
+[Release notes](CHANGELOG.md) ·
+[Support the project](#-support-the-project)
 </div>
 
-<div align="center">
-  <img src="docs/img/poster.png" alt="RikkaHub" width="800" />
-</div>
-
-## 🚀 Download
-
-🔗 [Download from Website](https://rikka-ai.com/download) (Recommended)
-
-🔗 [Download from Google Play](https://play.google.com/store/apps/details?id=me.rerere.rikkahub)
-
-> [!WARNING]
-> There are many forked versions of RikkaHub. Issues with forks are unrelated to RikkaHub, so please use forks with caution to avoid privacy leaks or excessive permission requests.
-
-## 💖 Sponsors
-
-| Sponsor | Description |
-|:---:|:---|
-| <img src="docs/sponsors/aihubmix.png" alt="Aihubmix" width="50" /><br /><b>Aihubmix</b> | Thanks to <a href="https://aihubmix.com?aff=pG7r">aihubmix.com</a> for their financial support. We recommend using aihubmix as a one-stop shop for mainstream models worldwide. (OpenAI, Claude, Google Gemini, DeepSeek, Qwen, and hundreds more). |
-| <img src="docs/sponsors/api-mart.png" alt="APIMart" width="50" /><br /><b><a href="https://go.apimart.ai/gh-rikkahub">APIMart</a></b> | Thanks to APIMart for sponsoring this project! APIMart is a low-cost API platform for AI image & video generation — GPT-Image-2 from $0.006/image, 160+ images per dollar. One async API covers both image and video: submit a task, get an ID, fetch results via polling or callback. Batch tens of thousands of images without timeouts, switch models without changing code. Pay-as-you-go with no monthly fee — <a href="https://go.apimart.ai/gh-rikkahub">sign up here</a> to get started. |
-| <img src="docs/sponsors/suixiang.jpg" alt="随想AI中转" width="50" /><br /><b><a href="https://sui-xiang.com">随想AI中转</a></b> | 感谢<a href="https://sui-xiang.com">随想AI中转</a>对本项目的赞助！随想AI中转 是一家可靠高效的 API 中继服务提供商，提供 Claude、Codex、Gemini 等的中继服务。注重隐私的中转站·无数据倒卖·无模型掺水，隐私，透明，极速售后。新账户注册每日签到就送 0.5 元测试额度，充值额度 1:1，无需订阅，按量付费。多线路冗余、跨区域容灾、自动故障切换，长链路 SSE 不中断。99.9% 可用性，关键调用从不掉队。 |
-| <img src="docs/sponsors/ztest.png" alt="真测 ztest.ai" width="50" /><br /><b><a href="https://ztest.ai">真测 ztest.ai</a></b> | 感谢<a href="https://ztest.ai">真测 ztest.ai</a>对本项目的赞助！真测 ztest.ai 是一个 AI 中转站模型检测平台，检测结果数据全公开，23 项探针覆盖协议、身份、能力、内容完整性、安全性、性能六大维度，交叉印证识别伪造与降级。作为独立第三方验证平台，实时监测 AI 中转站的模型真实性、响应质量与服务可用性。 |
-| <img src="docs/sponsors/maru.png" alt="MaruCode" width="50" /><br /><b><a href="https://api.muteki.site/register?aff=Rikkahub&promo=Rikkahub">MaruCode</a></b> | <b><a href="https://api.muteki.site/register?aff=Rikkahub&promo=Rikkahub">MaruCode</a></b> 是一家偶尔做做慈善的小破站 API，自营号池，主要提供 Codex、Claude Code、GPT Image 等主流模型，支持 Websocket 协议，明码标价(Codex 0.25x, CC 1.5x)，透明汇率(1:1)，<a href="https://api.muteki.site/register?aff=Rikkahub&promo=Rikkahub">新用户注册送 2 刀</a>。<a href="https://images-2.muteki.site">生图工作台🖼️</a> |
-| <img src="docs/sponsors/naapi.png" alt="NaAPI 钠API" width="50" /><br /><b><a href="https://naapi.cc/register?aff=rikkahub">NaAPI 钠API</a></b> | Thanks to <a href="https://naapi.cc/register?aff=rikkahub">NaAPI</a> (naapi.cc) for sponsoring this project! NaAPI is an OpenAI-compatible LLM gateway that reliably serves 300+ models from OpenAI, Anthropic, Google and others at discounted pricing. One base URL and one key is all you need: multi-line redundancy with automatic failover keeps long SSE streams alive, and pricing is strictly pay-as-you-go with a 1:1 top-up ratio — no subscription, no hidden markup. |
+> RikkaHub Ultra is a fork of [RikkaHub](https://github.com/rikkahub/rikkahub) by its original authors, maintained by
+> [Vahid Borandeh](https://vahid.top/). It installs as a separate app (`top.vahid.rikkahubultra`), next to the original.
 
 ## ✨ Features
 
-- 🎨 Material 3 Expressive design and 🌙 Dark mode
-- 📦 Workspace: a proot-based Linux agent environment
+Items marked **🆕 Ultra** were added in this fork; everything else comes from the original RikkaHub.
+
+### Core (from RikkaHub)
+
+- 🎨 Material 3 Expressive design and 🌙 dark mode
+- 🔄 Multiple AI providers: custom API / URL / models (any OpenAI, Google or Anthropic compatible API), plus ChatGPT and Grok account sign-in
+- 🖼️ Multimodal input (images, text documents, PDF, DOCX)
+- 📦 Workspace: a proot-based Linux agent environment with a terminal
 - 🎬 Media generation (image and video)
-- 🔄 Multiple AI Provider Support: custom API / URL / models (all OpenAI, Google, Anthropic compatible api)
-- 🖼️ Multimodal input support (Image, Text Documentation, PDF, Docx)
-- 🖥️ Web access for multi-platform use
-- 🛠️ MCP and Skills support
-- 📝 Markdown Rendering (with code highlighting, Latex formulas, tables, Mermaid)
-- 🔍 Search capabilities (Exa, Tavily, Zhipu, LinkUp, Brave, Perplexity, etc.)
-- 🧩 Prompt variables (model name, time, etc.)
+- 🖥️ Built-in web server to use your chats from any device's browser
+- 🛠️ MCP and Skills support, tool calling with approvals
+- 📝 Markdown rendering (code highlighting, LaTeX, tables, Mermaid)
+- 🔍 Web search (Exa, Tavily, Zhipu, LinkUp, Brave, Perplexity and more)
+- 🧩 Prompt variables (model name, time, …), lorebooks and prompt injections
 - 🤳 QR code export and import for providers
-- 🤖 Agent customization
-- 🧠 File-based memory
-- 📝 AI Translation
-- 🌐 Custom HTTP request headers and request bodies
-- 💌 Silly Tavern character card import
+- 🤖 Assistant customization and 🧠 file-based memory
+- 📝 AI translation and text-to-speech
+- 💾 Backup and sync (WebDAV / S3)
+- 🌐 Custom HTTP headers and request bodies
+- 💌 SillyTavern character card import
 
-## ✨ Development
+### Added in Ultra
 
-> [!IMPORTANT]
-> This project does not accept pull requests (PRs).
+- 🆕 **Ultra** · **Complete Persian translation** of the app (1800+ strings) and the web UI, full right-to-left layout and the Vazirmatn font
+- 🆕 **Ultra** · **In-app language picker** (follows the system language by default)
+- 🆕 **Ultra** · Hard-coded Chinese texts moved to translatable resources, English texts polished
+- 🆕 **Ultra** · **15 extra providers**: free, trial and Iranian ones (Groq, NVIDIA NIM, Mistral, Cohere, Z.ai, SiliconFlow Global, LLM7, Pollinations, Cerebras, SambaNova, Anthropic, Ollama, AvalAI, GapGPT, Metis)
+- 🆕 **Ultra** · Provider badges and filters: *Free*, *Free quota*, *Trial*, *Paid*, *Works without VPN*
+- 🆕 **Ultra** · **First-run welcome dialog** that sets up a free provider in about a minute
+- 🆕 **Ultra** · Step-by-step **API key guides** with screenshots, and a key-test button
+- 🆕 **Ultra** · **Fetch models** with clear errors, **Add all free models**, free-quota notes and a *Free* badge for `:free` models
+- 🆕 **Ultra** · Model sorting: default, **by quality** (LMArena scores) or **manual drag order**, remembered across restarts; favorites in every mode
+- 🆕 **Ultra** · Model picker: recent models, quick filters (free, no VPN, vision, reasoning, tools) and context-size badges
+- 🆕 **Ultra** · **Human-readable error messages** with a shortcut to the provider settings
+- 🆕 **Ultra** · Settings search, a clear *Settings* entry in the drawer, simpler chat defaults and a calmer message jumper
+- 🆕 **Ultra** · Named built-in assistants (*Simple* / *Smart*, Smart by default) with an info button; visible delete action for assistants
+- 🆕 **Ultra** · Correct icon mirroring in right-to-left layouts
+- 🆕 **Ultra** · **Updates from this repository**: the app checks the GitHub releases here and shows localized release notes
+- 🆕 **Ultra** · New About page with release notes, developer, docs and license, and a new minimal robot icon
+- 🆕 **Ultra** · New donate page (crypto with QR codes and network guides) and our own sponsor list
 
-This project is developed using [Android Studio](https://developer.android.com/studio).
+## 📲 Install (Android 8.0+)
 
-Technology stack documentation:
+1. Open the [latest release](https://github.com/Diamond242/rikkahub-ultra/releases/latest) on your phone.
+2. Download the APK for your phone. Almost every modern phone uses **arm64-v8a**; pick `armeabi-v7a` only for very old devices, and `x86_64` for emulators.
+3. Open the downloaded file. If Android asks, allow **Install unknown apps** for your browser or file manager (Settings › Apps › Special app access › Install unknown apps), then go back and tap **Install**.
+4. If **Google Play Protect** shows a warning, tap **More details › Install anyway**. The app is open source and built from this repository.
+5. Open RikkaHub Ultra. The welcome dialog helps you set up a free provider; you can add your own API keys later in *Settings › Providers*.
 
-- [Kotlin](https://kotlinlang.org/) (Development language)
-- [Koin](https://insert-koin.io/) (Dependency Injection)
-- [Jetpack Compose](https://developer.android.com/jetpack/compose) (UI framework)
-- [DataStore](https://developer.android.com/topic/libraries/architecture/datastore) (Preference data
-  storage)
-- [Room](https://developer.android.com/training/data-storage/room) (Database)
-- [Coil](https://coil-kt.github.io/coil/) (Image loading)
-- [Material 3 Expressive](https://m3.material.io/) (UI design)
-- [Navigation 3](https://developer.android.com/guide/navigation/navigation-3) (Navigation)
-- [Okhttp](https://square.github.io/okhttp/) (HTTP client)
-- [kotlinx.serialization](https://github.com/Kotlin/kotlinx.serialization) (JSON serialization)
+Updating: install a newer APK from the same source over the existing app — your data stays. The app also tells you when a new release is available.
+
+> RikkaHub Ultra uses a different app id from the original RikkaHub, so both can be installed side by side. Data is not shared between them; use *Settings › Backup* to move your chats.
+
+## 📚 Documentation
+
+- Documentation: <https://vahid.top/rikkahub-ultra>
+- Developer website: <https://vahid.top/>
+- Release notes: [CHANGELOG.md](CHANGELOG.md)
+
+## 💚 Support the project
+
+If RikkaHub Ultra is useful to you, you can support its development. Every address below is also in the app
+(*Settings › Donate*) with QR codes and copy buttons. **Always send on the network shown next to each address** —
+coins sent on another network may be lost.
+
+| Coin | Network | Address |
+|------|---------|---------|
+| USDT / TRX | TRON (TRC20) | `TEK8V2mfzFhj7S83zp3bgJEPTMj6D45qhZ` |
+| BTC | Bitcoin (SegWit) | `bc1qd6k2zap20pqxu2kj9ez9mhsl40d6acjd5nn79p` |
+| ETH / USDT | Ethereum (ERC20) | `0x1D1bBD5751625Dd505081Bd3ca8F755952c4eb09` |
+| BNB / USDT | BNB Smart Chain (BEP20) | `0x1D1bBD5751625Dd505081Bd3ca8F755952c4eb09` |
+| SOL / USDC | Solana | `DdzSTaEhdR5MT6YVfmkZCXfjZbLtNxDVb5qeZ6Uibps5` |
+
+How to send: in your wallet or exchange choose **Withdraw / Send**, pick the coin, select the matching network,
+paste the address, check the first and last characters, and send a small test amount first if you are unsure.
+
+Want to appear in the in-app sponsor list? [Open a sponsor listing request](https://github.com/Diamond242/rikkahub-ultra/issues/new?template=sponsor-listing.yml).
+
+## 🛠️ Development
+
+This project is developed with [Android Studio](https://developer.android.com/studio) using Kotlin, Jetpack Compose,
+Material 3 Expressive, Koin, Room, DataStore, Navigation 3, OkHttp, Coil and kotlinx.serialization.
+
+```powershell
+./gradlew :app:assembleDebug        # GitHub-flavor debug APK
+./gradlew testDebugUnitTest         # unit tests
+```
 
 > [!TIP]
-> You need a `google-services.json` file at `app` folder to build the app.
-
-## 💰 Donate
-
-* [Ko-fi](https://ko-fi.com/reovodev)
-* [爱发电](https://afdian.com/a/reovo)
-
-## ⭐ Star History
-
-If you like this project, please give it a star ⭐
-
-<a href="https://www.star-history.com/?type=date&repos=re-ovo%2Frikkahub">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=re-ovo/rikkahub&type=date&theme=dark&legend=top-left&sealed_token=qSytWeq7LkzQQViTjK0MYlvvA_qkfuwjOxOqgbRpLUZZwok5rO6LXhpVL7Mq-q3o89BfKpzE7g66BCy18H6eiqTsD8czD0J-HejLqmHy-npcvCTHu11wZw" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=re-ovo/rikkahub&type=date&legend=top-left&sealed_token=qSytWeq7LkzQQViTjK0MYlvvA_qkfuwjOxOqgbRpLUZZwok5rO6LXhpVL7Mq-q3o89BfKpzE7g66BCy18H6eiqTsD8czD0J-HejLqmHy-npcvCTHu11wZw" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=re-ovo/rikkahub&type=date&legend=top-left&sealed_token=qSytWeq7LkzQQViTjK0MYlvvA_qkfuwjOxOqgbRpLUZZwok5rO6LXhpVL7Mq-q3o89BfKpzE7g66BCy18H6eiqTsD8czD0J-HejLqmHy-npcvCTHu11wZw" />
- </picture>
-</a>
+> You need a `google-services.json` file in the `app` folder to build the app.
 
 ## 📄 License
 
-This project is licensed under the [GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0).
+RikkaHub Ultra is licensed under the [GNU AGPL-3.0](LICENSE), like the original
+[RikkaHub](https://github.com/rikkahub/rikkahub). All credit for the original app goes to its authors.
+
+## 🙏 Credits
+
+- [RikkaHub](https://github.com/rikkahub/rikkahub) and its contributors
+- [Vazirmatn](https://github.com/rastikerdar/vazirmatn) font (OFL)
+- [Termux terminal emulator](https://github.com/termux/termux-app) (Apache 2.0)

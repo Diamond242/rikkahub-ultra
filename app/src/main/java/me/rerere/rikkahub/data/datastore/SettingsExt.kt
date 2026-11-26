@@ -48,7 +48,9 @@ fun Settings.getCurrentChatModel(): Model? {
  * 已持久化的会话应改用 [me.rerere.rikkahub.data.model.getAssistantOf]。
  */
 fun Settings.getCurrentAssistant(): Assistant {
-    return this.assistants.find { it.id == assistantId } ?: this.assistants.first()
+    return this.assistants.find { it.id == assistantId }
+        ?: this.assistants.find { it.id == DEFAULT_ASSISTANT_ID }
+        ?: this.assistants.first()
 }
 
 /** 按 ID 查找助手，不存在时返回 null，不做回退。 */

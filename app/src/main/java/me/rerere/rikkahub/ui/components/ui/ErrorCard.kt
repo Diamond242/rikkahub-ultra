@@ -46,6 +46,8 @@ import me.rerere.rikkahub.service.ChatError
 import me.rerere.rikkahub.service.ChatErrorSolution
 import me.rerere.rikkahub.ui.context.LocalNavController
 import kotlin.uuid.Uuid
+import me.rerere.rikkahub.utils.friendlyErrorKind
+import me.rerere.rikkahub.utils.messageRes
 
 @Composable
 fun ErrorCardsDisplay(
@@ -116,7 +118,7 @@ fun ErrorCard(
 
     // 5 秒后自动消失
     LaunchedEffect(error.id) {
-        delay(5000)
+        delay(if (error.error.friendlyErrorKind() != null) 15000 else 5000)
         onDismiss()
     }
 
@@ -152,6 +154,24 @@ fun ErrorCard(
                     color = MaterialTheme.colorScheme.onErrorContainer.copy(alpha = 0.8f),
                     overflow = TextOverflow.Ellipsis,
                 )
+                val friendlyKind = androidx.compose.runtime.remember(error.id) { error.error.friendlyErrorKind() }
+                if (friendlyKind != null) {
+                    Text(
+                        text = stringResource(friendlyKind.messageRes()),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer,
+                    )
+                    if (friendlyKind == me.rerere.rikkahub.utils.FriendlyErrorKind.QUOTA) {
+                        Text(
+                            text = stringResource(R.string.friendly_error_quota_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onErrorContainer,
+                        )
+                    }
+                    androidx.compose.material3.TextButton(onClick = { navController.navigate(Screen.SettingProvider) }) {
+                        Text(stringResource(R.string.friendly_error_go_provider_settings))
+                    }
+                }
                 if (error.solution == ChatErrorSolution.CheckFastModelSettings) {
                     Text(
                         text = buildAnnotatedString {

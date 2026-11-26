@@ -336,7 +336,7 @@ fun WorkspaceDetailPage(id: String) {
     state.exportResult?.let { result ->
         AlertDialog(
             onDismissRequest = vm::dismissExportResult,
-            title = { Text("导出结果") },
+            title = { Text(stringResource(R.string.workspace_export_result)) },
             text = { Text(result, modifier = Modifier.verticalScroll(rememberScrollState())) },
             confirmButton = {
                 TextButton(onClick = vm::dismissExportResult) { Text(stringResource(R.string.common_confirm)) }
@@ -829,7 +829,7 @@ private fun WorkspaceFilesPage(
                 colors = CustomColors.floatingToolbarColors,
                 leadingContent = {
                     IconButton(onClick = { exitSelection() }) {
-                        Icon(HugeIcons.Cancel01, contentDescription = "取消多选")
+                        Icon(HugeIcons.Cancel01, contentDescription = stringResource(R.string.workspace_cancel_selection))
                     }
                 },
                 trailingContent = {
@@ -838,7 +838,7 @@ private fun WorkspaceFilesPage(
                             selectedPaths = if (allSelected) emptySet() else files.map { it.path }.toSet()
                         },
                     ) {
-                        Icon(HugeIcons.CheckList, contentDescription = if (allSelected) "取消全选" else "全选")
+                        Icon(HugeIcons.CheckList, contentDescription = if (allSelected) stringResource(R.string.workspace_deselect_all) else stringResource(R.string.workspace_select_all))
                     }
                 },
             ) {
@@ -852,7 +852,7 @@ private fun WorkspaceFilesPage(
                         modifier = Modifier.size(ButtonDefaults.IconSize),
                     )
                     Spacer(Modifier.width(ButtonDefaults.IconSpacing))
-                    Text("导出 (${selectedFiles.size})")
+                    Text(stringResource(R.string.workspace_export_count, selectedFiles.size))
                 }
             }
         }
@@ -940,7 +940,7 @@ private fun ExportProgressCard(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = "正在导出 $completed/$total",
+                text = stringResource(R.string.workspace_exporting_progress, completed, total),
                 style = MaterialTheme.typography.bodyMedium,
             )
             LinearWavyProgressIndicator(
@@ -994,6 +994,7 @@ private fun WorkspaceFileItem(
         animationSpec = MaterialTheme.motionScheme.defaultEffectsSpec(),
     )
 
+    val selectFileLabel = stringResource(R.string.workspace_select_file)
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -1001,7 +1002,7 @@ private fun WorkspaceFileItem(
             .combinedClickable(
                 onClick = onOpen,
                 onLongClick = if (entry.isDirectory) null else onLongClick,
-                onLongClickLabel = if (entry.isDirectory) null else "选择文件",
+                onLongClickLabel = if (entry.isDirectory) null else selectFileLabel,
             ),
         shape = shape,
         color = containerColor,

@@ -57,7 +57,7 @@ fun TTSProviderConfigure(
                         is TTSProviderSetting.Step -> "Step"
                         is TTSProviderSetting.ElevenLabs -> "ElevenLabs"
                         is TTSProviderSetting.FishAudio -> "Fish Audio"
-                        is TTSProviderSetting.Volcengine -> "火山引擎"
+                        is TTSProviderSetting.Volcengine -> "Volcengine"
                     },
                     options = TTSProviderSetting.Types,
                     readOnly = true,
@@ -74,7 +74,7 @@ fun TTSProviderConfigure(
                             TTSProviderSetting.MiMo::class -> "MiMo"
                             TTSProviderSetting.ElevenLabs::class -> "ElevenLabs"
                             TTSProviderSetting.FishAudio::class -> "Fish Audio"
-                            TTSProviderSetting.Volcengine::class -> "火山引擎"
+                            TTSProviderSetting.Volcengine::class -> "Volcengine"
                             TTSProviderSetting.Step::class -> "Step"
                             else -> providerClass.simpleName ?: "Unknown"
                         }
@@ -977,8 +977,8 @@ private fun CardGroupScope.fishAudioTTSItems(
 
     // Model (下拉选择框 + 文本输入框，完全同 ElevenLabs 格式)
     val models = listOf(
-        "s2.1-pro" to "S2.1-Pro (推荐)",
-        "s2.1-pro-free" to "S2.1-Pro Free (免费)",
+        "s2.1-pro" to "S2.1-Pro (Recommended)",
+        "s2.1-pro-free" to "S2.1-Pro Free",
         "s2-pro" to "S2-Pro",
         "s1" to "S1"
     )
@@ -1054,7 +1054,7 @@ private fun CardGroupScope.stepTTSItems(
     // API Key
     formItem(
         headlineContent = { Text(stringResource(R.string.setting_tts_page_api_key)) },
-        supportingContent = { Text("从阶跃星辰官网获取密钥: platform.stepfun.com/interface-key") }
+        supportingContent = { Text(stringResource(R.string.tts_step_api_key_hint)) }
     ) {
         OutlinedTextField(
             value = setting.apiKey,
@@ -1062,7 +1062,7 @@ private fun CardGroupScope.stepTTSItems(
                 onValueChange(setting.copy(apiKey = newApiKey))
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("从阶跃星辰官网获取密钥") },
+            placeholder = { Text(stringResource(R.string.tts_step_api_key_placeholder)) },
         )
     }
 
@@ -1083,10 +1083,10 @@ private fun CardGroupScope.stepTTSItems(
 
     // Model
     val models = listOf(
-        "step-tts-mini" to "step-tts-mini (轻量, 便宜)",
-        "step-tts-vivid" to "step-tts-vivid (情感丰富)",
-        "stepaudio-2.5-tts" to "stepaudio-2.5-tts (语境感知, 支持 instruction)",
-        "step-tts-2" to "step-tts-2 (上一代)",
+        "step-tts-mini" to "step-tts-mini (lightweight, low cost)",
+        "step-tts-vivid" to "step-tts-vivid (expressive)",
+        "stepaudio-2.5-tts" to "stepaudio-2.5-tts (context-aware, supports instructions)",
+        "step-tts-2" to "step-tts-2 (previous generation)",
     )
 
     formItem(
@@ -1167,7 +1167,7 @@ private fun CardGroupScope.stepTTSItems(
 
     formItem(
         headlineContent = { Text("Response Format") },
-        supportingContent = { Text("音频编码格式 (注意 StepFun API 字段名为 camelCase)") }
+        supportingContent = { Text(stringResource(R.string.tts_step_format_desc)) }
     ) {
         SelectTextField(
             value = setting.responseFormat,
@@ -1185,7 +1185,7 @@ private fun CardGroupScope.stepTTSItems(
     // Speed
     formItem(
         headlineContent = { Text(stringResource(R.string.setting_tts_page_speed)) },
-        supportingContent = { Text("语速 (0.5 - 2.0, 1.0 为正常)") }
+        supportingContent = { Text(stringResource(R.string.tts_step_speed_desc)) }
     ) {
         OutlinedNumberInput(
             value = setting.speed,
@@ -1202,7 +1202,7 @@ private fun CardGroupScope.stepTTSItems(
     // Volume
     formItem(
         headlineContent = { Text("Volume") },
-        supportingContent = { Text("音量 (0.1 - 2.0, 1.0 为正常)") }
+        supportingContent = { Text(stringResource(R.string.tts_step_volume_desc)) }
     ) {
         OutlinedNumberInput(
             value = setting.volume,
@@ -1221,7 +1221,7 @@ private fun CardGroupScope.stepTTSItems(
 
     formItem(
         headlineContent = { Text("Sample Rate") },
-        supportingContent = { Text("采样率 (Hz)") }
+        supportingContent = { Text(stringResource(R.string.tts_step_sample_rate_desc)) }
     ) {
         SelectTextField(
             value = setting.sampleRate.toString(),
@@ -1238,7 +1238,7 @@ private fun CardGroupScope.stepTTSItems(
     // Instruction (仅 stepaudio-2.5-tts 生效)
     formItem(
         headlineContent = { Text("Instruction") },
-        supportingContent = { Text("全局语境指令, 仅 stepaudio-2.5-tts 生效 (≤200 字符, 留空不下发)") }
+        supportingContent = { Text(stringResource(R.string.tts_step_instruction_desc)) }
     ) {
         OutlinedTextField(
             value = setting.instruction,
@@ -1249,7 +1249,7 @@ private fun CardGroupScope.stepTTSItems(
                 }
             },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { Text("例如: 语气温柔, 语速偏慢") },
+            placeholder = { Text(stringResource(R.string.tts_step_instruction_placeholder)) },
             minLines = 2,
             maxLines = 4,
         )
@@ -1262,7 +1262,7 @@ private fun CardGroupScope.volcengineTTSItems(
 ) {
     formItem(
         headlineContent = { Text("API Key") },
-        supportingContent = { Text("请填写豆包语音控制台的 API Key，不是火山方舟控制台的 API Key。") }
+        supportingContent = { Text(stringResource(R.string.tts_volc_api_key_hint)) }
     ) {
         var keyVisible by remember(setting.id) { mutableStateOf(false) }
         OutlinedTextField(
@@ -1273,7 +1273,7 @@ private fun CardGroupScope.volcengineTTSItems(
                 IconButton(onClick = { keyVisible = !keyVisible }) {
                     Icon(
                         imageVector = if (keyVisible) HugeIcons.ViewOff else HugeIcons.View,
-                        contentDescription = if (keyVisible) "隐藏 API Key" else "显示 API Key",
+                        contentDescription = if (keyVisible) stringResource(R.string.tts_hide_api_key) else stringResource(R.string.tts_show_api_key),
                     )
                 }
             },
@@ -1291,8 +1291,8 @@ private fun CardGroupScope.volcengineTTSItems(
         )
     }
     formItem(
-        headlineContent = { Text("资源 ID") },
-        supportingContent = { Text("需与已开通的服务和音色匹配，默认 seed-tts-2.0。") }
+        headlineContent = { Text(stringResource(R.string.tts_volc_resource_id)) },
+        supportingContent = { Text(stringResource(R.string.tts_volc_resource_id_desc)) }
     ) {
         OutlinedTextField(
             value = setting.resourceId,
@@ -1302,8 +1302,8 @@ private fun CardGroupScope.volcengineTTSItems(
         )
     }
     formItem(
-        headlineContent = { Text("音色 ID") },
-        supportingContent = { Text("填写控制台中的音色 ID，默认使用 VV 音色。") }
+        headlineContent = { Text(stringResource(R.string.tts_volc_voice_id)) },
+        supportingContent = { Text(stringResource(R.string.tts_volc_voice_id_desc)) }
     ) {
         OutlinedTextField(
             value = setting.speaker,
@@ -1314,7 +1314,7 @@ private fun CardGroupScope.volcengineTTSItems(
     }
     formItem(
         headlineContent = { Text(stringResource(R.string.setting_tts_page_speed)) },
-        supportingContent = { Text("范围 -50～100，0 为正常语速，-50 为半速，100 为两倍速。") }
+        supportingContent = { Text(stringResource(R.string.tts_volc_speed_desc)) }
     ) {
         OutlinedNumberInput(
             value = setting.speechRate,

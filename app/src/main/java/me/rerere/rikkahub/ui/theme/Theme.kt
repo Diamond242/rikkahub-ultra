@@ -16,6 +16,7 @@ import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -99,6 +100,10 @@ fun RikkahubTheme(
         }
     }
 
+    val configuration = LocalConfiguration.current
+    val isPersian = configuration.locales[0]?.language == "fa"
+    val typography = if (isPersian) PersianTypography else Typography
+
     CompositionLocalProvider(
         LocalDarkMode provides darkTheme,
         LocalExtendColors provides extendColors,
@@ -106,7 +111,7 @@ fun RikkahubTheme(
     ) {
         MaterialExpressiveTheme(
             colorScheme = colorSchemeConverted,
-            typography = Typography,
+            typography = typography,
             content = content,
             motionScheme = MotionScheme.expressive()
         )

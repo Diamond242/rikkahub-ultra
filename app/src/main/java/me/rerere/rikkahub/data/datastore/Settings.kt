@@ -51,7 +51,7 @@ data class Settings(
     val translateThinkingBudget: Int = 0,
     // 翻译页的目标语言，存 BCP 47 语言标签
     val translateTargetLanguage: String = "zh-CN",
-    val enableSuggestion: Boolean = true,
+    val enableSuggestion: Boolean = false,
     val suggestionPrompt: String = DEFAULT_SUGGESTION_PROMPT,
     val ocrModelId: Uuid = Uuid.random(),
     val ocrPrompt: String = DEFAULT_OCR_PROMPT,
@@ -142,7 +142,7 @@ data class DisplaySetting(
     val showModelIcon: Boolean = true,
     val showModelName: Boolean = true,
     val showDateTimeInMessage: Boolean = false,
-    val showTokenUsage: Boolean = true,
+    val showTokenUsage: Boolean = false,
     val showThinkingContent: Boolean = true,
     val autoCloseThinking: Boolean = true,
     val updateCheckDisabledUntilEpochMillis: Long = 0L,

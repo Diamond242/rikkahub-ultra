@@ -61,7 +61,7 @@ class OAuthLoopbackCallbackServer(
     private var localizedContext: Context? = null
 
     init {
-        require(port in 0..65535) { "非法的 OAuth 回调端口: $port" }
+        require(port in 0..65535) { "Invalid OAuth callback port: $port" }
     }
 
     suspend fun openSession(expectedState: String): OAuthLoopbackCallbackSession {
@@ -84,12 +84,12 @@ class OAuthLoopbackCallbackServer(
         expectedState: String,
         foregroundServiceContext: Context?,
     ): OAuthLoopbackCallbackSession {
-        require(expectedState.isNotBlank()) { "OAuth state 不能为空" }
+        require(expectedState.isNotBlank()) { "OAuth state must not be empty" }
         val registration = CallbackRegistration()
         return lifecycleMutex.withLock {
             foregroundServiceContext?.let { localizedContext = it }
             check(callbacks.putIfAbsent(expectedState, registration) == null) {
-                "OAuth state 已存在待处理的授权会话"
+                "A pending authorization session already exists for this OAuth state"
             }
             try {
                 val uri = ensureStarted()
@@ -99,7 +99,7 @@ class OAuthLoopbackCallbackServer(
                             context = foregroundServiceContext,
                             sessionId = expectedState,
                         )
-                    ) { "无法启动 OAuth 回调前台服务" }
+                    ) { "Unable to start the OAuth callback foreground service" }
                 }
                 OAuthLoopbackCallbackSession(
                     redirectUri = uri,
@@ -221,10 +221,10 @@ class OAuthLoopbackCallbackServer(
 
     private fun String.requireValidCallbackPath(): String {
         require(startsWith('/') && !startsWith("//")) {
-            "OAuth callbackPath 必须是以单个 / 开头的绝对路径"
+            "OAuth callbackPath must be an absolute path starting with a single /"
         }
         require('?' !in this && '#' !in this) {
-            "OAuth callbackPath 不能包含 query 或 fragment"
+            "OAuth callbackPath must not contain a query or fragment"
         }
         return this
     }
@@ -243,7 +243,7 @@ class OAuthLoopbackCallbackServer(
         ),
         hint = localizedString(
             R.string.oauth_callback_success_hint,
-            "You can close this tab and return to RikkaHub.",
+            "You can close this tab and return to RikkaHub Ultra.",
         ),
     )
 
@@ -257,7 +257,7 @@ class OAuthLoopbackCallbackServer(
         ),
         hint = localizedString(
             R.string.oauth_callback_error_hint,
-            "Close this tab and try again from RikkaHub.",
+            "Close this tab and try again from RikkaHub Ultra.",
         ),
     )
 
@@ -274,7 +274,7 @@ class OAuthLoopbackCallbackServer(
         ),
         hint = localizedString(
             R.string.oauth_callback_invalid_hint,
-            "Return to RikkaHub and start the authorization again.",
+            "Return to RikkaHub Ultra and start the authorization again.",
         ),
     )
 
@@ -291,7 +291,7 @@ class OAuthLoopbackCallbackServer(
         ),
         hint = localizedString(
             R.string.oauth_callback_handled_hint,
-            "You can safely close this tab and return to RikkaHub.",
+            "You can safely close this tab and return to RikkaHub Ultra.",
         ),
     )
 
@@ -323,7 +323,7 @@ class OAuthLoopbackCallbackServer(
               <meta charset="utf-8">
               <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
               <meta name="color-scheme" content="light dark">
-              <title>$safeTitle · RikkaHub</title>
+              <title>$safeTitle · RikkaHub Ultra</title>
               <style>
                 :root {
                   color-scheme: light dark;
@@ -412,7 +412,7 @@ class OAuthLoopbackCallbackServer(
             </head>
             <body class="$tone">
               <main role="status" aria-live="polite">
-                <p class="brand">RikkaHub</p>
+                <p class="brand">RikkaHub <span style="color:#16a34a;font-size:.6em;font-weight:700">Ultra</span></p>
                 <div class="status">
                   <div class="icon" aria-hidden="true">$symbol</div>
                   <h1>$safeTitle</h1>

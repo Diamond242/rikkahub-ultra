@@ -222,7 +222,7 @@ internal fun McpPickerPage(
             title = stringResource(R.string.mcp_picker_title),
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(HugeIcons.ArrowLeft01, contentDescription = stringResource(R.string.back))
+                    Icon(me.rerere.rikkahub.ui.components.ui.startArrowIcon(), contentDescription = stringResource(R.string.back))
                 }
             },
         )

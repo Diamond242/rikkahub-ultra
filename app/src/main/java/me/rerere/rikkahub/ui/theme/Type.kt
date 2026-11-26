@@ -86,3 +86,38 @@ val JetbrainsMono = FontFamily(
         )
     )
 )
+
+// Vazirmatn (OFL-1.1, rastikerdar/vazirmatn v33.003), variable font (wght 100-900).
+// Used only when the app locale is Persian (see AppTheme in Theme.kt).
+@OptIn(ExperimentalTextApi::class)
+val Vazirmatn = FontFamily(
+    listOf(FontWeight.Light, FontWeight.Normal, FontWeight.Medium, FontWeight.SemiBold, FontWeight.Bold).map { w ->
+        Font(
+            resId = R.font.vazirmatn,
+            weight = w,
+            variationSettings = FontVariation.Settings(FontVariation.weight(w.weight)),
+        )
+    }
+)
+
+private fun TextStyle.withFamily(family: FontFamily) = copy(fontFamily = family)
+
+fun Typography.withFontFamily(family: FontFamily): Typography = copy(
+    displayLarge = displayLarge.withFamily(family),
+    displayMedium = displayMedium.withFamily(family),
+    displaySmall = displaySmall.withFamily(family),
+    headlineLarge = headlineLarge.withFamily(family),
+    headlineMedium = headlineMedium.withFamily(family),
+    headlineSmall = headlineSmall.withFamily(family),
+    titleLarge = titleLarge.withFamily(family),
+    titleMedium = titleMedium.withFamily(family),
+    titleSmall = titleSmall.withFamily(family),
+    bodyLarge = bodyLarge.withFamily(family),
+    bodyMedium = bodyMedium.withFamily(family),
+    bodySmall = bodySmall.withFamily(family),
+    labelLarge = labelLarge.withFamily(family),
+    labelMedium = labelMedium.withFamily(family),
+    labelSmall = labelSmall.withFamily(family),
+)
+
+val PersianTypography: Typography by lazy { Typography.withFontFamily(Vazirmatn) }

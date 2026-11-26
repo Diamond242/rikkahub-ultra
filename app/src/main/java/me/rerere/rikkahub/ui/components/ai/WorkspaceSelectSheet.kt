@@ -96,7 +96,7 @@ internal fun WorkspaceSelectSheet(
                 },
                 trailingContent = {
                     Icon(
-                        imageVector = HugeIcons.ArrowRight01,
+                        imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                         contentDescription = null,
                         tint = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

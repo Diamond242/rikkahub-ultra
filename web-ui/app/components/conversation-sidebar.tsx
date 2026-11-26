@@ -135,6 +135,7 @@ const COLOR_THEME_OPTIONS: Array<{
 const LANGUAGE_OPTIONS = [
   { value: "zh-CN", label: "简体中文" },
   { value: "en-US", label: "English" },
+  { value: "fa-IR", label: "فارسی" },
 ] as const;
 
 type ConversationListItem =
@@ -511,7 +512,7 @@ const ConversationListRow = React.memo(
                           <Folder className="size-4" />
                           <span className="truncate">{folder.name}</span>
                           {folder.id === conversation.folderId && (
-                            <Check className="ml-auto size-4" />
+                            <Check className="ms-auto size-4" />
                           )}
                         </DropdownMenuItem>
                       ))}
@@ -557,7 +558,9 @@ const ConversationListRow = React.memo(
 );
 
 function resolveLanguage(language: string): (typeof LANGUAGE_OPTIONS)[number]["value"] {
-  return language.startsWith("zh") ? "zh-CN" : "en-US";
+  if (language.startsWith("zh")) return "zh-CN";
+  if (language.startsWith("fa")) return "fa-IR";
+  return "en-US";
 }
 
 function LanguageSwitcher() {
@@ -710,7 +713,7 @@ function FolderBar({
                     tabIndex={-1}
                     aria-label={t("conversation_sidebar.folder_actions")}
                     onClick={(event) => event.stopPropagation()}
-                    className="ml-0.5 inline-flex items-center opacity-70 hover:opacity-100"
+                    className="ms-0.5 inline-flex items-center opacity-70 hover:opacity-100"
                   >
                     <MoreHorizontal className="size-3" />
                   </span>
@@ -1227,12 +1230,14 @@ export const ConversationSidebar = React.memo(
             </DropdownMenu>
 
             <a
-              href="https://rikka-ai.com"
+              href="https://github.com/Diamond242/rikkahub-ultra"
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-auto text-xs font-normal text-foreground/80 hover:text-foreground transition-colors"
+              dir="ltr"
+              className="ms-auto text-xs font-normal text-foreground/80 hover:text-foreground transition-colors"
             >
               RikkaHub
+              <sub className="ms-0.5 text-[0.65em] font-bold text-green-600 dark:text-green-400">Ultra</sub>
             </a>
           </div>
         </SidebarFooter>

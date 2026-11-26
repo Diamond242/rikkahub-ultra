@@ -35,13 +35,16 @@ import me.rerere.ui.toast.ToastType
 import me.rerere.hugeicons.HugeIcons
 import me.rerere.hugeicons.stroke.Cancel01
 import me.rerere.hugeicons.stroke.Download01
+import me.rerere.hugeicons.stroke.Github
 import me.rerere.rikkahub.BuildConfig
 import me.rerere.rikkahub.R
 import me.rerere.rikkahub.ui.components.richtext.MarkdownBlock
 import me.rerere.rikkahub.ui.context.LocalToaster
 import me.rerere.rikkahub.ui.hooks.useThrottle
 import me.rerere.rikkahub.ui.pages.chat.ChatVM
+import me.rerere.rikkahub.utils.Changelog
 import me.rerere.rikkahub.utils.UpdateDownload
+import me.rerere.rikkahub.utils.openUrl
 import me.rerere.rikkahub.utils.Version
 import me.rerere.rikkahub.utils.onError
 import me.rerere.rikkahub.utils.onSuccess
@@ -82,6 +85,8 @@ fun UpdateCard(vm: ChatVM) {
         var dismissed by remember { mutableStateOf(false) }
         val current = remember { Version(BuildConfig.VERSION_NAME) }
         val latest = remember(info) { Version(info.version) }
+        val language = context.resources.configuration.locales[0].language
+        val changelog = remember(info, language) { Changelog.localize(info.changelog, language) }
         if (latest > current && !dismissed) {
             Card(
                 onClick = {
@@ -114,7 +119,7 @@ fun UpdateCard(vm: ChatVM) {
                         }
                     }
                     MarkdownBlock(
-                        content = info.changelog,
+                        content = changelog,
                         style = MaterialTheme.typography.bodySmall,
                         modifier = Modifier.heightIn(max = 200.dp)
                     )
@@ -143,13 +148,16 @@ fun UpdateCard(vm: ChatVM) {
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.primary
                     )
-                    Text(
-                        text = Instant.parse(info.publishedAt).toJavaInstant().toLocalDateTime(),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    if (info.publishedAt.isNotBlank()) {
+                        Text(
+                            text = runCatching { Instant.parse(info.publishedAt).toJavaInstant().toLocalDateTime() }
+                                .getOrDefault(info.publishedAt),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
                     MarkdownBlock(
-                        content = info.changelog,
+                        content = changelog,
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(300.dp)
@@ -181,6 +189,20 @@ fun UpdateCard(vm: ChatVM) {
                                 }
                             )
                         }
+                    }
+                    OutlinedCard(
+                        onClick = { context.openUrl(info.pageUrl) },
+                    ) {
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.update_card_view_release)) },
+                            supportingContent = { Text(info.pageUrl) },
+                            leadingContent = {
+                                Icon(
+                                    imageVector = HugeIcons.Github,
+                                    contentDescription = null
+                                )
+                            }
+                        )
                     }
                 }
             }

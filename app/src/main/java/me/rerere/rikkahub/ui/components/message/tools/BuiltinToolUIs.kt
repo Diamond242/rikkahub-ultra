@@ -145,7 +145,7 @@ class MemoryFileToolUI(override val toolName: String) : ToolUIRenderer {
                     )
                     if (memoryId != null) {
                         Icon(
-                            imageVector = HugeIcons.ArrowRight01,
+                            imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                             contentDescription = null,
                             modifier = Modifier.size(12.dp),
                             tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),

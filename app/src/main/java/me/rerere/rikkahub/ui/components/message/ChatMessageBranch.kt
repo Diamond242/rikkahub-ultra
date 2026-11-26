@@ -38,7 +38,7 @@ fun ChatMessageBranchSelector(
             val actionColor = MaterialTheme.colorScheme.onSurfaceVariant
 
             Icon(
-                imageVector = HugeIcons.ArrowLeft01,
+                imageVector = me.rerere.rikkahub.ui.components.ui.startArrowIcon(),
                 contentDescription = "Prev",
                 modifier = Modifier
                     .clip(CircleShape)
@@ -68,7 +68,7 @@ fun ChatMessageBranchSelector(
             )
 
             Icon(
-                imageVector = HugeIcons.ArrowRight01,
+                imageVector = me.rerere.rikkahub.ui.components.ui.endArrowIcon(),
                 contentDescription = "Next",
                 modifier = Modifier
                     .clip(CircleShape)

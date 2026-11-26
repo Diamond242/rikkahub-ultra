@@ -1,220 +1,224 @@
-# 消息生成链路文档
+# Message generation pipeline
 
-本文档描述从用户发送消息到 AI 回复完成的完整数据流，涉及的核心类与处理阶段。
+This document describes the full data flow from the moment the user sends a message until the AI reply is complete, including
+the core classes and processing stages involved.
 
-## 核心类概览
+## Core classes
 
-| 类                          | 职责                          |
-|----------------------------|-----------------------------|
-| `ChatService`              | 入口与编排层，管理所有会话，对外暴露操作接口      |
-| `ConversationSession`      | 单个会话的状态容器（引用计数、生成 Job、处理状态） |
-| `GenerationHandler`        | 核心生成逻辑，驱动 Step 循环与工具调用      |
-| `InputMessageTransformer`  | 发送给 API 前对消息列表的变换管道         |
-| `OutputMessageTransformer` | 接收到流式 chunk 后对消息列表的变换管道     |
+| Class                      | Responsibility |
+|----------------------------|----------------|
+| `ChatService`              | Entry point and orchestration layer; manages all sessions and exposes the public operations |
+| `ConversationSession`      | State container of a single conversation (reference count, generation job, processing state) |
+| `GenerationHandler`        | Core generation logic; drives the step loop and tool calls |
+| `InputMessageTransformer`  | Transformation pipeline applied to the message list before it is sent to the API |
+| `OutputMessageTransformer` | Transformation pipeline applied to the message list after streamed chunks arrive |
 
 ---
 
-## 完整生成链路
+## Full generation flow
 
 ```
-用户发送消息
+User sends a message
     │
     ▼
 ChatService.sendMessage()
-    ├── 取消上一个 Job（cancel + join）
-    ├── finishInterruptedPendingTools()  // 补全上次被打断的 Tool 输出
-    ├── preprocessUserInputParts()       // 对用户文本执行助手 regex 替换
-    ├── 将 UIMessage(USER) 追加到 Conversation.messageNodes
+    ├── cancel the previous job (cancel + join)
+    ├── finishInterruptedPendingTools()  // complete tool output interrupted last time
+    ├── preprocessUserInputParts()       // apply the assistant's regex replacements to the user text
+    ├── append UIMessage(USER) to Conversation.messageNodes
     └── handleMessageComplete()
             │
             ▼
         GenerationHandler.generateText()   ← Flow<GenerationChunk>
-            │  (最多 maxSteps=256 轮循环)
+            │  (loop of at most maxSteps=256 rounds)
             │
-            ├─ [若无待处理 Tool] generateInternal()
-            │       ├── 构建 internalMessages
-            │       │       ├── System message（系统提示 + 记忆 + tool.systemPrompt）
-            │       │       ├── limitContext() 按 contextMessageLimit 阶梯式裁剪历史
-            │       │       └── InputTransformers 管道
-            │       ├── 构建 TextGenerationParams
-            │       └── 调用 Provider
-            │               ├── stream=true → providerImpl.streamText() 逐 chunk emit
-            │               └── stream=false → providerImpl.generateText() 一次返回
+            ├─ [no pending tool] generateInternal()
+            │       ├── build internalMessages
+            │       │       ├── system message (system prompt + memories + tool.systemPrompt)
+            │       │       ├── limitContext() trims history in steps according to contextMessageLimit
+            │       │       └── InputTransformers pipeline
+            │       ├── build TextGenerationParams
+            │       └── call the provider
+            │               ├── stream=true → providerImpl.streamText() emits chunk by chunk
+            │               └── stream=false → providerImpl.generateText() returns once
             │
-            ├─ 每次收到 chunk → OutputTransformers.transforms() (实时)
-            │                  → OutputTransformers.visualTransforms() → emit GenerationChunk
+            ├─ on every chunk → OutputTransformers.transforms() (live)
+            │                 → OutputTransformers.visualTransforms() → emit GenerationChunk
             │
-            ├─ 生成完毕 → OutputTransformers.visualTransforms()
-            │           → OutputTransformers.onGenerationFinish()
-            │           → 设置 message.finishedAt
+            ├─ generation finished → OutputTransformers.visualTransforms()
+            │                      → OutputTransformers.onGenerationFinish()
+            │                      → set message.finishedAt
             │
-            ├─ 检查最新消息中是否有未执行 Tool
-            │       ├── 无 Tool → break（生成结束）
-            │       ├── 有 Tool 且需要审批 → 设为 ToolApprovalState.Pending
-            │       │                        → emit → break（等待用户审批）
-            │       └── 有 Tool 且已审批 → 执行工具（见下）
+            ├─ check the latest message for tools not yet executed
+            │       ├── no tool → break (generation ends)
+            │       ├── tool needs approval → set ToolApprovalState.Pending
+            │       │                        → emit → break (wait for the user's approval)
+            │       └── tool approved → execute the tool (see below)
             │
-            ├─ 工具执行
-            │       ├── Denied  → 输出 {"error": "denied by user"}
-            │       ├── Answered → 直接使用用户提供的答案
+            ├─ tool execution
+            │       ├── Denied   → output {"error": "denied by user"}
+            │       ├── Answered → use the answer provided by the user
             │       └── Auto / Approved → toolDef.execute(args)
-            │               ├── 若输出超 32KB 且有 shell 权限 → 截断并写入文件
-            │               └── CancellationException 必须向上传播（不能吞掉）
+            │               ├── output over 32 KB and shell access available → truncate and write to a file
+            │               └── CancellationException must propagate (never swallow it)
             │
-            └─ 将执行结果写回 messages → emit → 继续下一 Step
-                    (Tool 结果内联在 ASSISTANT 消息的 parts 中，不创建 TOOL 角色消息)
+            └─ write the results back to messages → emit → continue with the next step
+                    (tool results are inlined in the parts of the ASSISTANT message; no TOOL role message is created)
 
     ▼
-onCompletion（Flow 结束或取消）
+onCompletion (flow finished or cancelled)
     ├── cancelLiveUpdateNotification()
-    ├── 对所有消息 finishReasoning()（兜底）
-    └── 若 App 不在前台 → sendGenerationDoneNotification()
+    ├── finishReasoning() on every message (safety net)
+    └── if the app is not in the foreground → sendGenerationDoneNotification()
 
     ▼
 onSuccess
     ├── saveConversation()
-    ├── generateTitle()    （异步，使用 titleModel）
-    └── generateSuggestion()（异步，使用 suggestionModel）
+    ├── generateTitle()      (async, uses titleModel)
+    └── generateSuggestion() (async, uses suggestionModel)
 ```
 
 ---
 
-## 阶段一：用户消息预处理
+## Stage 1: user message preprocessing
 
-**入口**：`ChatService.preprocessUserInputParts()`
+**Entry point**: `ChatService.preprocessUserInputParts()`
 
-对用户输入的 `UIMessagePart.Text` 执行 `Assistant.replaceRegexes(scope=USER)`，即助手配置中 `AffectScope.USER`
-的正则替换规则，用于规范化或脱敏输入文本。非文本 Part（图片、文档等）不参与处理。
-
----
-
-## 阶段二：InputMessage 变换管道
-
-**时机**：`generateInternal()` 构建 `internalMessages` 后，发送给 API 前调用。
-
-变换器按顺序执行（`fold`），每个变换器接收上一个的输出：
-
-| 顺序 | 变换器                            | 说明                                       |
-|----|--------------------------------|------------------------------------------|
-| 1  | `TimeReminderTransformer`      | 在系统消息中注入当前时间/日期                          |
-| 2  | `PromptInjectionTransformer`   | 注入 ModeInjection 和 Lorebook 触发的提示词       |
-| 3  | `PlaceholderTransformer`       | 替换消息中的 `{{placeholder}}` 占位符             |
-| 4  | `DocumentAsPromptTransformer`  | 将文档附件转换为文本内容注入消息                         |
-| 5  | `OcrTransformer`               | 对图片 Part 执行 OCR，将识别结果附加为文本               |
-| 6  | `TemplateTransformer`          | 用 Pebble 模板引擎渲染消息（可访问 time/date/role 变量） |
-| 7  | `WorkspaceReminderTransformer` | 若对话关联 Workspace，注入工作区路径提示                |
-
-`PromptInjectionTransformer` 支持四种注入位置：
-
-- `BEFORE_SYSTEM_PROMPT` / `AFTER_SYSTEM_PROMPT` — 插入到系统消息前后
-- `TOP_OF_CHAT` — 插入到第一条用户消息前
-- `BOTTOM_OF_CHAT` — 插入到最后一条消息前
-- `AT_DEPTH` — 从最新消息往前数第 N 条处插入
+Applies `Assistant.replaceRegexes(scope=USER)` to the user's `UIMessagePart.Text`, i.e. the regex replacement rules with
+`AffectScope.USER` from the assistant configuration, used to normalize or redact input text. Non-text parts (images,
+documents, ...) are not processed.
 
 ---
 
-## 阶段三：OutputMessage 变换管道
+## Stage 2: input message transformation pipeline
 
-分三个时机调用：
+**When**: after `generateInternal()` has built `internalMessages`, before sending to the API.
 
-| 时机                  | 方法                     | 说明                             |
-|---------------------|------------------------|--------------------------------|
-| 流式 chunk 到达时（实时）    | `transforms()`         | 真实变换，用于内部消息存储                  |
-| 流式 chunk 到达时（UI 展示） | `visualTransforms()`   | 视觉变换，不影响实际存储（如流式 think tag 转换） |
-| 生成完全结束后             | `onGenerationFinish()` | 最终后处理，如 base64 图片落盘            |
+Transformers run in order (`fold`); each receives the output of the previous one:
 
-当前 Output 变换器：
+| Order | Transformer                    | Description |
+|-------|--------------------------------|-------------|
+| 1     | `TimeReminderTransformer`      | Injects the current time/date into the system message |
+| 2     | `PromptInjectionTransformer`   | Injects prompts from ModeInjection and triggered Lorebook entries |
+| 3     | `PlaceholderTransformer`       | Replaces `{{placeholder}}` placeholders in messages |
+| 4     | `DocumentAsPromptTransformer`  | Converts document attachments into text injected into the message |
+| 5     | `OcrTransformer`               | Runs OCR on image parts and appends the recognized text |
+| 6     | `TemplateTransformer`          | Renders messages with the Pebble template engine (time/date/role variables available) |
+| 7     | `WorkspaceReminderTransformer` | If the conversation is linked to a workspace, injects a hint with the workspace path |
 
-| 变换器                                 | transforms            | visualTransform               | onGenerationFinish |
-|-------------------------------------|-----------------------|-------------------------------|--------------------|
-| `ThinkTagTransformer`               | —                     | ✓（`<think>` → Reasoning Part） | ✓（最终提取）            |
-| `Base64ImageToLocalFileTransformer` | —                     | —                             | ✓（base64 → 本地文件）   |
-| `RegexOutputTransformer`            | ✓（助手 regex OUTPUT 替换） | —                             | —                  |
+`PromptInjectionTransformer` supports these injection positions:
+
+- `BEFORE_SYSTEM_PROMPT` / `AFTER_SYSTEM_PROMPT` — before or after the system message
+- `TOP_OF_CHAT` — before the first user message
+- `BOTTOM_OF_CHAT` — before the last message
+- `AT_DEPTH` — at the Nth message counting back from the latest
 
 ---
 
-## 阶段四：工具系统
+## Stage 3: output message transformation pipeline
 
-### 工具注册顺序
+Called at three points:
 
-`handleMessageComplete()` 中按如下顺序构建工具列表：
+| When                                  | Method                 | Description |
+|---------------------------------------|------------------------|-------------|
+| Streamed chunk arrives (live)         | `transforms()`         | Real transformation, used for the stored message |
+| Streamed chunk arrives (UI display)   | `visualTransforms()`   | Visual transformation that does not affect storage (e.g. streaming think tag conversion) |
+| Generation fully finished             | `onGenerationFinish()` | Final post-processing, e.g. saving base64 images to disk |
 
-1. **Search Tools**（`createSearchTools`）— 当 `settings.enableWebSearch = true` 时
-2. **Local Tools**（`localTools.getTools(assistant.localTools)`）— 按助手配置启用：
-  - `JavascriptEngine`：执行 JS 代码片段
-  - `TimeInfo`：获取当前时间
-  - `Clipboard`：读写剪贴板
-  - `Tts`：文字转语音
-  - `AskUser`：向用户提问（需审批）
-  - `ScreenTime`：获取屏幕使用时间
-3. **Conversation Tools**（`createConversationTools`）— `enableRecentChatsReference = true` 时，查询历史对话
-4. **Workspace Tools**（`createWorkspaceToolsIfReady`）— Workspace Shell 就绪时注入，含 `workspace_shell`
-5. **Skill Tools**（`createSkillTools`）— 助手启用的 Skill 列表
-6. **MCP Tools** — 所有已连接 MCP 服务器的工具，命名格式 `mcp__{serverName}__{toolName}`
-7. **Memory Tools**（`buildMemoryTools`，内置于 GenerationHandler）— `enableMemory = true` 时，支持记忆的增删改
+Current output transformers:
 
-### 工具审批状态机
+| Transformer                         | transforms | visualTransform | onGenerationFinish |
+|-------------------------------------|------------|-----------------|--------------------|
+| `ThinkTagTransformer`               | —          | ✓ (`<think>` → reasoning part) | ✓ (final extraction) |
+| `Base64ImageToLocalFileTransformer` | —          | —               | ✓ (base64 → local file) |
+| `RegexOutputTransformer`            | ✓ (assistant OUTPUT regex replacements) | — | — |
+
+---
+
+## Stage 4: tool system
+
+### Tool registration order
+
+`handleMessageComplete()` builds the tool list in this order:
+
+1. **Search tools** (`createSearchTools`) — when `settings.enableWebSearch = true`
+2. **Local tools** (`localTools.getTools(assistant.localTools)`) — enabled per assistant:
+  - `JavascriptEngine`: runs JS snippets
+  - `TimeInfo`: gets the current time
+  - `Clipboard`: reads and writes the clipboard
+  - `Tts`: text to speech
+  - `AskUser`: asks the user a question (needs approval)
+  - `ScreenTime`: gets screen time usage
+3. **Conversation tools** (`createConversationTools`) — when `enableRecentChatsReference = true`, query past conversations
+4. **Workspace tools** (`createWorkspaceToolsIfReady`) — injected when the workspace shell is ready, including `workspace_shell`
+5. **Skill tools** (`createSkillTools`) — skills enabled for the assistant
+6. **MCP tools** — tools of every connected MCP server, named `mcp__{serverName}__{toolName}`
+7. **Memory tools** (`buildMemoryTools`, built into GenerationHandler) — when `enableMemory = true`, add, edit and delete memories
+
+### Tool approval state machine
 
 ```
-Auto（默认）
+Auto (default)
     │ toolDef.needsApproval() == true
     ▼
-Pending ──── 用户操作 ────► Approved → 执行工具
-                       ──► Denied   → 返回拒绝错误
-                       ──► Answered → 使用用户提供的文本作为结果
+Pending ──── user action ────► Approved → execute the tool
+                         ──► Denied   → return a denial error
+                         ──► Answered → use the text provided by the user as the result
 ```
 
-审批流程由 `ChatService.handleToolApproval()` 触发，更新状态后重新调用 `handleMessageComplete()`，`GenerationHandler` 检测到
-`canResumeExecution` 的 Tool 后直接跳过本轮生成，进入工具执行阶段。
+Approval is triggered by `ChatService.handleToolApproval()`, which updates the state and calls `handleMessageComplete()` again.
+When `GenerationHandler` detects a tool with `canResumeExecution`, it skips generation for that round and goes straight to tool
+execution.
 
-### 工具输出截断
+### Tool output truncation
 
-当 Workspace Shell 工具可用且工具输出超过 **32KB** 时，输出被截断：
+When the workspace shell tool is available and a tool's output exceeds **32 KB**, the output is truncated:
 
-- 前 4KB 保留在消息中
-- 完整输出写入 `filesDir/tool_outputs/{toolCallId}.txt`
-- 消息中附带 shell 读取指令提示
+- the first 4 KB stay in the message
+- the full output is written to `filesDir/tool_outputs/{toolCallId}.txt`
+- the message includes a hint with the shell command to read it
 
-`search_web` 不参与截断：结果体积由用户设置的结果数决定，且结果列表 UI 与引用跳转依赖完整的 JSON。
-
----
-
-## 阶段五：会话生命周期管理
-
-`ConversationSession` 使用**原子引用计数**管理内存生命周期：
-
-- `acquire()` / `release()` — UI 页面打开/关闭时调用
-- `refCount == 0 && !isGenerating` — 触发 5 秒空闲超时后，`ChatService.removeSession()` 清理 session
-- `setJob()` — 设置生成 Job，完成后自动置 null 并触发空闲检查
+`search_web` is never truncated: its size depends on the result count set by the user, and the result list UI and citation
+links rely on the complete JSON.
 
 ---
 
-## 阶段六：后台通知
+## Stage 5: session lifecycle
 
-| 通知类型                 | 触发条件           | Channel                                    |
-|----------------------|----------------|--------------------------------------------|
-| Live Update（ongoing） | 生成过程中且 App 在后台 | `CHAT_LIVE_UPDATE_NOTIFICATION_CHANNEL_ID` |
-| 生成完成                 | 生成结束且 App 在后台  | `CHAT_COMPLETED_NOTIFICATION_CHANNEL_ID`   |
+`ConversationSession` manages its memory lifecycle with an **atomic reference count**:
 
-Live Update 通知内容根据当前生成状态动态更新：
-
-- 工具执行中 → 显示工具名与输入预览
-- 推理中（Reasoning）→ 显示推理内容片段
-- 写回复中 → 显示文本内容片段
+- `acquire()` / `release()` — called when a UI page opens or closes
+- `refCount == 0 && !isGenerating` — after a 5 second idle timeout, `ChatService.removeSession()` cleans up the session
+- `setJob()` — sets the generation job; it is set back to null when done and triggers the idle check
 
 ---
 
-## 关键文件路径
+## Stage 6: background notifications
+
+| Notification           | Trigger                                   | Channel |
+|------------------------|-------------------------------------------|---------|
+| Live Update (ongoing)  | While generating with the app in the background | `CHAT_LIVE_UPDATE_NOTIFICATION_CHANNEL_ID` |
+| Generation complete    | Generation finished with the app in the background | `CHAT_COMPLETED_NOTIFICATION_CHANNEL_ID` |
+
+The Live Update content follows the current generation state:
+
+- running a tool → shows the tool name and an input preview
+- reasoning → shows a snippet of the reasoning
+- writing the reply → shows a snippet of the text
+
+---
+
+## Key file paths
 
 ```
 app/src/main/java/me/rerere/rikkahub/
 ├── service/
-│   ├── ChatService.kt              # 编排入口
-│   └── ConversationSession.kt      # 会话状态容器
+│   ├── ChatService.kt              # orchestration entry point
+│   └── ConversationSession.kt      # conversation state container
 └── data/ai/
-    ├── GenerationHandler.kt        # 核心生成逻辑
+    ├── GenerationHandler.kt        # core generation logic
     ├── transformers/
-    │   ├── Transformer.kt          # 接口定义与扩展函数
+    │   ├── Transformer.kt          # interfaces and extension functions
     │   ├── PromptInjectionTransformer.kt
     │   ├── TemplateTransformer.kt
     │   ├── TimeReminderTransformer.kt
@@ -232,5 +236,5 @@ app/src/main/java/me/rerere/rikkahub/
         ├── SkillsTools.kt
         ├── MemoryTools.kt
         └── local/
-            └── LocalTools.kt       # 本地工具注册表
+            └── LocalTools.kt       # local tool registry
 ```

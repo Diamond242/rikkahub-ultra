@@ -1,5 +1,8 @@
 package me.rerere.rikkahub.ui.components.ai
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -206,6 +209,7 @@ fun ChatInput(
     }
 
     // 底部渐变遮罩：从输入区顶部一直过渡到屏幕底部（键盘弹出时到键盘上沿），避免消息透到系统导航栏
+    val appLayoutDirection = LocalLayoutDirection.current
     val scrimColor = MaterialTheme.colorScheme.background
     val imeInsets = WindowInsets.ime
     Surface(
@@ -274,6 +278,9 @@ fun ChatInput(
                         onSendMessage = { sendMessage() },
                     )
 
+                    // Action bar is always laid out LTR (like English) so the send button stays on the right
+                    // for right-handed users; the text field above keeps the app (RTL) direction.
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -296,6 +303,7 @@ fun ChatInput(
 
                             // Reasoning
                             if (chatModel?.abilities?.contains(ModelAbility.REASONING) == true) {
+                                CompositionLocalProvider(LocalLayoutDirection provides appLayoutDirection) {
                                 ReasoningButton(
                                     reasoningLevel = assistant.reasoningLevel,
                                     onUpdateReasoningLevel = {
@@ -303,6 +311,7 @@ fun ChatInput(
                                     },
                                     onlyIcon = true,
                                 )
+                                }
                             }
 
                         }
@@ -357,6 +366,7 @@ fun ChatInput(
                                 onLongClick = { sendMessageWithoutAnswer() },
                             )
                         }
+                    }
                     }
                 }
             }

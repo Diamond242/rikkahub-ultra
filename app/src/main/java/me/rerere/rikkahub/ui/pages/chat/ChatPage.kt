@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.pages.chat
 
+import me.rerere.rikkahub.data.datastore.displayName
 import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -108,6 +109,23 @@ fun ChatPage(id: Uuid, text: String?, files: List<Uri>, nodeId: Uuid? = null) {
     val currentChatModel by vm.currentChatModel.collectAsStateWithLifecycle()
     val assistant by vm.assistant.collectAsStateWithLifecycle()
     val errors by vm.errors.collectAsStateWithLifecycle()
+
+    // First-run onboarding (shown once, skippable)
+    val onboardingContext = LocalContext.current
+    var showOnboarding by remember { mutableStateOf(!isOnboardingDone(onboardingContext)) }
+    if (showOnboarding) {
+        OnboardingDialog(
+            providers = setting.providers,
+            onFinish = { updated, firstModel ->
+                showOnboarding = false
+                scope.launch {
+                    vm.updateSettings { s -> s.copy(providers = s.providers.map { if (it.id == updated.id) updated else it }) }.join()
+                    firstModel?.let { vm.setChatModel(it) }
+                }
+            },
+            onDismiss = { showOnboarding = false },
+        )
+    }
 
     // 新会话发出第一条消息前，跟随抽屉当前选中的文件夹（#2133）
     val drawerVm: ChatDrawerVM = koinViewModel(viewModelStoreOwner = LocalContext.current as ComponentActivity)
@@ -342,6 +360,7 @@ private fun ChatPageContent(
             bottomBar = {
                 val messageQueue by vm.messageQueue.collectAsStateWithLifecycle()
                 val voiceState by vm.voiceSession.state.collectAsStateWithLifecycle()
+                val selectModelFirstText = stringResource(R.string.chat_select_model_first)
                 ChatInput(
                     onStartVoiceMode = onStartVoiceMode,
                     voiceState = voiceState,
@@ -363,7 +382,7 @@ private fun ChatPageContent(
                     },
                     onSendClick = {
                         if (currentChatModel == null) {
-                            toaster.show("请先选择模型", type = ToastType.Error)
+                            toaster.show(selectModelFirstText, type = ToastType.Error)
                             return@ChatInput
                         }
                         if (inputState.isEditing()) {
@@ -611,7 +630,7 @@ private fun TopBar(
                     )
                     if (chatModel != null && provider != null) {
                         Text(
-                            text = "${assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) }} / ${chatModel.displayName} (${provider.name})",
+                            text = "${assistant.displayName()} / \u2068${chatModel.displayName}\u2069 (\u2068${provider.name}\u2069)",
                             overflow = TextOverflow.Ellipsis,
                             maxLines = 1,
                             color = LocalContentColor.current.copy(0.65f),

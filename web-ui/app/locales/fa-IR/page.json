@@ -1,0 +1,38 @@
+{
+  "conversations": {
+    "meta": {
+      "title": "RikkaHub Ultra Web",
+      "description": "کلاینت وب RikkaHub"
+    },
+    "preview": {
+      "empty_message": "پیام خالی",
+      "image": "[تصویر]",
+      "video": "[ویدیو]",
+      "audio": "[صوت]",
+      "document": "[سند]",
+      "document_with_name": "[سند] {{name}}",
+      "thinking": "[تفکر]",
+      "tool_call": "[فراخوانی ابزار]",
+      "tool_with_name": "[ابزار] {{name}}"
+    },
+    "errors": {
+      "load_detail_failed": "بارگذاری جزئیات گفتگو ناموفق بود"
+    },
+    "empty_state": {
+      "select_title": "یک گفتگو انتخاب کنید",
+      "select_description": "برای دیدن پیام‌ها، گفتگویی را از نوار کناری انتخاب کنید",
+      "loading_title": "در حال بارگذاری…",
+      "loading_description": "در حال بارگذاری جزئیات گفتگو",
+      "error_title": "بارگذاری ناموفق بود",
+      "no_message_title": "هنوز پیامی وجود ندارد",
+      "no_message_description": "این گفتگو هنوز هیچ پیامی ندارد"
+    },
+    "welcome_prompt": "چطور می‌توانم کمکتان کنم؟",
+    "user": {
+      "default_name": "کاربر"
+    },
+    "header": {
+      "select_conversation": "یک گفتگو انتخاب کنید"
+    }
+  }
+}

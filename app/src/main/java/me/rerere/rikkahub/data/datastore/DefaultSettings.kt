@@ -7,15 +7,23 @@ import me.rerere.rikkahub.data.model.PromptInjection
 import me.rerere.tts.provider.TTSProviderSetting
 import kotlin.uuid.Uuid
 
-internal val DEFAULT_ASSISTANT_ID = Uuid.parse("0950e2dc-9bd5-4801-afa3-aa887aa36b4e")
+/** Built-in "simple" assistant: no system prompt, the raw model. */
+internal val PLAIN_ASSISTANT_ID = Uuid.parse("0950e2dc-9bd5-4801-afa3-aa887aa36b4e")
+
+/** Built-in "smart" assistant: tells the model date, locale, device and nickname. */
+internal val SMART_ASSISTANT_ID = Uuid.parse("3d47790c-c415-4b90-9388-751128adb0a0")
+
+/** Assistant selected on fresh installs (existing installs are pinned by PreferenceStoreV6Migration). */
+internal val DEFAULT_ASSISTANT_ID = SMART_ASSISTANT_ID
+
 internal val DEFAULT_ASSISTANTS = listOf(
     Assistant(
-        id = DEFAULT_ASSISTANT_ID,
+        id = PLAIN_ASSISTANT_ID,
         name = "",
         systemPrompt = ""
     ),
     Assistant(
-        id = Uuid.parse("3d47790c-c415-4b90-9388-751128adb0a0"),
+        id = SMART_ASSISTANT_ID,
         name = "",
         systemPrompt = """
             You are a helpful assistant, called {{char}}, based on model {{model_name}}.

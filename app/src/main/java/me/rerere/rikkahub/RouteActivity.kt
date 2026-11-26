@@ -158,6 +158,10 @@ fun conversationIntent(context: Context, conversationId: String): Intent =
     }
 
 class RouteActivity : ComponentActivity() {
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(me.rerere.rikkahub.utils.AppLocale.wrap(newBase))
+    }
+
     private val okHttpClient by inject<OkHttpClient>()
     private val settingsStore by inject<SettingsStore>()
     private val mediaCreationRepository by inject<MediaCreationRepository>()
@@ -431,7 +435,8 @@ class RouteActivity : ComponentActivity() {
                             }
 
                             entry<Screen.ImageGen> {
-                                ImageGenPage()
+                                // Deprecated image-generation page: redirect to media creation
+                                MediaCreationSessionsPage()
                             }
 
                             entry<Screen.MediaCreationSessions> {
@@ -600,7 +605,7 @@ class RouteActivity : ComponentActivity() {
                     )
                     if (BuildConfig.DEBUG) {
                         Text(
-                            text = "[开发模式]",
+                            text = stringResource(R.string.dev_mode_label),
                             modifier = Modifier
                                 .align(Alignment.TopCenter)
                                 .padding(top = 4.dp),

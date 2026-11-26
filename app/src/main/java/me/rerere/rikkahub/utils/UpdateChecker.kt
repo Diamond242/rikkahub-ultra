@@ -13,16 +13,21 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import me.rerere.common.http.await
 import me.rerere.rikkahub.AppScope
 import me.rerere.rikkahub.BuildConfig
+import me.rerere.rikkahub.R
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import java.util.Locale
 
-private const val API_URL = "https://updates.rikka-ai.com/"
-
+/**
+ * Checks the latest GitHub release of the rikkahub-ultra repository
+ * (see [AppLinks.LATEST_RELEASE_API]) instead of upstream's update server.
+ */
 class UpdateChecker(
     private val client: OkHttpClient,
     appScope: AppScope,
@@ -42,18 +47,26 @@ class UpdateChecker(
                 data = try {
                     val response = client.newCall(
                         Request.Builder()
-                            .url(API_URL)
+                            .url(AppLinks.LATEST_RELEASE_API)
                             .get()
+                            .addHeader("Accept", "application/vnd.github+json")
                             .addHeader(
                                 "User-Agent",
-                                "RikkaHub ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}"
+                                "RikkaHub-Ultra ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}"
                             )
                             .build()
                     ).await()
-                    if (response.isSuccessful) {
-                        json.decodeFromString<UpdateInfo>(response.body.string())
-                    } else {
-                        throw Exception("Failed to fetch update info")
+                    when {
+                        response.isSuccessful -> json.decodeFromString<GithubRelease>(response.body.string()).toUpdateInfo()
+                        // No release published yet: treat as "up to date" instead of showing an error card.
+                        response.code == 404 -> UpdateInfo.upToDate()
+                        // GitHub's REST API allows only 60 requests/hour per IP (shared VPN IPs hit this often):
+                        // fall back to the public release page of our own repo instead of showing an error.
+                        response.code == 403 || response.code == 429 -> {
+                            response.close()
+                            checkViaReleasePage()
+                        }
+                        else -> throw Exception("HTTP ${response.code}")
                     }
                 } catch (e: Exception) {
                     throw Exception("Failed to fetch update info", e)
@@ -64,28 +77,45 @@ class UpdateChecker(
         emit(UiState.Error(it))
     }.flowOn(Dispatchers.IO)
 
+    /** Reads the tag from the redirect of [AppLinks.LATEST_RELEASE_PAGE] (always our repo, never upstream). */
+    private suspend fun checkViaReleasePage(): UpdateInfo {
+        val response = client.newCall(
+            Request.Builder()
+                .url(AppLinks.LATEST_RELEASE_PAGE)
+                .head()
+                .addHeader("User-Agent", "RikkaHub-Ultra ${BuildConfig.VERSION_NAME} #${BuildConfig.VERSION_CODE}")
+                .build()
+        ).await()
+        val finalUrl = response.request.url.toString()
+        val code = response.code
+        response.close()
+        if (code == 404) return UpdateInfo.upToDate()
+        if (code !in 200..399) throw Exception("HTTP $code")
+        val tag = releaseTagFromUrl(finalUrl) ?: return UpdateInfo.upToDate()
+        return UpdateInfo(
+            version = normalizeTag(tag),
+            publishedAt = "",
+            changelog = "",
+            downloads = emptyList(),
+            pageUrl = finalUrl,
+        )
+    }
+
     fun downloadUpdate(context: Context, download: UpdateDownload) {
         runCatching {
             val request = DownloadManager.Request(download.url.toUri()).apply {
-                // 设置下载时通知栏的标题和描述
                 setTitle(download.name)
-                setDescription("正在下载更新包...")
-                // 下载完成后通知栏可见
+                setDescription(context.getString(R.string.update_downloading_package))
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                // 允许在移动网络和WiFi下下载
                 setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-                // 设置文件保存路径
                 setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, download.name)
-                // 允许下载的文件类型
                 setMimeType("application/vnd.android.package-archive")
             }
-            // 获取系统的DownloadManager
             val dm = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
             dm.enqueue(request)
-            // 你可以保存返回的downloadId到本地，以便后续查询下载进度或状态
         }.onFailure {
-            Toast.makeText(context, "Failed to update", Toast.LENGTH_SHORT).show()
-            context.openUrl(download.url) // 跳转到下载页面
+            Toast.makeText(context, context.getString(R.string.update_card_download_failed), Toast.LENGTH_SHORT).show()
+            context.openUrl(download.url)
         }
     }
 }
@@ -102,9 +132,65 @@ data class UpdateInfo(
     val version: String,
     val publishedAt: String,
     val changelog: String,
-    val downloads: List<UpdateDownload>
+    val downloads: List<UpdateDownload>,
+    val pageUrl: String = AppLinks.RELEASES,
+) {
+    companion object {
+        fun upToDate() = UpdateInfo(
+            version = BuildConfig.VERSION_NAME,
+            publishedAt = "",
+            changelog = "",
+            downloads = emptyList(),
+        )
+    }
+}
+
+@Serializable
+internal data class GithubRelease(
+    @SerialName("tag_name") val tagName: String,
+    val name: String? = null,
+    val body: String? = null,
+    @SerialName("published_at") val publishedAt: String? = null,
+    @SerialName("html_url") val htmlUrl: String? = null,
+    val assets: List<GithubAsset> = emptyList(),
 )
 
+@Serializable
+internal data class GithubAsset(
+    val name: String,
+    @SerialName("browser_download_url") val downloadUrl: String,
+    val size: Long = 0,
+)
+
+/** "v3.1.1-ultra.2" -> "3.1.1-ultra.2" */
+internal fun normalizeTag(tag: String): String = tag.trim().removePrefix("v").removePrefix("V")
+
+/** Extracts the tag from ".../<owner>/<repo>/releases/tag/<tag>" of OUR repo only; null for anything else. */
+internal fun releaseTagFromUrl(url: String): String? {
+    val prefix = "${AppLinks.GITHUB}/releases/tag/"
+    if (!url.startsWith(prefix, ignoreCase = true)) return null
+    return url.substring(prefix.length).substringBefore('?').substringBefore('#').trimEnd('/')
+        .let { java.net.URLDecoder.decode(it, "UTF-8") }
+        .takeIf { it.isNotBlank() && '/' !in it }
+}
+
+internal fun GithubRelease.toUpdateInfo(): UpdateInfo = UpdateInfo(
+    version = normalizeTag(tagName),
+    publishedAt = publishedAt.orEmpty(),
+    changelog = body.orEmpty(),
+    // APKs only; arm64-v8a first because almost every modern phone uses it
+    downloads = assets
+        .filter { it.name.endsWith(".apk", ignoreCase = true) }
+        .sortedWith(compareByDescending<GithubAsset> { it.name.contains("arm64", true) }.thenBy { it.name })
+        .map { UpdateDownload(name = it.name, url = it.downloadUrl, size = formatBytes(it.size)) },
+    pageUrl = htmlUrl ?: AppLinks.RELEASES,
+)
+
+private fun formatBytes(bytes: Long): String = when {
+    bytes <= 0 -> ""
+    bytes >= 1024 * 1024 -> String.format(Locale.US, "%.1f MB", bytes / 1024.0 / 1024.0)
+    else -> String.format(Locale.US, "%.0f KB", bytes / 1024.0)
+}
 /**
  * 版本号值类，封装版本号字符串并提供比较功能
  *
@@ -119,7 +205,7 @@ value class Version(val value: String) : Comparable<Version> {
 
     private fun parse(): ParsedVersion {
         // 去掉 build metadata（+号后面的部分）
-        val withoutBuild = value.split("+").first()
+        val withoutBuild = value.trim().removePrefix("v").removePrefix("V").split("+").first()
         // 分离主版本号和预发布标识符
         val hyphenIndex = withoutBuild.indexOf('-')
         val (coreStr, prereleaseStr) = if (hyphenIndex >= 0) {
@@ -128,8 +214,16 @@ value class Version(val value: String) : Comparable<Version> {
             withoutBuild to null
         }
         val core = coreStr.split(".").map { it.toIntOrNull() ?: 0 }
-        val prerelease = prereleaseStr?.split(".")
-        return ParsedVersion(core, prerelease)
+        var prerelease = prereleaseStr?.split(".")
+        // RikkaHub Ultra: "<upstream>-ultra.N" is a fork release built ON TOP of <upstream>, so it is not a
+        // SemVer prerelease: 3.1.1-rc.1 < 3.1.1 < 3.1.1-ultra.1 < 3.1.1-ultra.2 < 3.1.2
+        var fork = 0
+        if (prerelease != null && prerelease.first().equals(FORK_TAG, ignoreCase = true)) {
+            val n = prerelease.getOrNull(1)?.toIntOrNull()
+            fork = n ?: 1
+            prerelease = prerelease.drop(if (n != null) 2 else 1).ifEmpty { null }
+        }
+        return ParsedVersion(core, prerelease, fork)
     }
 
     override fun compareTo(other: Version): Int {
@@ -144,6 +238,9 @@ value class Version(val value: String) : Comparable<Version> {
             if (ap != bp) return ap.compareTo(bp)
         }
 
+        // RikkaHub Ultra: same upstream version -> higher fork release wins (plain upstream = 0)
+        if (a.fork != b.fork) return a.fork.compareTo(b.fork)
+
         // 主版本号相同时比较预发布标识符
         // 有预发布标识符的版本优先级低于没有的：1.0.0-alpha < 1.0.0
         return when {
@@ -155,6 +252,8 @@ value class Version(val value: String) : Comparable<Version> {
     }
 
     companion object {
+        private const val FORK_TAG = "ultra"
+
         fun compare(version1: String, version2: String): Int {
             return Version(version1).compareTo(Version(version2))
         }
@@ -188,6 +287,7 @@ value class Version(val value: String) : Comparable<Version> {
 private data class ParsedVersion(
     val core: List<Int>,
     val prerelease: List<String>?,
+    val fork: Int = 0,
 )
 
 // 扩展操作符函数，使比较更直观

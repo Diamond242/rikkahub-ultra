@@ -1,5 +1,14 @@
 package me.rerere.rikkahub.ui.pages.assistant.detail
 
+import me.rerere.rikkahub.data.datastore.displayName
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import me.rerere.hugeicons.stroke.Delete01
+import me.rerere.rikkahub.data.datastore.DEFAULT_ASSISTANTS_IDS
+import me.rerere.rikkahub.ui.pages.assistant.AssistantVM
+import me.rerere.ui.components.RikkaConfirmDialog
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -79,7 +88,24 @@ fun AssistantDetailPage(id: String) {
     val listState = rememberLazyListState()
     // 头部滚出屏幕后，名字改在顶栏里显示
     val showTitle by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
-    val name = assistant.name.ifBlank { stringResource(R.string.assistant_page_default_assistant) }
+    val name = assistant.displayName()
+    val assistantVM: AssistantVM = koinViewModel()
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    RikkaConfirmDialog(
+        show = showDeleteDialog,
+        title = stringResource(R.string.assistant_page_delete),
+        confirmText = stringResource(R.string.delete),
+        dismissText = stringResource(R.string.cancel),
+        onConfirm = {
+            showDeleteDialog = false
+            assistantVM.removeAssistant(assistant)
+            navController.popBackStack()
+        },
+        onDismiss = { showDeleteDialog = false },
+    ) {
+        Text(stringResource(R.string.assistant_page_delete_dialog_text))
+    }
 
     Scaffold(
         topBar = {
@@ -99,6 +125,18 @@ fun AssistantDetailPage(id: String) {
                 },
                 navigationIcon = {
                     BackButton()
+                },
+                actions = {
+                    // built-in (default) assistants cannot be deleted
+                    if (assistant.id !in DEFAULT_ASSISTANTS_IDS) {
+                        IconButton(onClick = { showDeleteDialog = true }) {
+                            Icon(
+                                imageVector = HugeIcons.Delete01,
+                                contentDescription = stringResource(R.string.assistant_page_delete),
+                                tint = MaterialTheme.colorScheme.error,
+                            )
+                        }
+                    }
                 },
                 scrollBehavior = scrollBehavior,
                 colors = CustomColors.topBarColors

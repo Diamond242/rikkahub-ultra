@@ -1,5 +1,6 @@
 package me.rerere.rikkahub.ui.components.ai
 
+import me.rerere.rikkahub.data.datastore.displayName
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,7 +61,6 @@ fun AssistantPicker(
     onClickSetting: () -> Unit,
 ) {
     val state = rememberAssistantState(settings, onSelectAssistant)
-    val defaultAssistantName = stringResource(R.string.assistant_page_default_assistant)
     var showPicker by remember { mutableStateOf(false) }
 
     NavigationDrawerItem(
@@ -72,7 +72,7 @@ fun AssistantPicker(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = state.currentAssistant.name.ifEmpty { defaultAssistantName },
+                    text = state.currentAssistant.displayName(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -80,7 +80,7 @@ fun AssistantPicker(
                 Spacer(Modifier.weight(1f))
 
                 UIAvatar(
-                    name = state.currentAssistant.name.ifEmpty { defaultAssistantName },
+                    name = state.currentAssistant.displayName(),
                     value = state.currentAssistant.avatar,
                     onClick = onClickSetting
                 )
@@ -117,7 +117,6 @@ private fun AssistantPickerSheet(
 ) {
     val sheetState = rememberBottomSheetState(initialValue = SheetValue.Hidden, enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded))
     val scope = rememberCoroutineScope()
-    val defaultAssistantName = stringResource(R.string.assistant_page_default_assistant)
 
     // 标签过滤状态
     var selectedTagIds by remember { mutableStateOf(emptySet<Uuid>()) }
@@ -193,7 +192,6 @@ private fun AssistantPickerSheet(
                     ) {
                         AssistantItem(
                             assistant = assistant,
-                            defaultAssistantName = defaultAssistantName,
                             onEdit = {
                                 scope.launch {
                                     sheetState.hide()
@@ -212,34 +210,36 @@ private fun AssistantPickerSheet(
 @Composable
 private fun AssistantItem(
     assistant: Assistant,
-    defaultAssistantName: String,
     onEdit: () -> Unit
 ) {
     ListItem(
         headlineContent = {
             Text(
-                text = assistant.name.ifEmpty { defaultAssistantName },
+                text = assistant.displayName(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
         },
         leadingContent = {
             UIAvatar(
-                name = assistant.name.ifEmpty { defaultAssistantName },
+                name = assistant.displayName(),
                 value = assistant.avatar,
                 modifier = Modifier.size(32.dp)
             )
         },
         trailingContent = {
-            IconButton(
-                onClick = {
-                    onEdit()
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                AssistantInfoButton(assistant = assistant)
+                IconButton(
+                    onClick = {
+                        onEdit()
+                    }
+                ) {
+                    Icon(
+                        imageVector = HugeIcons.Edit03,
+                        contentDescription = null
+                    )
                 }
-            ) {
-                Icon(
-                    imageVector = HugeIcons.Edit03,
-                    contentDescription = null
-                )
             }
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),

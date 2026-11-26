@@ -1,0 +1,16 @@
+{
+  "code_block": {
+    "clipboard_not_available": "کلیپ‌بورد در دسترس نیست",
+    "copy_code": "کپی کد",
+    "copied": "کپی شد",
+    "copy": "کپی",
+    "preview_code": "پیش‌نمایش کد",
+    "preview": "پیش‌نمایش",
+    "window_not_available": "پنجره در دسترس نیست",
+    "download_code": "دانلود کد",
+    "download": "دانلود"
+  },
+  "markdown": {
+    "code_preview_title": "پیش‌نمایش {{language}}"
+  }
+}

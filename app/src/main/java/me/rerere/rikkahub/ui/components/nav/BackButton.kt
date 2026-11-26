@@ -24,7 +24,7 @@ fun BackButton(modifier: Modifier = Modifier) {
         colors = IconButtonDefaults.filledTonalIconButtonColors(containerColor = CustomColors.listItemColors.containerColor),
     ) {
         Icon(
-            imageVector = HugeIcons.ArrowLeft01,
+            imageVector = me.rerere.rikkahub.ui.components.ui.startArrowIcon(),
             contentDescription = stringResource(R.string.back)
         )
     }
